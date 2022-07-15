@@ -10,10 +10,10 @@ RUN go install google.golang.org/protobuf/cmd/protoc-gen-go@v1.28 \
 
 COPY ./scripts/ /docker-entrypoint-initdb.d/
 
-COPY go.mod go.sum ./
-RUN go mod download && go mod verify
+#COPY go.mod go.sum ./
+#RUN go mod download && go mod verify
 
-COPY . .
-RUN go build -v -o /usr/local/bin/app ./...
+#COPY . .
+#RUN go build -v -o /usr/local/bin/app ./...
 
 CMD ["app"]
