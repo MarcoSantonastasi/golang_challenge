@@ -8,6 +8,7 @@ services:
     image: postgres:latest
     volumes:
       - postgres-data:/var/lib/postgresql/data
+      - ./scripts:/docker-entrypoint-initdb.d
     env_file:
       - .env
     ports:
