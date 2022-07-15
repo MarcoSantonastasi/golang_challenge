@@ -1,0 +1,22 @@
+syntax = "proto3";
+
+package v1;
+
+option go_package = "github.com/marcosantonastasi/arex_challenge/proto";
+
+message Invoice {
+    string id = 1;
+    string denom = 2;
+    string amount = 3;
+    string asking = 4;
+}
+
+message Empty {}
+
+message GetAllInvoicesResponse{
+    repeated Invoice data = 1;
+}
+
+service InvoiceService {
+    rpc GetAll(Empty) returns (GetAllInvoicesResponse);
+}
