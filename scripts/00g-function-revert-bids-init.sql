@@ -4,7 +4,7 @@ CREATE OR REPLACE FUNCTION revert_outstanding_bids (
 )
 AS $$
 DECLARE
-  _tx uuid;
+  _tx bigint;
   _esc uuid;
   _account RECORD;
   _credit bigint;
@@ -12,7 +12,7 @@ DECLARE
 
 BEGIN
 
-SET TRANSACTION ISOLATION LEVEL SERIALIZABLE;
+-- SET TRANSACTION ISOLATION LEVEL SERIALIZABLE;
 
 SELECT id FROM transactions
 WHERE
@@ -27,10 +27,10 @@ INTO _esc;
 
 FOR _account IN (
   SELECT debit AS _id FROM ledger
-    WHERE transactrion = _tx
+    WHERE transaction = _tx
   UNION
   SELECT credit AS _id FROM ledger
-    WHERE transactrion = _tx
+    WHERE transaction = _tx
 )
 LOOP
 

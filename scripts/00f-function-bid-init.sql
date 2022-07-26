@@ -6,10 +6,10 @@ CREATE OR REPLACE FUNCTION bid (
 AS $$
 DECLARE
   _esc uuid;
-  _tx uuid;
+  _tx bigint;
 
 BEGIN
-SET TRANSACTION ISOLATION LEVEL SERIALIZABLE;
+-- SET TRANSACTION ISOLATION LEVEL SERIALIZABLE;
 
 SELECT id FROM accounts
 WHERE
@@ -17,8 +17,8 @@ WHERE
 FETCH FIRST ROW ONLY
 INTO _esc;
 
-INSERT INTO transactions ( invoice, is_bid )
-VALUES (_invoice, true)
+INSERT INTO transactions (invoice)
+VALUES (_invoice)
 RETURNING id INTO _tx;
 
 EXCEPTION WHEN unique_violation THEN

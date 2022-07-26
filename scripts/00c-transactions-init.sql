@@ -1,4 +1,4 @@
-DROP TABLE IF EXISTS transactions;
+DROP TABLE IF EXISTS transactions CASCADE;
 
 CREATE TABLE transactions
 (

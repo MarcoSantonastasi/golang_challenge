@@ -1,4 +1,4 @@
-DROP TABLE IF EXISTS accounts;
+DROP TABLE IF EXISTS accounts CASCADE;
 
 DROP TYPE IF EXISTS type_account_type;
 

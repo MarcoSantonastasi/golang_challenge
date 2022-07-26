@@ -2,10 +2,10 @@ CREATE OR REPLACE FUNCTION update_account_balance_on_ledger_insert()
 RETURNS TRIGGER AS $$
 BEGIN
   UPDATE accounts
-  SET balance = balnace + new.amount
+  SET balance = balance + new.amount
   WHERE id = new.credit;
   UPDATE accounts
-  SET balance = balnace - new.amount
+  SET balance = balance - new.amount
   WHERE id = new.debit;
 RETURN NEW;
 END;

@@ -1,4 +1,4 @@
-DROP TABLE IF EXISTS invoices;
+DROP TABLE IF EXISTS invoices CASCADE;
 
 CREATE TABLE invoices
 (
