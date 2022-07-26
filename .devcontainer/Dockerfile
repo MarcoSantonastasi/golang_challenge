@@ -12,7 +12,7 @@ RUN export PATH="$PATH:$(go env GOPATH)/bin"
 RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
     && apt-get -y install --no-install-recommends \
     protobuf-compiler \
-    psql \
+    postgresql-client \
     && apt-get clean
 
 RUN go install google.golang.org/protobuf/cmd/protoc-gen-go@v1.28 \
