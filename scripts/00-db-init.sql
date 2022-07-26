@@ -49,7 +49,7 @@ CREATE TABLE transactions
 );
 CREATE UNIQUE INDEX
   ON transactions (invoice, is_active)
-  WHERE is_active = true AND is_bid = true;
+  WHERE is_active = true;
 COMMENT ON TABLE transactions
     IS 'Transactions are an accounting object needed to reconcile ledger entries';
 
