@@ -14,7 +14,7 @@ RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
     protobuf-compiler \
     && apt-get clean
 
-RUN && go install google.golang.org/protobuf/cmd/protoc-gen-go@v1.28 \
+RUN go install google.golang.org/protobuf/cmd/protoc-gen-go@v1.28 \
     && go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@v1.2
     
 # [Optional] Uncomment the next lines to use go get to install anything else you need
