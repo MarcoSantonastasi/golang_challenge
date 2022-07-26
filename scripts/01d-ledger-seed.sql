@@ -1,0 +1,43 @@
+INSERT INTO ledger (
+    transaction,
+    credit,
+    debit,
+    amount
+)
+VALUES
+(
+    'a82b5ade-2790-46a8-bdbb-2a2cac5bfc92'::uuid,
+    'acb51e7b-2cef-4081-93ad-6b3a97c68b8a'::uuid,
+),
+(
+    '95a040ad-44ef-4791-8b41-8228e9de58a8'::uuid,
+    'acb51e7b-2cef-4081-93ad-6b3a97c68b8a'::uuid,
+),
+(
+    '980ebc77-cbd1-427a-b8d5-d446d04f2308'::uuid,
+    'acb51e7b-2cef-4081-93ad-6b3a97c68b8a'::uuid,
+),
+(
+    '021ad917-ef24-4d9b-9601-9b9a57ce9337'::uuid,
+    'af80d0ea-78b9-45b1-a7b0-d1ddd0fbd6fe'::uuid,
+),
+(
+    '110988b1-6ae1-4ae4-b006-ff64f2ff9fa3'::uuid,
+    'af80d0ea-78b9-45b1-a7b0-d1ddd0fbd6fe'::uuid,
+),
+(
+    '3dc1ea63-1d5a-443b-a3b9-51c23f265c33'::uuid,
+    'af80d0ea-78b9-45b1-a7b0-d1ddd0fbd6fe'::uuid,
+),
+(
+    '4a9356f2-6499-4237-b26d-29771e69ac8d'::uuid,
+    'ceeaece4-ca5c-4d31-9fd6-90a90854fed9'::uuid,
+),
+(
+    'be387497-7683-43a0-89c6-157d7ab72fef'::uuid,
+    'ceeaece4-ca5c-4d31-9fd6-90a90854fed9'::uuid,
+),
+(
+    'db414a6d-7caa-444b-a930-561f04202517'::uuid,
+    'ceeaece4-ca5c-4d31-9fd6-90a90854fed9'::uuid,
+);

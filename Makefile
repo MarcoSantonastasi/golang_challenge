@@ -1,4 +1,4 @@
-SHELL=/bin/sh
+SHELL=/user/bin/bash
 
 include .env
 
