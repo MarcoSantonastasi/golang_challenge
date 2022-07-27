@@ -4,6 +4,7 @@ RUN export PATH="$PATH:$(go env GOPATH)/bin"
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
     protobuf-compiler \
+    postgresql-client \
     && apt-get clean
 
 RUN dogo install google.golang.org/protobuf/cmd/protoc-gen-go@v1.28 \
