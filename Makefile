@@ -4,8 +4,8 @@ include .env
 
 dbseed:
 	psql -U $(POSTGRES_USER) -d $(POSTGRES_DB) -h $(POSTGRES_HOSTNAME) -a \
-	  -f ./scripts/00-db-init.sql \
-	  -f ./scripts/01-db-seed.sql
+	  -f ./db/init/00-db-init.sql \
+	  -f ./db/init/01-db-seed.sql
 .PHONY: dbseed
 
 protogen:
