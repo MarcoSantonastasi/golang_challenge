@@ -27,13 +27,13 @@ VALUES
   'feac2610-27df-4665-afae-0f536ed06ab5'::uuid,
   'Investor B',
   'INVESTOR'::type_account_type,
-  DEFAULT
+  5000000
 ),
 (
   'c5f76419-eb27-4255-86ba-afbbe271114b'::uuid,
   'Investor C',
   'INVESTOR'::type_account_type,
-  DEFAULT
+  200000
 ),
 (
   '5af74869-9b16-4ddd-9f0d-4a1df2b980eb'::uuid,
@@ -85,13 +85,7 @@ VALUES
     300000
 );
 
-
-INSERT INTO transactions (
-  id,
-  invoice
-)
-VALUES
-(
-    1::bigint,
-    'acb51e7b-2cef-4081-93ad-6b3a97c68b8a'::uuid
-);
+-- bid( _bidder_account uuid,  _invoice uuid, _offer bigint)
+SELECT bid('991842fe-2e97-4481-a560-8d985a82ae74', 'ceeaece4-ca5c-4d31-9fd6-90a90854fed9' , 160000);
+SELECT bid('feac2610-27df-4665-afae-0f536ed06ab5', 'ceeaece4-ca5c-4d31-9fd6-90a90854fed9' , 320000);
+SELECT bid('c5f76419-eb27-4255-86ba-afbbe271114b', 'af80d0ea-78b9-45b1-a7b0-d1ddd0fbd6fe' , 195000);

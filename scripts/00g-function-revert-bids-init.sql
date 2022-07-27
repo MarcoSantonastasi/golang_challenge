@@ -12,8 +12,6 @@ DECLARE
 
 BEGIN
 
--- SET TRANSACTION ISOLATION LEVEL SERIALIZABLE;
-
 SELECT id FROM transactions
 WHERE
   invoice = _invoice AND
@@ -36,25 +34,24 @@ LOOP
 
   SELECT SUM(amount) FROM ledger
   WHERE
-    transaction=_transaction AND
+    transaction = _tx AND
     credit= _esc AND
-    debit= _account
+    debit= _account._id
   INTO _credit;
 
   SELECT SUM(amount) FROM ledger
   WHERE
-    transaction=_transaction AND
-    credit= _account AND
+    transaction = _tx AND
+    credit= _account._id AND
     debit=  _esc
   INTO _debit;
 
   INSERT INTO ledger( transaction, credit, debit, amount)
-    VALUES (_tx, _esc, _account, (coalesce(_credit,0::int) - coalesce(_debit,0::int)));
+    VALUES (_tx, _esc, _account._id, (coalesce(_credit,0::bigint) - coalesce(_debit,0::bigint)));
   
 END LOOP;
 
-UPDATE transactions SET is_active = false
-  WHERE invoice = _invoice;
+-- UPDATE transactions SET is_active = false WHERE invoice = _invoice;
 
 RETURN;
 END; 

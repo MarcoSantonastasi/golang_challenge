@@ -27,13 +27,13 @@ VALUES
   'feac2610-27df-4665-afae-0f536ed06ab5'::uuid,
   'Investor B',
   'INVESTOR'::type_account_type,
-  DEFAULT
+  5000000
 ),
 (
   'c5f76419-eb27-4255-86ba-afbbe271114b'::uuid,
   'Investor C',
   'INVESTOR'::type_account_type,
-  DEFAULT
+  200000
 ),
 (
   '5af74869-9b16-4ddd-9f0d-4a1df2b980eb'::uuid,

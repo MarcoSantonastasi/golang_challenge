@@ -9,7 +9,6 @@ DECLARE
   _tx bigint;
 
 BEGIN
--- SET TRANSACTION ISOLATION LEVEL SERIALIZABLE;
 
 SELECT id FROM accounts
 WHERE
@@ -17,16 +16,21 @@ WHERE
 FETCH FIRST ROW ONLY
 INTO _esc;
 
-INSERT INTO transactions (invoice)
-VALUES (_invoice)
-RETURNING id INTO _tx;
+LOOP
+  SELECT id FROM transactions
+  WHERE
+    invoice = _invoice AND
+    is_active = true
+  INTO _tx;
 
-EXCEPTION WHEN unique_violation THEN
-SELECT id FROM transactions
-WHERE
-  invoice = _invoice AND
-  is_active = true
-INTO _tx;
+  EXIT WHEN FOUND;
+
+  INSERT INTO transactions (invoice)
+  VALUES (_invoice)
+  RETURNING id INTO _tx;
+
+  EXIT WHEN FOUND;
+END LOOP;
 
 INSERT INTO ledger( transaction, credit, debit, amount)
 VALUES (_tx, _esc, _bidder_account, _offer);
