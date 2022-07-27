@@ -211,11 +211,13 @@ LOOP
   INTO _debit;
 
   INSERT INTO ledger( transaction, credit, debit, amount)
-    VALUES (_tx, _esc, _account._id, (coalesce(_credit,0::bigint) - coalesce(_debit,0::bigint)));
+    VALUES (_tx, _account._id, _esc, (coalesce(_credit,0::bigint) - coalesce(_debit,0::bigint)));
   
 END LOOP;
 
--- UPDATE transactions SET is_active = false WHERE invoice = _invoice;
+UPDATE transactions
+SET is_active = false
+WHERE invoice = _invoice;
 
 RETURN;
 END; 
