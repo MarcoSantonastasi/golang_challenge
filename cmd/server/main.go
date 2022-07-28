@@ -1,29 +1,20 @@
 package main
 
 import (
-	"context"
 	"flag"
 	"fmt"
 	"log"
 	"net"
 
-	pb "github.com/marcosantonastasi/arex_challenge/proto"
+	pb "github.com/marcosantonastasi/arex_challenge/api/arex/v1"
+	db "github.com/marcosantonastasi/arex_challenge/db"
+	server "github.com/marcosantonastasi/arex_challenge/pkg/server"
 	"google.golang.org/grpc"
 )
 
 var (
 	port = flag.Int("port", 50051, "The server port")
 )
-
-type server struct {
-	pb.UnimplementedInvoiceServiceServer
-}
-
-// SayHello implements helloworld.GreeterServer
-func (s *server) GetAll(ctx context.Context, in *pb.Empty) (*pb.GetAllInvoicesResponse, error) {
-	log.Printf("Received: %v", in)
-	return &pb.GetAllInvoicesResponse{}, nil
-}
 
 func main() {
 	flag.Parse()
@@ -32,7 +23,9 @@ func main() {
 		log.Fatalf("failed to listen: %v", err)
 	}
 	s := grpc.NewServer()
-	pb.RegisterInvoiceServiceServer(s, &server{})
+	pb.RegisterInvestorServiceServer(s, &server.InvestorServiceServer{Db: db.ArexDb{}})
+	pb.RegisterIssuerServiceServer(s, &server.IssuerServiceServer{Db: db.ArexDb{}})
+	pb.RegisterInvoiceServiceServer(s, server.InvoiceServiceServer{Db: db.ArexDb{}})
 	log.Printf("server listening at %v", lis.Addr())
 	if err := s.Serve(lis); err != nil {
 		log.Fatalf("failed to serve: %v", err)

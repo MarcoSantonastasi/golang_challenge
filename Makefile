@@ -9,5 +9,5 @@ dbseed:
 .PHONY: dbseed
 
 protogen:
-	protoc --go_out=. --go_opt=paths=source_relative --go-grpc_out=. --go-grpc_opt=paths=source_relative proto/arex.proto
+	protoc --go_out=. --go_opt=paths=source_relative --go-grpc_out=. --go-grpc_opt=paths=source_relative api/arex/v1/arexApiV1.proto
 .PHONY: protogen

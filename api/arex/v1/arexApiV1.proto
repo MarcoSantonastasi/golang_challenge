@@ -1,0 +1,53 @@
+syntax = "proto3";
+
+package v1;
+
+option go_package = "github.com/marcosantonastasi/arex_challenge/proto";
+
+message Empty {}
+
+message Investor {
+    string id = 1;
+    string name = 2;
+    int32  balance = 3;
+}
+
+message Issuer {
+    string id = 1;
+    string name = 2;
+    int32  balance = 3;
+}
+
+message Invoice {
+    string id = 1;
+    string denom = 2;
+    int32 amount = 3;
+    int32 asking = 4;
+}
+
+
+message GetAllInvestorsResponse{
+    repeated Investor data = 1;
+}
+
+service InvestorService {
+    rpc GetAllInvestors(Empty) returns (GetAllInvestorsResponse);
+}
+
+
+service IssuerService {
+    rpc GetAllIssuers(Empty) returns (GetAllIssuersResponse);
+}
+
+message GetAllIssuersResponse{
+    repeated Issuer data = 1;
+}
+
+
+message GetAllInvoicesResponse{
+    repeated Invoice data = 1;
+}
+
+service InvoiceService {
+    rpc GetAllInvoices(Empty) returns (GetAllInvoicesResponse);
+}
