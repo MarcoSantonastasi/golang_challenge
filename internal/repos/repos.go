@@ -2,6 +2,7 @@ package repos
 
 import (
 	pb "github.com/marcosantonastasi/arex_challenge/api/arex/v1"
+	db "github.com/marcosantonastasi/arex_challenge/internal/db"
 )
 
 type IInvestorsRepository interface {
@@ -9,6 +10,7 @@ type IInvestorsRepository interface {
 }
 
 type InvestorsRepository struct {
+	Db db.IDb
 }
 
 func (repo *InvestorsRepository) GetAllInvestors() ([]*pb.Investor, error) {
@@ -20,6 +22,7 @@ type IIssuersRepository interface {
 }
 
 type IssuersRepository struct {
+	Db db.IDb
 }
 
 func (repo *IssuersRepository) GetAllIssuers() ([]*pb.Issuer, error) {
@@ -31,6 +34,7 @@ type IInvoicesRepository interface {
 }
 
 type InvoicesRepository struct {
+	Db db.IDb
 }
 
 func (repo *InvoicesRepository) GetAllInvoices() ([]*pb.Invoice, error) {

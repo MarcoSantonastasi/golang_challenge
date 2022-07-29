@@ -63,7 +63,7 @@ func TestFakeIssuersRepository_GetAllIssuers(t *testing.T) {
 	}
 }
 
-func TestFakeInvoiceRepository_GetAllInvoices(t *testing.T) {
+func TestFakeInvoicesRepository_GetAllInvoices(t *testing.T) {
 	tests := []struct {
 		name    string
 		repo    *FakeInvoicesRepository
