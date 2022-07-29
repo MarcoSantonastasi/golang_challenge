@@ -6,7 +6,7 @@ import (
 	"testing"
 
 	pb "github.com/marcosantonastasi/arex_challenge/api/arex/v1"
-	fakeDb "github.com/marcosantonastasi/arex_challenge/db/test-fake"
+	fakeRepos "github.com/marcosantonastasi/arex_challenge/repos/fakes"
 )
 
 func TestInvestorServiceServer_GetAllInvestors(t *testing.T) {
@@ -23,10 +23,10 @@ func TestInvestorServiceServer_GetAllInvestors(t *testing.T) {
 		wantErr bool
 	}{
 		{
-			name:    "gets all inovices on the database (3 for newly seeded db)",
-			s:       &InvestorServiceServer{Db: &fakeDb.FakeArexDb{}},
+			name:    "gets all Investors on the repository (3 for newly seeded db)",
+			s:       &InvestorServiceServer{Repo: &fakeRepos.FakeInvestorsRepository{}},
 			args:    args{ctx: context.Background(), in: &pb.Empty{}},
-			want:    &pb.GetAllInvestorsResponse{Data: fakeDb.FakeAllInvestorsList},
+			want:    &pb.GetAllInvestorsResponse{Data: fakeRepos.FakeAllInvestorsList},
 			wantErr: false,
 		},
 	}

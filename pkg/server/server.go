@@ -2,47 +2,52 @@ package server
 
 import (
 	"context"
+	"fmt"
 	"log"
 
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
 	pb "github.com/marcosantonastasi/arex_challenge/api/arex/v1"
-	db "github.com/marcosantonastasi/arex_challenge/db"
+	repos "github.com/marcosantonastasi/arex_challenge/repos"
 )
 
 type InvestorServiceServer struct {
 	pb.UnimplementedInvestorServiceServer
-	Db db.IArexDb
+	Repo repos.IInvestorsRepository
 }
 type IssuerServiceServer struct {
 	pb.UnimplementedIssuerServiceServer
-	Db db.IArexDb
+	Repo repos.IIssuersRepository
 }
 type InvoiceServiceServer struct {
 	pb.UnimplementedInvoiceServiceServer
-	Db db.IArexDb
+	Repo repos.IInvoiceRepository
 }
 
 func (s *InvestorServiceServer) GetAllInvestors(ctx context.Context, in *pb.Empty) (*pb.GetAllInvestorsResponse, error) {
-	if s.Db == nil {
-		return nil, status.Error(codes.Internal, "no database connection found")
+	if s.Repo == nil {
+		return nil, status.Error(codes.Internal, "no repository found for Investors")
 	}
-	log.Printf("Received: %v", in)
-	return &pb.GetAllInvestorsResponse{}, nil
+	res, err := s.Repo.GetAllInvestors()
+	if err != nil {
+		return nil, fmt.Errorf("database error: %q", err)
+	}
+
+	return &pb.GetAllInvestorsResponse{Data: res}, nil
 }
 
 func (s *IssuerServiceServer) GetAllIssuers(ctx context.Context, in *pb.Empty) (*pb.GetAllIssuersResponse, error) {
-	if s.Db == nil {
-		return nil, status.Error(codes.Internal, "no database connection found")
+	if s.Repo == nil {
+		return nil, status.Error(codes.Internal, "no repository found for Issuers")
 	}
 	log.Printf("Received: %v", in)
 	return &pb.GetAllIssuersResponse{}, nil
 }
 
 func (s *InvoiceServiceServer) GetAllinvoices(ctx context.Context, in *pb.Empty) (*pb.GetAllInvoicesResponse, error) {
-	if s.Db == nil {
-		return nil, status.Error(codes.Internal, "no database connection found")
+	if s.Repo == nil {
+		return nil, status.Error(codes.Internal, "no repository found for Invoices")
 	}
 	log.Printf("Received: %v", in)
 	return &pb.GetAllInvoicesResponse{}, nil

@@ -1,4 +1,4 @@
-package fakedb
+package fakerepos
 
 import (
 	"encoding/json"
@@ -8,13 +8,10 @@ import (
 	pb "github.com/marcosantonastasi/arex_challenge/api/arex/v1"
 )
 
-type FakeArexDb struct {
-}
-
 var FakeAllInvestorsList []*pb.Investor
 
 func init() {
-	jsonFile, fileErr := os.Open("../../db/test-fake/fakeInvestors.json")
+	jsonFile, fileErr := os.Open("../../repos/fakes/fakeInvestors.json")
 	if fileErr != nil {
 		panic(".json file error")
 	}
@@ -29,6 +26,15 @@ func init() {
 	defer jsonFile.Close()
 }
 
-func (db *FakeArexDb) GetAllInvestors() []*pb.Investor {
-	return FakeAllInvestorsList
+type FakeInvestorsRepository struct {
+}
+
+func (repo *FakeInvestorsRepository) GetAllInvestors() ([]*pb.Investor, error) {
+	return FakeAllInvestorsList, nil
+}
+
+type FakeIssuersRepository struct {
+}
+
+type FakeInvoiceRepository struct {
 }
