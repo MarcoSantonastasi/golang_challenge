@@ -3,6 +3,8 @@ package repos
 import (
 	pb "github.com/marcosantonastasi/arex_challenge/api/arex/v1"
 	db "github.com/marcosantonastasi/arex_challenge/internal/db"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 )
 
 type IInvestorsRepository interface {
@@ -14,6 +16,9 @@ type InvestorsRepository struct {
 }
 
 func (repo *InvestorsRepository) GetAllInvestors() ([]*pb.Investor, error) {
+	if repo.Db == nil {
+		return nil, status.Error(codes.Internal, "no database found for Investors")
+	}
 	return nil, nil
 }
 
@@ -26,6 +31,9 @@ type IssuersRepository struct {
 }
 
 func (repo *IssuersRepository) GetAllIssuers() ([]*pb.Issuer, error) {
+	if repo.Db == nil {
+		return nil, status.Error(codes.Internal, "no database found for Issuers")
+	}
 	return nil, nil
 }
 
@@ -38,5 +46,8 @@ type InvoicesRepository struct {
 }
 
 func (repo *InvoicesRepository) GetAllInvoices() ([]*pb.Invoice, error) {
+	if repo.Db == nil {
+		return nil, status.Error(codes.Internal, "no database found for Invoices")
+	}
 	return nil, nil
 }
