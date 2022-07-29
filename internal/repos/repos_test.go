@@ -66,11 +66,11 @@ func TestInvoicesRepository_GetAllInvoices(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			got, err := tt.repo.GetAllInvoices()
 			if (err != nil) != tt.wantErr {
-				t.Errorf("InvoiceRepository.GetAllInvoices() error = %v, wantErr %v", err, tt.wantErr)
+				t.Errorf("InvoicesRepository.GetAllInvoices() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
 			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("InvoiceRepository.GetAllInvoices() = %v, want %v", got, tt.want)
+				t.Errorf("InvoicesRepository.GetAllInvoices() = %v, want %v", got, tt.want)
 			}
 		})
 	}

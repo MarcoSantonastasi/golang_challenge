@@ -1,5 +1,1 @@
 package client
-
-func Hola() {
-
-}
