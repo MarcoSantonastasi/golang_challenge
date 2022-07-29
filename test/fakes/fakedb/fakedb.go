@@ -10,6 +10,21 @@ import (
 	pb "github.com/marcosantonastasi/arex_challenge/api/arex/v1"
 )
 
+
+type FakeDb struct {
+}
+
+func (db *FakeDb) GetAllInvestors() []*pb.Investor {
+	return FakeAllInvestorsList
+}
+func (db *FakeDb) GetAllIssuers() []*pb.Issuer {
+	return FakeAllIssuersList
+}
+func (db *FakeDb) GetAllInvoices() []*pb.Invoice {
+	return FakeAllInvoicesList
+}
+
+
 var FakeAllInvestorsList []*pb.Investor
 var FakeAllIssuersList []*pb.Issuer
 var FakeAllInvoicesList []*pb.Invoice
@@ -59,17 +74,4 @@ func init() {
 		panic("cannot parse (unmarshall) JSON data from " + path + "/../../data/fakeInvoices.json")
 	}
 	defer fakeInvoicesFile.Close()
-}
-
-type FakeDb struct {
-}
-
-func (db *FakeDb) GetAllInvestors() []*pb.Investor {
-	return FakeAllInvestorsList
-}
-func (db *FakeDb) GetAllIssuers() []*pb.Issuer {
-	return FakeAllIssuersList
-}
-func (db *FakeDb) GetAllInvoices() []*pb.Invoice {
-	return FakeAllInvoicesList
 }
