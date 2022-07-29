@@ -6,6 +6,7 @@ import (
 	"testing"
 
 	pb "github.com/marcosantonastasi/arex_challenge/api/arex/v1"
+	fakeDb "github.com/marcosantonastasi/arex_challenge/db/test-fake"
 )
 
 func TestInvestorServiceServer_GetAllInvestors(t *testing.T) {
@@ -13,6 +14,7 @@ func TestInvestorServiceServer_GetAllInvestors(t *testing.T) {
 		ctx context.Context
 		in  *pb.Empty
 	}
+
 	tests := []struct {
 		name    string
 		s       *InvestorServiceServer
@@ -20,17 +22,23 @@ func TestInvestorServiceServer_GetAllInvestors(t *testing.T) {
 		want    *pb.GetAllInvestorsResponse
 		wantErr bool
 	}{
-		// TODO: Add test cases.
+		{
+			name:    "gets all inovices on the database (3 for newly seeded db)",
+			s:       &InvestorServiceServer{Db: &fakeDb.FakeArexDb{}},
+			args:    args{ctx: context.Background(), in: &pb.Empty{}},
+			want:    &pb.GetAllInvestorsResponse{Data: fakeDb.FakeAllInvestorsList},
+			wantErr: false,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			got, err := tt.s.GetAllInvestors(tt.args.ctx, tt.args.in)
 			if (err != nil) != tt.wantErr {
-				t.Errorf("InvestorServiceServer.GetAllInvestors() error = %v, wantErr %v", err, tt.wantErr)
+				t.Errorf("Got InvestorServiceServer.GetAllInvestors() error = %v, instead expected error %v", err, tt.wantErr)
 				return
 			}
 			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("InvestorServiceServer.GetAllInvestors() = %v, want %v", got, tt.want)
+				t.Errorf("Got InvestorServiceServer.GetAllInvestors() = %v, but wanted %v", got, tt.want)
 			}
 		})
 	}
