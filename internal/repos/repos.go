@@ -19,7 +19,8 @@ func (repo *InvestorsRepository) GetAllInvestors() ([]*pb.Investor, error) {
 	if repo.Db == nil {
 		return nil, status.Error(codes.Internal, "no database found for Investors")
 	}
-	return nil, nil
+	data := repo.Db.GetAllInvestors()
+	return data, nil
 }
 
 type IIssuersRepository interface {
@@ -34,7 +35,8 @@ func (repo *IssuersRepository) GetAllIssuers() ([]*pb.Issuer, error) {
 	if repo.Db == nil {
 		return nil, status.Error(codes.Internal, "no database found for Issuers")
 	}
-	return nil, nil
+	data := repo.Db.GetAllIssuers()
+	return data, nil
 }
 
 type IInvoicesRepository interface {
@@ -49,5 +51,6 @@ func (repo *InvoicesRepository) GetAllInvoices() ([]*pb.Invoice, error) {
 	if repo.Db == nil {
 		return nil, status.Error(codes.Internal, "no database found for Invoices")
 	}
-	return nil, nil
+	data := repo.Db.GetAllInvoices()
+	return data, nil
 }
