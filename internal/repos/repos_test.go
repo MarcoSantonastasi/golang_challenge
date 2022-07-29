@@ -53,10 +53,10 @@ func TestIssuersRepository_GetAllIssuers(t *testing.T) {
 	}
 }
 
-func TestInvoiceRepository_GetAllInvoices(t *testing.T) {
+func TestInvoicesRepository_GetAllInvoices(t *testing.T) {
 	tests := []struct {
 		name    string
-		repo    *InvoiceRepository
+		repo    *InvoicesRepository
 		want    []*pb.Invoice
 		wantErr bool
 	}{

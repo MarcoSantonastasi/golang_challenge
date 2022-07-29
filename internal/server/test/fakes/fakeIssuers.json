@@ -1,0 +1,14 @@
+[
+  {
+    "Name": "Issuer A",
+    "Balance": 10000000
+  },
+  {
+    "Name": "Issuer B",
+    "Balance": 5000000
+  },
+  {
+    "Name": "Issuer C",
+    "Balance": 200000
+  }
+]

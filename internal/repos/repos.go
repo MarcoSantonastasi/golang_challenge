@@ -16,6 +16,7 @@ func (repo *InvestorsRepository) GetAllInvestors() ([]*pb.Investor, error) {
 }
 
 type IIssuersRepository interface {
+	GetAllIssuers() ([]*pb.Issuer, error)
 }
 
 type IssuersRepository struct {
@@ -25,12 +26,13 @@ func (repo *IssuersRepository) GetAllIssuers() ([]*pb.Issuer, error) {
 	return nil, nil
 }
 
-type IInvoiceRepository interface {
+type IInvoicesRepository interface {
+	GetAllInvoices() ([]*pb.Invoice, error)
 }
 
-type InvoiceRepository struct {
+type InvoicesRepository struct {
 }
 
-func (repo *InvoiceRepository) GetAllInvoices() ([]*pb.Invoice, error) {
+func (repo *InvoicesRepository) GetAllInvoices() ([]*pb.Invoice, error) {
 	return nil, nil
 }

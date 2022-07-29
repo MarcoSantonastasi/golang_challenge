@@ -7,8 +7,8 @@ import (
 	"net"
 
 	pb "github.com/marcosantonastasi/arex_challenge/api/arex/v1"
-	server "github.com/marcosantonastasi/arex_challenge/pkg/server"
-	repos "github.com/marcosantonastasi/arex_challenge/repos"
+	repos "github.com/marcosantonastasi/arex_challenge/internal/repos"
+	server "github.com/marcosantonastasi/arex_challenge/internal/server"
 	"google.golang.org/grpc"
 )
 
@@ -24,8 +24,8 @@ func main() {
 	}
 	s := grpc.NewServer()
 	pb.RegisterInvestorServiceServer(s, &server.InvestorServiceServer{Repo: &repos.InvestorsRepository{}})
-	pb.RegisterIssuerServiceServer(s, &server.IssuerServiceServer{Repo: repos.IssuersRepository{}})
-	pb.RegisterInvoiceServiceServer(s, server.InvoiceServiceServer{Repo: repos.InvoiceRepository{}})
+	pb.RegisterIssuerServiceServer(s, &server.IssuerServiceServer{Repo: &repos.IssuersRepository{}})
+	pb.RegisterInvoiceServiceServer(s, server.InvoiceServiceServer{Repo: &repos.InvoicesRepository{}})
 	log.Printf("server listening at %v", lis.Addr())
 	if err := s.Serve(lis); err != nil {
 		log.Fatalf("failed to serve: %v", err)

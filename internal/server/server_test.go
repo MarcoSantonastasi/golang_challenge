@@ -6,7 +6,7 @@ import (
 	"testing"
 
 	pb "github.com/marcosantonastasi/arex_challenge/api/arex/v1"
-	fakeRepos "github.com/marcosantonastasi/arex_challenge/repos/fakes"
+	fakeRepos "github.com/marcosantonastasi/arex_challenge/internal/server/test/fakes"
 )
 
 func TestInvestorServiceServer_GetAllInvestors(t *testing.T) {
@@ -56,7 +56,13 @@ func TestIssuerServiceServer_GetAllIssuers(t *testing.T) {
 		want    *pb.GetAllIssuersResponse
 		wantErr bool
 	}{
-		// TODO: Add test cases.
+		{
+			name:    "gets all Issuers on the repository (3 for newly seeded db)",
+			s:       &IssuerServiceServer{Repo: &fakeRepos.FakeIssuersRepository{}},
+			args:    args{ctx: context.Background(), in: &pb.Empty{}},
+			want:    &pb.GetAllIssuersResponse{Data: fakeRepos.FakeAllIssuersList},
+			wantErr: false,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -72,7 +78,7 @@ func TestIssuerServiceServer_GetAllIssuers(t *testing.T) {
 	}
 }
 
-func TestInvoiceServiceServer_GetAllinvoices(t *testing.T) {
+func TestInvoiceServiceServer_GetAllInvoices(t *testing.T) {
 	type args struct {
 		ctx context.Context
 		in  *pb.Empty
@@ -84,8 +90,13 @@ func TestInvoiceServiceServer_GetAllinvoices(t *testing.T) {
 		want    *pb.GetAllInvoicesResponse
 		wantErr bool
 	}{
-		// TODO: Add test cases.
-	}
+		{
+			name:    "gets all Invoices on the repository (3 for newly seeded db)",
+			s:       &InvoiceServiceServer{Repo: &fakeRepos.FakeInvoicesRepository{}},
+			args:    args{ctx: context.Background(), in: &pb.Empty{}},
+			want:    &pb.GetAllInvoicesResponse{Data: fakeRepos.FakeAllInvoicesList},
+			wantErr: false,
+		}}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			got, err := tt.s.GetAllinvoices(tt.args.ctx, tt.args.in)
