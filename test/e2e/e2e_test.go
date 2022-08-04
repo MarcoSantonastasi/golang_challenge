@@ -1,7 +1,6 @@
 package e2etest
 
 import (
-	"context"
 	"encoding/json"
 	"flag"
 	"io"
@@ -11,7 +10,6 @@ import (
 	"reflect"
 	"runtime"
 	"testing"
-	"time"
 
 	pb "github.com/marcosantonastasi/arex_challenge/api/arex/v1"
 	client "github.com/marcosantonastasi/arex_challenge/internal/client"
@@ -19,19 +17,13 @@ import (
 	"google.golang.org/grpc/credentials/insecure"
 )
 
-var FakeAllInvestorsList []*pb.Investor
-var FakeAllIssuersList []*pb.Issuer
-var FakeAllInvoicesList []*pb.Invoice
+var AllInvestorsList []*pb.Investor
+var AllIssuersList []*pb.Issuer
+var AllInvoicesList []*pb.Invoice
 
-var Client = struct {
-	investorServiceClient pb.InvestorServiceClient
-	invoiceServiceClient  pb.InvoiceServiceClient
-	issuerServiceClient   pb.IssuerServiceClient
-}{
-	investorServiceClient: pb.NewInvestorServiceClient(globalConn),
-	invoiceServiceClient:  pb.NewInvoiceServiceClient(globalConn),
-	issuerServiceClient:   pb.NewIssuerServiceClient(globalConn),
-}
+var InvestorServiceClient client.InvestorServiceClient
+var IssuerServiceClient client.IssuerServiceClient
+var InvoiceServiceClient client.InvoiceServiceClient
 
 var (
 	addr       = flag.String("addr", "localhost:50051", "the address to connect to")
@@ -41,14 +33,14 @@ var (
 func TestE2E_GetAllInvestors(t *testing.T) {
 	testCases := []struct {
 		desc    string
-		client  *client.Client
-		want    *pb.GetAllInvestorsResponse
+		client  client.InvestorServiceClient
+		want    pb.GetAllInvestorsResponse
 		wantErr bool
 	}{
 		{
 			desc:    "queries the db for Investors",
-			client:  &client.Client{},
-			want:    &pb.GetAllInvestorsResponse{Data: FakeAllInvestorsList},
+			client:  InvestorServiceClient,
+			want:    pb.GetAllInvestorsResponse{Data: AllInvestorsList},
 			wantErr: false,
 		},
 	}
@@ -67,87 +59,125 @@ func TestE2E_GetAllInvestors(t *testing.T) {
 	}
 }
 
-func init() {
+func TestE2E_GetAllIssuers(t *testing.T) {
+	testCases := []struct {
+		desc    string
+		client  client.IssuerServiceClient
+		want    pb.GetAllIssuersResponse
+		wantErr bool
+	}{
+		{
+			desc:    "queries the db for Issuers",
+			client:  IssuerServiceClient,
+			want:    pb.GetAllIssuersResponse{Data: AllIssuersList},
+			wantErr: false,
+		},
+	}
+	for _, tt := range testCases {
+		t.Run(tt.desc, func(t *testing.T) {
+			got, err := tt.client.GetAllIssuers()
+			if (err != nil) != tt.wantErr {
+				t.Errorf("Got IssuerServiceServer.GetAllIssuers() error = %v, instead expected error %v", err, tt.wantErr)
+				return
+			}
+			if !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("Got IssuersServiceServer.GetAllIssuers() = %v, but wanted %v", got, tt.want)
+			}
+
+		})
+	}
+}
+
+func TestE2E_GetAllInvoices(t *testing.T) {
+	testCases := []struct {
+		desc    string
+		client  client.InvoiceServiceClient
+		want    pb.GetAllInvoicesResponse
+		wantErr bool
+	}{
+		{
+			desc:    "queries the db for Invoices",
+			client:  InvoiceServiceClient,
+			want:    pb.GetAllInvoicesResponse{Data: AllInvoicesList},
+			wantErr: false,
+		},
+	}
+	for _, tt := range testCases {
+		t.Run(tt.desc, func(t *testing.T) {
+			got, err := tt.client.GetAllInvoices()
+			if (err != nil) != tt.wantErr {
+				t.Errorf("Got InvoicersServiceServer.GetAllInvoices() error = %v, instead expected error %v", err, tt.wantErr)
+				return
+			}
+			if !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("Got InvoicesServiceServer.GetAllInvoices() = %v, but wanted %v", got, tt.want)
+			}
+
+		})
+	}
+}
+
+func TestMain(m *testing.M) {
 	_, b, _, _ := runtime.Caller(0)
 	path := path.Dir(b)
 
-	fakeInvestorsFile, fakeInvestorsFileErr := os.Open(path + "/../../data/fakeInvestors.json")
-	if fakeInvestorsFileErr != nil {
-		panic("cannot open " + path + "/../../data/fakeInvestors.json")
+	investorsFile, investorsFileErr := os.Open(path + "/../../data/investors.json")
+	if investorsFileErr != nil {
+		panic("cannot open " + path + "/../../data/investors.json")
 	}
-	fakeInvestorsData, fakeInvestorsDataErr := io.ReadAll(fakeInvestorsFile)
-	if fakeInvestorsDataErr != nil {
-		panic("cannot read " + path + "/../../data/fakeInvestors.json")
+	investorsData, investorsDataErr := io.ReadAll(investorsFile)
+	if investorsDataErr != nil {
+		panic("cannot read " + path + "/../../data/investors.json")
 	}
-	fakeInvestorsJsonErr := json.Unmarshal(fakeInvestorsData, &FakeAllInvestorsList)
-	if fakeInvestorsJsonErr != nil {
-		panic("cannot parse (unmarshall) JSON data from " + path + "/../../data/fakeInvestors.json")
+	investorsJsonErr := json.Unmarshal(investorsData, &AllInvestorsList)
+	if investorsJsonErr != nil {
+		panic("cannot parse (unmarshall) JSON data from " + path + "/../../data/investors.json")
 	}
-	defer fakeInvestorsFile.Close()
+	defer investorsFile.Close()
 
-	fakeIssuersFile, fakeIssuersFileErr := os.Open(path + "/../../data/fakeIssuers.json")
-	if fakeIssuersFileErr != nil {
-		panic("cannot open " + path + "/../../data/fakeIssuers.json")
+	issuersFile, issuersFileErr := os.Open(path + "/../../data/issuers.json")
+	if issuersFileErr != nil {
+		panic("cannot open " + path + "/../../data/issuers.json")
 	}
-	fakeIssuersData, fakeIssuersDataErr := io.ReadAll(fakeIssuersFile)
-	if fakeIssuersDataErr != nil {
-		panic("cannot read " + path + "/../../data/fakeIssuers.json")
+	issuersData, issuersDataErr := io.ReadAll(issuersFile)
+	if issuersDataErr != nil {
+		panic("cannot read " + path + "/../../data/issuers.json")
 	}
-	fakeIssuersJsonErr := json.Unmarshal(fakeIssuersData, &FakeAllInvestorsList)
-	if fakeIssuersJsonErr != nil {
-		panic("cannot parse (unmarshall) JSON data form " + path + "/../../data/fakeIssuers.json")
+	issuersJsonErr := json.Unmarshal(issuersData, &AllIssuersList)
+	if issuersJsonErr != nil {
+		panic("cannot parse (unmarshall) JSON data form " + path + "/../../data/issuers.json")
 	}
-	defer fakeIssuersFile.Close()
+	defer issuersFile.Close()
 
-	fakeInvoicesFile, fakeInvoicesFileErr := os.Open(path + "/../../data/fakeInvoices.json")
-	if fakeInvoicesFileErr != nil {
-		panic("cannot open " + path + "/../../data/fakeInvoices.json")
+	invoicesFile, invoicesFileErr := os.Open(path + "/../../data/invoices.json")
+	if invoicesFileErr != nil {
+		panic("cannot open " + path + "/../../data/invoices.json")
 	}
-	fakeInvoicesData, fakeInvoicesDataErr := io.ReadAll(fakeInvoicesFile)
-	if fakeInvoicesDataErr != nil {
-		panic("cannot read " + path + "/../../data/fakeInvoices.json")
+	invoicesData, invoicesDataErr := io.ReadAll(invoicesFile)
+	if invoicesDataErr != nil {
+		panic("cannot read " + path + "/../../data/invoices.json")
 	}
-	fakeInvoicesJsonErr := json.Unmarshal(fakeInvoicesData, &FakeAllInvoicesList)
-	if fakeInvoicesJsonErr != nil {
-		panic("cannot parse (unmarshall) JSON data from " + path + "/../../data/fakeInvoices.json")
+	invoicesJsonErr := json.Unmarshal(invoicesData, &AllInvoicesList)
+	if invoicesJsonErr != nil {
+		panic("cannot parse (unmarshall) JSON data from " + path + "/../../data/invoices.json")
 	}
-	defer fakeInvoicesFile.Close()
+	defer invoicesFile.Close()
 
 	flag.Parse()
-	// Set up a connection to the server.
+
 	conn, err := grpc.Dial(*addr, grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		log.Fatalf("could not not connect to the gRPC server: %v", err)
 	}
 
-	// ----- TODO: move into testing -----
 	globalConn = conn
 	defer conn.Close()
 
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
-	defer cancel()
+	InvestorServiceClient = client.NewInvestorServiceClient(conn)
+	InvoiceServiceClient = client.NewInvoiceServiceClient(conn)
+	IssuerServiceClient = client.NewIssuerServiceClient(conn)
 
-	investorServiceClient := pb.NewInvestorServiceClient(conn)
-	invoiceServiceClient := pb.NewInvoiceServiceClient(conn)
-	issuerServiceClient := pb.NewIssuerServiceClient(conn)
+	code := m.Run()
 
-	res1, err1 := investorServiceClient.GetAllInvestors(ctx, &pb.Empty{})
-	if err1 != nil {
-		log.Fatalf("could not get Investors: %v", err1)
-	}
-	log.Printf("Greeting: %v", res1.GetData())
-
-	res2, err2 := invoiceServiceClient.GetAllInvoices(ctx, &pb.Empty{})
-	if err2 != nil {
-		log.Fatalf("could not get Invoices: %v", err2)
-	}
-	log.Printf("Greeting: %v", res2.GetData())
-
-	res3, err3 := issuerServiceClient.GetAllIssuers(ctx, &pb.Empty{})
-	if err3 != nil {
-		log.Fatalf("could not get Issuers: %v", err3)
-	}
-	log.Printf("Greeting: %v", res3.GetData())
-	// ----- TODO: move into testing -----
-
+	os.Exit(code)
 }

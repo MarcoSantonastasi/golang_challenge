@@ -6,6 +6,7 @@ import (
 	"log"
 	"time"
 
+	client "github.com/marcosantonastasi/arex_challenge/internal/client"
 	pb "github.com/marcosantonastasi/arex_challenge/api/arex/v1"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
@@ -27,9 +28,9 @@ func main() {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()
 
-	investorServiceClient := pb.NewInvestorServiceClient(conn)
-	invoiceServiceClient := pb.NewInvoiceServiceClient(conn)
-	issuerServiceClient := pb.NewIssuerServiceClient(conn)
+	investorServiceClient := client.NewInvestorServiceClient(conn)
+	invoiceServiceClient := client.NewInvoiceServiceClient(conn)
+	issuerServiceClient := client.NewIssuerServiceClient(conn)
 
 	res1, err1 := investorServiceClient.GetAllInvestors(ctx, &pb.Empty{})
 	if err1 != nil {
