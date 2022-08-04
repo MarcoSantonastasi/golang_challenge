@@ -85,7 +85,8 @@ CREATE OR REPLACE VIEW bids (
   transaction,
   invoice,
   issuer,
-  bidder_account
+  bidder_account,
+  amount
 )
 AS (
   SELECT
@@ -115,6 +116,7 @@ AS (
     WHERE l.debit = escrow.id
     GROUP BY transaction, credit
     ) AS bid_down ON bid_down.transaction = tx.id
+  WHERE tx.is_active = true
 );
 
 
