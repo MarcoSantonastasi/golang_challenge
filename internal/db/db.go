@@ -9,8 +9,6 @@ import (
 	pb "github.com/marcosantonastasi/arex_challenge/api/arex/v1"
 )
 
-var DockerPG = Db{}
-
 type IDb interface {
 	GetAllInvestors() []*pb.Investor
 	GetAllIssuers() []*pb.Issuer
@@ -41,6 +39,8 @@ func (db *Db) GetAllInvoices() []*pb.Invoice {
 	return nil
 }
 
+var DockerPG = Db{}
+
 func init() {
 	//
 	// POSTGRES_USER=postgres
@@ -49,7 +49,7 @@ func init() {
 	// POSTGRES_HOSTNAME=localhost
 	//
 
-	conn, err := pg.Connect(context.Background(), os.Getenv("POSTGRES_HOSTNAME"))
+	conn, err := pg.Connect(context.Background(), fmt.Sprintf("postgres://%s:%s@%s:5432/%s", os.Getenv("POSTGRES_PASSWORD"), os.Getenv("POSTGRES_USER"), os.Getenv("POSTGRES_HOSTNAME"), os.Getenv("POSTGRES_DB")))
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Unable to connect to database: %v\n", err)
 		os.Exit(1)

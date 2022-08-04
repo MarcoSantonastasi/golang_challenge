@@ -34,7 +34,7 @@ var Client = struct {
 }
 
 var (
-	addr       = flag.String("addr", "localhost:50051", "the address to connect to")
+	addr       = flag.String("addr", "127.0.0.1:50051", "the address to connect to")
 	globalConn *grpc.ClientConn
 )
 

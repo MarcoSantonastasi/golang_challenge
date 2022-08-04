@@ -5,7 +5,7 @@ import (
 	"testing"
 
 	pb "github.com/marcosantonastasi/arex_challenge/api/arex/v1"
-	"github.com/marcosantonastasi/arex_challenge/test/fakes/fakedb"
+	fakedb "github.com/marcosantonastasi/arex_challenge/test/fakes/fakedb"
 )
 
 func TestInvestorsRepository_GetAllInvestors(t *testing.T) {
