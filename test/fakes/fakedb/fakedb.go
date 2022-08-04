@@ -55,7 +55,7 @@ func init() {
 	if fakeIssuersDataErr != nil {
 		panic("cannot read " + path + "/../../data/fakeIssuers.json")
 	}
-	fakeIssuersJsonErr := json.Unmarshal(fakeIssuersData, &FakeAllInvestorsList)
+	fakeIssuersJsonErr := json.Unmarshal(fakeIssuersData, &FakeAllIssuersList)
 	if fakeIssuersJsonErr != nil {
 		panic("cannot parse (unmarshall) JSON data form " + path + "/../../data/fakeIssuers.json")
 	}
