@@ -47,7 +47,7 @@ func (s *IssuerServiceServer) GetAllIssuers(ctx context.Context, in *pb.Empty) (
 	return &pb.GetAllIssuersResponse{Data: res}, nil
 }
 
-func (s *InvoiceServiceServer) GetAllinvoices(ctx context.Context, in *pb.Empty) (*pb.GetAllInvoicesResponse, error) {
+func (s *InvoiceServiceServer) GetAllInvoices(ctx context.Context, in *pb.Empty) (*pb.GetAllInvoicesResponse, error) {
 	if s.Repo == nil {
 		return nil, status.Error(codes.Internal, "no repository found for Invoices")
 	}

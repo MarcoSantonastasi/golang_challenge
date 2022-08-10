@@ -99,7 +99,7 @@ func TestInvoiceServiceServer_GetAllInvoices(t *testing.T) {
 		}}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, err := tt.s.GetAllinvoices(tt.args.ctx, tt.args.in)
+			got, err := tt.s.GetAllInvoices(tt.args.ctx, tt.args.in)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("InvoiceServiceServer.GetAllinvoices() error = %v, wantErr %v", err, tt.wantErr)
 				return
