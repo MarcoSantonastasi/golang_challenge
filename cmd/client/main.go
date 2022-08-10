@@ -6,8 +6,8 @@ import (
 	"log"
 	"time"
 
-	client "github.com/marcosantonastasi/arex_challenge/internal/client"
 	pb "github.com/marcosantonastasi/arex_challenge/api/arex/v1"
+	client "github.com/marcosantonastasi/arex_challenge/internal/client"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 )
@@ -18,7 +18,6 @@ var (
 
 func main() {
 	flag.Parse()
-	// Set up a connection to the server.
 	conn, err := grpc.Dial(*addr, grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		log.Fatalf("could not not connect to the gRPC server: %v", err)
@@ -29,25 +28,25 @@ func main() {
 	defer cancel()
 
 	investorServiceClient := client.NewInvestorServiceClient(conn)
-	invoiceServiceClient := client.NewInvoiceServiceClient(conn)
 	issuerServiceClient := client.NewIssuerServiceClient(conn)
+	invoiceServiceClient := client.NewInvoiceServiceClient(conn)
 
-	res1, err1 := investorServiceClient.GetAllInvestors(ctx, &pb.Empty{})
-	if err1 != nil {
-		log.Fatalf("could not get Investors: %v", err1)
+	resGetAllInvestors, errGetAllInvestors := investorServiceClient.GetAllInvestors(ctx, &pb.Empty{})
+	if errGetAllInvestors != nil {
+		log.Fatalf("could not get Investors: %v", errGetAllInvestors)
 	}
-	log.Printf("Greeting: %v", res1.GetData())
+	log.Printf("All Investors: %v", resGetAllInvestors.GetData())
 
-	res2, err2 := invoiceServiceClient.GetAllInvoices(ctx, &pb.Empty{})
-	if err2 != nil {
-		log.Fatalf("could not get Invoices: %v", err2)
+	resGetAllIssuers, errGetAllIssuers := issuerServiceClient.GetAllIssuers(ctx, &pb.Empty{})
+	if errGetAllIssuers != nil {
+		log.Fatalf("could not get Issuers: %v", errGetAllIssuers)
 	}
-	log.Printf("Greeting: %v", res2.GetData())
+	log.Printf("All Issuers: %v", resGetAllIssuers.GetData())
 
-	res3, err3 := issuerServiceClient.GetAllIssuers(ctx, &pb.Empty{})
-	if err3 != nil {
-		log.Fatalf("could not get Issuers: %v", err3)
+	resGetAllInvoices, errGetAllInvoices := invoiceServiceClient.GetAllInvoices(ctx, &pb.Empty{})
+	if errGetAllInvoices != nil {
+		log.Fatalf("could not get Invoices: %v", errGetAllInvoices)
 	}
-	log.Printf("Greeting: %v", res3.GetData())
+	log.Printf("All Invoices: %v", resGetAllInvoices.GetData())
 
 }
