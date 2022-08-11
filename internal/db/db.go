@@ -19,24 +19,63 @@ type Db struct {
 	Conn *pg.Conn
 }
 
-func (db *Db) GetAllInvestors() []*pb.Investor {
-	var greeting string
-	_ = db.Conn.QueryRow(context.Background(), "select 'Hello, world!'").Scan(&greeting)
-	fmt.Println(greeting)
-	return nil
+func (db *Db) GetAllInvestors() (data []*pb.Investor) {
+	rows, err := db.Conn.Query(context.Background(), "select id, name, balance from accounts where type = 'INVESTOR'")
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "Query failed: %v\n", err)
+	}
+	defer rows.Close()
+	for rows.Next() {
+		row := new(pb.Investor)
+		if err := rows.Scan(&row.Id, &row.Name, &row.Balance); err != nil {
+			fmt.Printf("%v", err)
+		}
+		data = append(data, row)
+	}
+	if err := rows.Err(); err != nil {
+		fmt.Printf("%v", err)
+	}
+	fmt.Printf("Query results: %v\n", data)
+	return
 }
 
-func (db *Db) GetAllIssuers() []*pb.Issuer {
-	var greeting string
-	_ = db.Conn.QueryRow(context.Background(), "select 'Hello, world!'").Scan(&greeting)
-	fmt.Println(greeting)
-	return nil
+func (db *Db) GetAllIssuers() (data []*pb.Issuer) {
+	rows, err := db.Conn.Query(context.Background(), "select id, name, balance from accounts where type = 'ISSUER'")
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "Query failed: %v\n", err)
+	}
+	defer rows.Close()
+	for rows.Next() {
+		row := new(pb.Issuer)
+		if err := rows.Scan(&row.Id, &row.Name, &row.Balance); err != nil {
+			fmt.Printf("%v", err)
+		}
+		data = append(data, row)
+	}
+	if err := rows.Err(); err != nil {
+		fmt.Printf("%v", err)
+	}
+	fmt.Printf("Query results: %v\n", data)
+	return
 }
-func (db *Db) GetAllInvoices() []*pb.Invoice {
-	var greeting string
-	_ = db.Conn.QueryRow(context.Background(), "select 'Hello, world!'").Scan(&greeting)
-	fmt.Println(greeting)
-	return nil
+func (db *Db) GetAllInvoices() (data []*pb.Invoice) {
+	rows, err := db.Conn.Query(context.Background(), "select id, denom, amount, asking from invoices")
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "Query failed: %v\n", err)
+	}
+	defer rows.Close()
+	for rows.Next() {
+		row := new(pb.Invoice)
+		if err := rows.Scan(&row.Id, &row.Denom, &row.Amount, &row.Asking); err != nil {
+			fmt.Printf("%v", err)
+		}
+		data = append(data, row)
+	}
+	if err := rows.Err(); err != nil {
+		fmt.Printf("%v", err)
+	}
+	fmt.Printf("Query results: %v\n", data)
+	return
 }
 
 func NewPGDB(

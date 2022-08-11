@@ -74,7 +74,7 @@ func TestE2E_GetAllIssuers(t *testing.T) {
 		wantErr bool
 	}{
 		{
-			desc:    "gets the listo of all Issuers",
+			desc:    "gets the list of all Issuers",
 			client:  clientServices.issuer,
 			want:    &pb.GetAllIssuersResponse{Data: expectData.allIssuersList},
 			wantErr: false,
