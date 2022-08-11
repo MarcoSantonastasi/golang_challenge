@@ -43,7 +43,7 @@ func TestE2E_GetAllInvestors(t *testing.T) {
 		wantErr bool
 	}{
 		{
-			desc:    "queries the db for Investors",
+			desc:    "gets the list of all Investors",
 			client:  clientServices.investor,
 			want:    pb.GetAllInvestorsResponse{Data: expectData.allInvestorsList},
 			wantErr: false,
@@ -51,7 +51,6 @@ func TestE2E_GetAllInvestors(t *testing.T) {
 	}
 	for _, tt := range testCases {
 		t.Run(tt.desc, func(t *testing.T) {
-			log.Printf("running %s", tt.desc)
 			ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 			defer cancel()
 			got, err := tt.client.GetAllInvestors(ctx, &pb.Empty{})
@@ -75,7 +74,7 @@ func TestE2E_GetAllIssuers(t *testing.T) {
 		wantErr bool
 	}{
 		{
-			desc:    "queries the db for Issuers",
+			desc:    "gets the listo of all Issuers",
 			client:  clientServices.issuer,
 			want:    pb.GetAllIssuersResponse{Data: expectData.allIssuersList},
 			wantErr: false,
@@ -83,7 +82,6 @@ func TestE2E_GetAllIssuers(t *testing.T) {
 	}
 	for _, tt := range testCases {
 		t.Run(tt.desc, func(t *testing.T) {
-			log.Printf("running %s", tt.desc)
 			ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 			defer cancel()
 			got, err := tt.client.GetAllIssuers(ctx, &pb.Empty{})
@@ -107,7 +105,7 @@ func TestE2E_GetAllInvoices(t *testing.T) {
 		wantErr bool
 	}{
 		{
-			desc:    "queries the db for Invoices",
+			desc:    "gets the list of all Invoices",
 			client:  clientServices.invoice,
 			want:    pb.GetAllInvoicesResponse{Data: expectData.allInvoicesList},
 			wantErr: false,
@@ -115,7 +113,6 @@ func TestE2E_GetAllInvoices(t *testing.T) {
 	}
 	for _, tt := range testCases {
 		t.Run(tt.desc, func(t *testing.T) {
-			log.Printf("running %s", tt.desc)
 			ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 			defer cancel()
 			got, err := tt.client.GetAllInvoices(ctx, &pb.Empty{})
@@ -132,9 +129,6 @@ func TestE2E_GetAllInvoices(t *testing.T) {
 }
 
 func TestMain(m *testing.M) {
-
-	log.Printf("TestMain()")
-
 	loadTestData()
 
 	s := startBufferedServer()
@@ -142,16 +136,14 @@ func TestMain(m *testing.M) {
 
 	conn := startBufferedClient()
 	defer conn.Close()
-	
+
 	os.Exit(m.Run())
 }
 
 func loadTestData() {
-	log.Printf("loadTestData()")
-	
 	_, b, _, _ := runtime.Caller(0)
 	path := path.Dir(b)
-	
+
 	investorsFile, investorsFileErr := os.Open(path + "/../data/investors.json")
 	if investorsFileErr != nil {
 		panic("cannot open " + path + "/../data/investors.json")
@@ -165,7 +157,7 @@ func loadTestData() {
 		panic("cannot parse (unmarshall) JSON data from " + path + "/../data/investors.json")
 	}
 	defer investorsFile.Close()
-	
+
 	issuersFile, issuersFileErr := os.Open(path + "/../data/issuers.json")
 	if issuersFileErr != nil {
 		panic("cannot open " + path + "/../data/issuers.json")
@@ -179,7 +171,7 @@ func loadTestData() {
 		panic("cannot parse (unmarshall) JSON data form " + path + "/../data/issuers.json")
 	}
 	defer issuersFile.Close()
-	
+
 	invoicesFile, invoicesFileErr := os.Open(path + "/../data/invoices.json")
 	if invoicesFileErr != nil {
 		panic("cannot open " + path + "/../data/invoices.json")
@@ -193,38 +185,33 @@ func loadTestData() {
 		panic("cannot parse (unmarshall) JSON data from " + path + "/../data/invoices.json")
 	}
 	defer invoicesFile.Close()
-	
+
 }
 
 func startBufferedServer() (s *grpc.Server) {
-	
-	log.Printf("startBufferedServer()")
-	
 	const port int = 50051
-	
+
 	lis, err := net.Listen("tcp", fmt.Sprintf(":%d", port))
 	if err != nil {
 		log.Fatalf("failed to listen: %v", err)
 	}
 	s = grpc.NewServer()
-	
+
 	pb.RegisterInvestorServiceServer(s, &server.InvestorServiceServer{Repo: &repos.InvestorsRepository{Db: &db.Db{Conn: db.DockerPG.Conn}}})
 	pb.RegisterIssuerServiceServer(s, &server.IssuerServiceServer{Repo: &repos.IssuersRepository{Db: &db.Db{Conn: db.DockerPG.Conn}}})
 	pb.RegisterInvoiceServiceServer(s, &server.InvoiceServiceServer{Repo: &repos.InvoicesRepository{Db: &db.Db{Conn: db.DockerPG.Conn}}})
 	log.Printf("server listening at %v", lis.Addr())
 	go func() {
-	if err := s.Serve(lis); err != nil {
-		log.Fatalf("failed to serve: %v", err)
-		s.Stop()
-	}
+		if err := s.Serve(lis); err != nil {
+			log.Fatalf("failed to serve: %v", err)
+			s.Stop()
+		}
 	}()
-	
+
 	return s
 }
 
 func startBufferedClient() (conn *grpc.ClientConn) {
-	
-	log.Printf("startBufferedClient()")
 	addr := "localhost:50051"
 	conn, err := grpc.Dial(addr, grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
