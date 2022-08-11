@@ -2,16 +2,16 @@
   {
     "id": "991842fe-2e97-4481-a560-8d985a82ae74",
     "name": "Investor A",
-    "balance": 10000000
+    "balance": 9840000
   },
   {
     "id": "feac2610-27df-4665-afae-0f536ed06ab5",
     "name": "Investor B",
-    "balance": 5000000
+    "balance": 4580000
   },
   {
     "id": "c5f76419-eb27-4255-86ba-afbbe271114b",
     "name": "Investor C",
-    "balance": 200000
+    "balance": 5000
   }
 ]

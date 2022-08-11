@@ -20,7 +20,7 @@ type Db struct {
 }
 
 func (db *Db) GetAllInvestors() (data []*pb.Investor) {
-	rows, err := db.Conn.Query(context.Background(), "select id, name, balance from accounts where type = 'INVESTOR'")
+	rows, err := db.Conn.Query(context.Background(), "select id::varchar, name, balance from accounts where type = 'INVESTOR'")
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Query failed: %v\n", err)
 	}
@@ -35,12 +35,11 @@ func (db *Db) GetAllInvestors() (data []*pb.Investor) {
 	if err := rows.Err(); err != nil {
 		fmt.Printf("%v", err)
 	}
-	fmt.Printf("Query results: %v\n", data)
 	return
 }
 
 func (db *Db) GetAllIssuers() (data []*pb.Issuer) {
-	rows, err := db.Conn.Query(context.Background(), "select id, name, balance from accounts where type = 'ISSUER'")
+	rows, err := db.Conn.Query(context.Background(), "select id::varchar, name, balance from accounts where type = 'ISSUER'")
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Query failed: %v\n", err)
 	}
@@ -55,11 +54,10 @@ func (db *Db) GetAllIssuers() (data []*pb.Issuer) {
 	if err := rows.Err(); err != nil {
 		fmt.Printf("%v", err)
 	}
-	fmt.Printf("Query results: %v\n", data)
 	return
 }
 func (db *Db) GetAllInvoices() (data []*pb.Invoice) {
-	rows, err := db.Conn.Query(context.Background(), "select id, denom, amount, asking from invoices")
+	rows, err := db.Conn.Query(context.Background(), "select id::varchar, denom, amount, asking from invoices")
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Query failed: %v\n", err)
 	}
@@ -74,7 +72,6 @@ func (db *Db) GetAllInvoices() (data []*pb.Invoice) {
 	if err := rows.Err(); err != nil {
 		fmt.Printf("%v", err)
 	}
-	fmt.Printf("Query results: %v\n", data)
 	return
 }
 

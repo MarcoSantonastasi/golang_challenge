@@ -58,8 +58,8 @@ func TestE2E_GetAllInvestors(t *testing.T) {
 				t.Errorf("Got GetAllInvestors() error = %v, instead expected error %v", err, tt.wantErr)
 				return
 			}
-			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("Got GetAllInvestors() = %v, but wanted %v", got, tt.want)
+			if !reflect.DeepEqual(got.Data, tt.want.Data) {
+				t.Errorf("Got GetAllInvestors() = %v, but wanted %v", got.Data, tt.want.Data)
 			}
 
 		})
@@ -89,8 +89,8 @@ func TestE2E_GetAllIssuers(t *testing.T) {
 				t.Errorf("Got GetAllIssuers() error = %v, instead expected error %v", err, tt.wantErr)
 				return
 			}
-			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("Got GetAllIssuers() = %v, but wanted %v", got, tt.want)
+			if !reflect.DeepEqual(got.Data, tt.want.Data) {
+				t.Errorf("Got GetAllIssuers() = %v, but wanted %v", got.Data, tt.want.Data)
 			}
 
 		})
@@ -120,8 +120,8 @@ func TestE2E_GetAllInvoices(t *testing.T) {
 				t.Errorf("Got GetAllInvoices() error = %v, instead expected error %v", err, tt.wantErr)
 				return
 			}
-			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("Got GetAllInvoices() = %v, but wanted %v", got, tt.want)
+			if !reflect.DeepEqual(got.Data, tt.want.Data) {
+				t.Errorf("Got GetAllInvoices() = %v, but wanted %v", got.Data, tt.want.Data)
 			}
 
 		})
@@ -144,45 +144,45 @@ func loadTestData() {
 	_, b, _, _ := runtime.Caller(0)
 	path := path.Dir(b)
 
-	investorsFile, investorsFileErr := os.Open(path + "/../data/investors.json")
+	investorsFile, investorsFileErr := os.Open(path + "/../data/seededInvestors.json")
 	if investorsFileErr != nil {
-		panic("cannot open " + path + "/../data/investors.json")
+		panic("cannot open " + path + "/../data/seededInvestors.json")
 	}
 	investorsData, investorsDataErr := io.ReadAll(investorsFile)
 	if investorsDataErr != nil {
-		panic("cannot read " + path + "/../data/investors.json")
+		panic("cannot read " + path + "/../data/seededInvestors.json")
 	}
 	investorsJsonErr := json.Unmarshal(investorsData, &expectData.allInvestorsList)
 	if investorsJsonErr != nil {
-		panic("cannot parse (unmarshall) JSON data from " + path + "/../data/investors.json")
+		panic("cannot parse (unmarshall) JSON data from " + path + "/../data/seededInvestors.json")
 	}
 	defer investorsFile.Close()
 
-	issuersFile, issuersFileErr := os.Open(path + "/../data/issuers.json")
+	issuersFile, issuersFileErr := os.Open(path + "/../data/seededIssuers.json")
 	if issuersFileErr != nil {
-		panic("cannot open " + path + "/../data/issuers.json")
+		panic("cannot open " + path + "/../data/seededIssuers.json")
 	}
 	issuersData, issuersDataErr := io.ReadAll(issuersFile)
 	if issuersDataErr != nil {
-		panic("cannot read " + path + "/../data/issuers.json")
+		panic("cannot read " + path + "/../data/seededIssuers.json")
 	}
 	issuersJsonErr := json.Unmarshal(issuersData, &expectData.allIssuersList)
 	if issuersJsonErr != nil {
-		panic("cannot parse (unmarshall) JSON data form " + path + "/../data/issuers.json")
+		panic("cannot parse (unmarshall) JSON data form " + path + "/../data/seededIssuers.json")
 	}
 	defer issuersFile.Close()
 
-	invoicesFile, invoicesFileErr := os.Open(path + "/../data/invoices.json")
+	invoicesFile, invoicesFileErr := os.Open(path + "/../data/seededInvoices.json")
 	if invoicesFileErr != nil {
-		panic("cannot open " + path + "/../data/invoices.json")
+		panic("cannot open " + path + "/../data/seededInvoices.json")
 	}
 	invoicesData, invoicesDataErr := io.ReadAll(invoicesFile)
 	if invoicesDataErr != nil {
-		panic("cannot read " + path + "/../data/invoices.json")
+		panic("cannot read " + path + "/../data/seededInvoices.json")
 	}
 	invoicesJsonErr := json.Unmarshal(invoicesData, &expectData.allInvoicesList)
 	if invoicesJsonErr != nil {
-		panic("cannot parse (unmarshall) JSON data from " + path + "/../data/invoices.json")
+		panic("cannot parse (unmarshall) JSON data from " + path + "/../data/seededInvoices.json")
 	}
 	defer invoicesFile.Close()
 
