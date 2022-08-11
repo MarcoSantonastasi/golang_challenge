@@ -39,13 +39,13 @@ func TestE2E_GetAllInvestors(t *testing.T) {
 	testCases := []struct {
 		desc    string
 		client  pb.InvestorServiceClient
-		want    pb.GetAllInvestorsResponse
+		want    *pb.GetAllInvestorsResponse
 		wantErr bool
 	}{
 		{
 			desc:    "gets the list of all Investors",
 			client:  clientServices.investor,
-			want:    pb.GetAllInvestorsResponse{Data: expectData.allInvestorsList},
+			want:    &pb.GetAllInvestorsResponse{Data: expectData.allInvestorsList},
 			wantErr: false,
 		},
 	}
@@ -70,13 +70,13 @@ func TestE2E_GetAllIssuers(t *testing.T) {
 	testCases := []struct {
 		desc    string
 		client  pb.IssuerServiceClient
-		want    pb.GetAllIssuersResponse
+		want    *pb.GetAllIssuersResponse
 		wantErr bool
 	}{
 		{
 			desc:    "gets the listo of all Issuers",
 			client:  clientServices.issuer,
-			want:    pb.GetAllIssuersResponse{Data: expectData.allIssuersList},
+			want:    &pb.GetAllIssuersResponse{Data: expectData.allIssuersList},
 			wantErr: false,
 		},
 	}
@@ -101,13 +101,13 @@ func TestE2E_GetAllInvoices(t *testing.T) {
 	testCases := []struct {
 		desc    string
 		client  pb.InvoiceServiceClient
-		want    pb.GetAllInvoicesResponse
+		want    *pb.GetAllInvoicesResponse
 		wantErr bool
 	}{
 		{
 			desc:    "gets the list of all Invoices",
 			client:  clientServices.invoice,
-			want:    pb.GetAllInvoicesResponse{Data: expectData.allInvoicesList},
+			want:    &pb.GetAllInvoicesResponse{Data: expectData.allInvoicesList},
 			wantErr: false,
 		},
 	}
