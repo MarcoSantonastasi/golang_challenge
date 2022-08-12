@@ -35,7 +35,7 @@ func (db *StubDb) NewInvoice(*pb.Invoice) *pb.Invoice {
 
 func loadFakeInvestorsData() (allInvestorsList []*pb.Investor) {
 	_, runner, _, _ := runtime.Caller(0)
-	dataFile := path.Join(path.Dir(runner), "/..", "/fixtures/data", "fakeInvestors.json")
+	dataFile := path.Join(path.Dir(runner), "/../../..", "/fixtures/data", "fakeInvestors.json")
 
 	investorsFile, investorsFileErr := os.Open(dataFile)
 	if investorsFileErr != nil {
@@ -57,7 +57,7 @@ func loadFakeInvestorsData() (allInvestorsList []*pb.Investor) {
 
 func loadFakeIssuersData() (allIssuersList []*pb.Issuer) {
 	_, runner, _, _ := runtime.Caller(0)
-	dataFile := path.Join(path.Dir(runner), "/..", "/fixtures/data", "fakeIssuers.json")
+	dataFile := path.Join(path.Dir(runner), "/../../..", "/fixtures/data", "fakeIssuers.json")
 
 	issuersFile, issuersFileErr := os.Open(dataFile)
 	if issuersFileErr != nil {
@@ -78,7 +78,7 @@ func loadFakeIssuersData() (allIssuersList []*pb.Issuer) {
 
 func loadFakeInvoicesData() (allInvoicesList []*pb.Invoice) {
 	_, runner, _, _ := runtime.Caller(0)
-	dataFile := path.Join(path.Dir(runner), "/..", "/fixtures/data", "fakeInvoices.json")
+	dataFile := path.Join(path.Dir(runner), "/../../..", "/fixtures/data", "fakeInvoices.json")
 
 	invoicesFile, invoicesFileErr := os.Open(dataFile)
 	if invoicesFileErr != nil {
@@ -99,7 +99,7 @@ func loadFakeInvoicesData() (allInvoicesList []*pb.Invoice) {
 
 func loadFakeNewInvoiceData() (newInvoiceData *pb.Invoice) {
 	_, runner, _, _ := runtime.Caller(0)
-	dataFile := path.Join(path.Dir(runner), "/..", "/fixtures/data", "newInvoice.json")
+	dataFile := path.Join(path.Dir(runner), "/../../..", "/fixtures/data", "newInvoice.json")
 
 	invoiceFile, invoiceFileErr := os.Open(dataFile)
 	if invoiceFileErr != nil {
