@@ -18,7 +18,7 @@ VALUES
 (
     'af80d0ea-78b9-45b1-a7b0-d1ddd0fbd6fe'::uuid,
     'be95a593-c12a-495d-ae12-6dc45d8d9970'::uuid,
-    '2022/2',
+    '2022-0002',
     'EUR',
     300000,
     200000

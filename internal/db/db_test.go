@@ -95,6 +95,30 @@ func TestDb_GetAllInvoices(t *testing.T) {
 	}
 }
 
+func TestDb_NewInvoice(t *testing.T) {
+	tests := []struct {
+		name string
+		db   db.IDb
+		want *pb.Invoice
+	}{
+		{
+			name: "crates a new invoice using a insert query",
+			db:   testDb,
+			want: loadNewInvoiceData(),
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			gotData := tt.db.NewInvoice(tt.want)
+			gotData.Id = ""
+			if !reflect.DeepEqual(gotData, tt.want) {
+				t.Errorf("Got:\n \t%v\n expected:\n \t%v\n", gotData, tt.want)
+			}
+			// WARNING: should delete the invoice that has been createed
+		})
+	}
+}
+
 func loadSeededInvestorsData() (allInvestorsList []*pb.Investor) {
 	_, runner, _, _ := runtime.Caller(0)
 	dataFile := path.Join(path.Dir(runner), "/..", "/fixtures/data", "seededInvestors.json")
@@ -154,6 +178,28 @@ func loadSeededInvoicesData() (allInvoicesList []*pb.Invoice) {
 	}
 	invoicesJsonErr := json.Unmarshal(invoicesData, &allInvoicesList)
 	if invoicesJsonErr != nil {
+		panic("cannot parse (unmarshall) JSON data from " + dataFile)
+	}
+	return
+}
+
+func loadNewInvoiceData() (newInvoiceData *pb.Invoice) {
+	_, runner, _, _ := runtime.Caller(0)
+	dataFile := path.Join(path.Dir(runner), "/..", "/fixtures/data", "newInvoice.json")
+
+	invoiceFile, invoiceFileErr := os.Open(dataFile)
+	if invoiceFileErr != nil {
+		panic("cannot open " + dataFile)
+	}
+	defer invoiceFile.Close()
+
+	invoiceData, invoiceDataErr := io.ReadAll(invoiceFile)
+	if invoiceDataErr != nil {
+		panic("cannot read " + dataFile)
+	}
+
+	invoiceJsonErr := json.Unmarshal(invoiceData, &newInvoiceData)
+	if invoiceJsonErr != nil {
 		panic("cannot parse (unmarshall) JSON data from " + dataFile)
 	}
 	return

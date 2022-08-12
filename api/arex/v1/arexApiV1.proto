@@ -20,9 +20,11 @@ message Issuer {
 
 message Invoice {
     string id = 1;
-    string denom = 2;
-    int32 amount = 3;
-    int32 asking = 4;
+    string issuer_id = 2;
+    string reference = 3;
+    string denom = 4;
+    int64 amount = 5;
+    int64 asking = 6;
 }
 
 
@@ -48,6 +50,19 @@ message GetAllInvoicesResponse{
     repeated Invoice data = 1;
 }
 
+message NewInvoiceRequest{
+    string issuer_id = 1;
+    string reference = 2;
+    string denom = 3;
+    int64 amount = 4;
+    int64 asking = 5;
+}
+
+message NewInvoiceResponse{
+    Invoice data = 1;
+}
+
 service InvoiceService {
     rpc GetAllInvoices(Empty) returns (GetAllInvoicesResponse);
+    rpc NewInvoice(NewInvoiceRequest) returns (NewInvoiceResponse);
 }
