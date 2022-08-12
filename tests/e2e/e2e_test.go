@@ -197,9 +197,9 @@ func startBufferedServer() (s *grpc.Server) {
 	}
 	s = grpc.NewServer()
 
-	pb.RegisterInvestorServiceServer(s, &server.InvestorServiceServer{Repo: &repos.InvestorsRepository{Db: &db.Db{Conn: db.DockerPG.Conn}}})
-	pb.RegisterIssuerServiceServer(s, &server.IssuerServiceServer{Repo: &repos.IssuersRepository{Db: &db.Db{Conn: db.DockerPG.Conn}}})
-	pb.RegisterInvoiceServiceServer(s, &server.InvoiceServiceServer{Repo: &repos.InvoicesRepository{Db: &db.Db{Conn: db.DockerPG.Conn}}})
+	pb.RegisterInvestorServiceServer(s, &server.InvestorServiceServer{Repo: &repos.InvestorsRepository{Db: &db.PgDb{Conn: db.DockerPG.Conn}}})
+	pb.RegisterIssuerServiceServer(s, &server.IssuerServiceServer{Repo: &repos.IssuersRepository{Db: &db.PgDb{Conn: db.DockerPG.Conn}}})
+	pb.RegisterInvoiceServiceServer(s, &server.InvoiceServiceServer{Repo: &repos.InvoicesRepository{Db: &db.PgDb{Conn: db.DockerPG.Conn}}})
 	log.Printf("server listening at %v", lis.Addr())
 	go func() {
 		if err := s.Serve(lis); err != nil {

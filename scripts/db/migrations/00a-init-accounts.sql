@@ -14,5 +14,5 @@ CREATE TABLE accounts
     CONSTRAINT accounts_pkey PRIMARY KEY (id)
 );
 
-COMMENT ON TABLE accounts
-	IS 'Accounts are an accounting object necessary to keep the ledger';
+COMMENT ON TABLE accounts IS
+    'Accounts are abstract identifiers of parties in a monetary transaction. They are of four types: INVESTOR, ISSUER, ESCROW, CASH';

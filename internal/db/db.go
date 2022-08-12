@@ -17,7 +17,7 @@ type IDb interface {
 	GetAllInvoices() []*pb.Invoice
 }
 
-type Db struct {
+type PgDb struct {
 	pgUser     string
 	pgPwd      string
 	pgHostname string
@@ -25,7 +25,7 @@ type Db struct {
 	conn       *pg.Conn
 }
 
-func (db *Db) Connect() {
+func (db *PgDb) Connect() {
 	conn, err := pg.Connect(context.Background(), fmt.Sprintf("postgres://%s:%s@%s:5432/%s", db.pgUser, db.pgPwd, db.pgHostname, db.pgDbname))
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Unable to connect to database: %v\n", err)
@@ -34,7 +34,7 @@ func (db *Db) Connect() {
 	db.conn = conn
 }
 
-func (db *Db) Close() {
+func (db *PgDb) Close() {
 	err := db.conn.Close(context.Background())
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Unable to close the database: %v\n", err)
@@ -42,7 +42,7 @@ func (db *Db) Close() {
 	db.conn = nil
 }
 
-func (db *Db) GetAllInvestors() (data []*pb.Investor) {
+func (db *PgDb) GetAllInvestors() (data []*pb.Investor) {
 	rows, err := db.conn.Query(context.Background(), "select id::varchar, name, balance from investors")
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Query failed: %v\n", err)
@@ -61,7 +61,7 @@ func (db *Db) GetAllInvestors() (data []*pb.Investor) {
 	return
 }
 
-func (db *Db) GetAllIssuers() (data []*pb.Issuer) {
+func (db *PgDb) GetAllIssuers() (data []*pb.Issuer) {
 	rows, err := db.conn.Query(context.Background(), "select id::varchar, name, balance from issuers")
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Query failed: %v\n", err)
@@ -79,7 +79,7 @@ func (db *Db) GetAllIssuers() (data []*pb.Issuer) {
 	}
 	return
 }
-func (db *Db) GetAllInvoices() (data []*pb.Invoice) {
+func (db *PgDb) GetAllInvoices() (data []*pb.Invoice) {
 	rows, err := db.conn.Query(context.Background(), "select id::varchar, denom, amount, asking from invoices")
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Query failed: %v\n", err)
@@ -103,8 +103,8 @@ func NewPgDb(
 	pgPwd string,
 	pgHostname string,
 	pgDbname string,
-) *Db {
-	return &Db{
+) *PgDb {
+	return &PgDb{
 		pgUser:     pgUser,
 		pgPwd:      pgPwd,
 		pgHostname: pgHostname,
