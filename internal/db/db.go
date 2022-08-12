@@ -10,17 +10,40 @@ import (
 )
 
 type IDb interface {
+	Connect()
+	Close()
 	GetAllInvestors() []*pb.Investor
 	GetAllIssuers() []*pb.Issuer
 	GetAllInvoices() []*pb.Invoice
 }
 
 type Db struct {
-	Conn *pg.Conn
+	pgUser     string
+	pgPwd      string
+	pgHostname string
+	pgDbname   string
+	conn       *pg.Conn
+}
+
+func (db *Db) Connect() {
+	conn, err := pg.Connect(context.Background(), fmt.Sprintf("postgres://%s:%s@%s:5432/%s", db.pgUser, db.pgPwd, db.pgHostname, db.pgDbname))
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "Unable to connect to database: %v\n", err)
+		os.Exit(1)
+	}
+	db.conn = conn
+}
+
+func (db *Db) Close() {
+	err := db.conn.Close(context.Background())
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "Unable to close the database: %v\n", err)
+	}
+	db.conn = nil
 }
 
 func (db *Db) GetAllInvestors() (data []*pb.Investor) {
-	rows, err := db.Conn.Query(context.Background(), "select id::varchar, name, balance from accounts where type = 'INVESTOR'")
+	rows, err := db.conn.Query(context.Background(), "select id::varchar, name, balance from accounts where type = 'INVESTOR'")
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Query failed: %v\n", err)
 	}
@@ -39,7 +62,7 @@ func (db *Db) GetAllInvestors() (data []*pb.Investor) {
 }
 
 func (db *Db) GetAllIssuers() (data []*pb.Issuer) {
-	rows, err := db.Conn.Query(context.Background(), "select id::varchar, name, balance from accounts where type = 'ISSUER'")
+	rows, err := db.conn.Query(context.Background(), "select id::varchar, name, balance from accounts where type = 'ISSUER'")
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Query failed: %v\n", err)
 	}
@@ -57,7 +80,7 @@ func (db *Db) GetAllIssuers() (data []*pb.Issuer) {
 	return
 }
 func (db *Db) GetAllInvoices() (data []*pb.Invoice) {
-	rows, err := db.Conn.Query(context.Background(), "select id::varchar, denom, amount, asking from invoices")
+	rows, err := db.conn.Query(context.Background(), "select id::varchar, denom, amount, asking from invoices")
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Query failed: %v\n", err)
 	}
@@ -75,23 +98,18 @@ func (db *Db) GetAllInvoices() (data []*pb.Invoice) {
 	return
 }
 
-func NewPGDB(
-	pg_user string,
-	pg_pwd string,
-	pg_hostname string,
-	pg_dbname string,
+func NewDB(
+	pgUser string,
+	pgPwd string,
+	pgHostname string,
+	pgDbname string,
 ) *Db {
-	newPgDb := Db{}
-
-	conn, err := pg.Connect(context.Background(), fmt.Sprintf("postgres://%s:%s@%s:5432/%s", pg_user, pg_pwd, pg_hostname, pg_dbname))
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "Unable to connect to database: %v\n", err)
-		os.Exit(1)
+	return &Db{
+		pgUser:     pgUser,
+		pgPwd:      pgPwd,
+		pgHostname: pgHostname,
+		pgDbname:   pgDbname,
 	}
-
-	newPgDb.Conn = conn
-
-	return &newPgDb
 }
 
 //
@@ -101,4 +119,4 @@ func NewPGDB(
 // POSTGRES_HOSTNAME=localhost
 //
 
-var DockerPG = NewPGDB(os.Getenv("POSTGRES_USER"), os.Getenv("POSTGRES_PASSWORD"), os.Getenv("POSTGRES_HOSTNAME"), os.Getenv("POSTGRES_DB"))
+var DockerPG = NewDB(os.Getenv("POSTGRES_USER"), os.Getenv("POSTGRES_PASSWORD"), os.Getenv("POSTGRES_HOSTNAME"), os.Getenv("POSTGRES_DB"))

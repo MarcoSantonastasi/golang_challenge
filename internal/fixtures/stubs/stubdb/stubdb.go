@@ -1,4 +1,4 @@
-package fakedb
+package stubdb
 
 import (
 	"encoding/json"
@@ -11,16 +11,16 @@ import (
 )
 
 
-type FakeDb struct {
+type StubDb struct {
 }
 
-func (db *FakeDb) GetAllInvestors() []*pb.Investor {
+func (db *StubDb) GetAllInvestors() []*pb.Investor {
 	return FakeAllInvestorsList
 }
-func (db *FakeDb) GetAllIssuers() []*pb.Issuer {
+func (db *StubDb) GetAllIssuers() []*pb.Issuer {
 	return FakeAllIssuersList
 }
-func (db *FakeDb) GetAllInvoices() []*pb.Invoice {
+func (db *StubDb) GetAllInvoices() []*pb.Invoice {
 	return FakeAllInvoicesList
 }
 

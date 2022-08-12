@@ -1,21 +1,25 @@
-package fakedb
+//go:build unit_tests
+// +build unit_tests
+
+package stubdb
 
 import (
 	"reflect"
 	"testing"
 
 	pb "github.com/marcosantonastasi/arex_challenge/api/arex/v1"
+	db "github.com/marcosantonastasi/arex_challenge/internal/db"
 )
 
 func TestFakeDb_GetAllInvestors(t *testing.T) {
 	tests := []struct {
 		name string
-		db   *FakeDb
+		db   db.IDb
 		want []*pb.Investor
 	}{
 		{
 			name: "GetAllInvestors() returns exactly the data json file",
-			db:   &FakeDb{},
+			db:   &StubDb{},
 			want: FakeAllInvestorsList,
 		},
 	}
@@ -31,12 +35,12 @@ func TestFakeDb_GetAllInvestors(t *testing.T) {
 func TestFakeDb_GetAllIssuers(t *testing.T) {
 	tests := []struct {
 		name string
-		db   *FakeDb
+		db   *StubDb
 		want []*pb.Issuer
 	}{
 		{
 			name: "GetAllIssuers() returns exactly the data json file",
-			db:   &FakeDb{},
+			db:   &StubDb{},
 			want: FakeAllIssuersList,
 		},
 	}
@@ -52,12 +56,12 @@ func TestFakeDb_GetAllIssuers(t *testing.T) {
 func TestFakeDb_GetAllInvoices(t *testing.T) {
 	tests := []struct {
 		name string
-		db   *FakeDb
+		db   *StubDb
 		want []*pb.Invoice
 	}{
 		{
 			name: "GetAllInvoices() returns exactly the data json file",
-			db:   &FakeDb{},
+			db:   &StubDb{},
 			want: FakeAllInvoicesList,
 		},
 	}
