@@ -195,6 +195,7 @@ var IssuerService_ServiceDesc = grpc.ServiceDesc{
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type InvoiceServiceClient interface {
 	GetAllInvoices(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*GetAllInvoicesResponse, error)
+	NewInvoice(ctx context.Context, in *NewInvoiceRequest, opts ...grpc.CallOption) (*NewInvoiceResponse, error)
 }
 
 type invoiceServiceClient struct {
@@ -214,11 +215,21 @@ func (c *invoiceServiceClient) GetAllInvoices(ctx context.Context, in *Empty, op
 	return out, nil
 }
 
+func (c *invoiceServiceClient) NewInvoice(ctx context.Context, in *NewInvoiceRequest, opts ...grpc.CallOption) (*NewInvoiceResponse, error) {
+	out := new(NewInvoiceResponse)
+	err := c.cc.Invoke(ctx, "/v1.InvoiceService/NewInvoice", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // InvoiceServiceServer is the server API for InvoiceService service.
 // All implementations must embed UnimplementedInvoiceServiceServer
 // for forward compatibility
 type InvoiceServiceServer interface {
 	GetAllInvoices(context.Context, *Empty) (*GetAllInvoicesResponse, error)
+	NewInvoice(context.Context, *NewInvoiceRequest) (*NewInvoiceResponse, error)
 	mustEmbedUnimplementedInvoiceServiceServer()
 }
 
@@ -228,6 +239,9 @@ type UnimplementedInvoiceServiceServer struct {
 
 func (UnimplementedInvoiceServiceServer) GetAllInvoices(context.Context, *Empty) (*GetAllInvoicesResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetAllInvoices not implemented")
+}
+func (UnimplementedInvoiceServiceServer) NewInvoice(context.Context, *NewInvoiceRequest) (*NewInvoiceResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method NewInvoice not implemented")
 }
 func (UnimplementedInvoiceServiceServer) mustEmbedUnimplementedInvoiceServiceServer() {}
 
@@ -260,6 +274,24 @@ func _InvoiceService_GetAllInvoices_Handler(srv interface{}, ctx context.Context
 	return interceptor(ctx, in, info, handler)
 }
 
+func _InvoiceService_NewInvoice_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(NewInvoiceRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(InvoiceServiceServer).NewInvoice(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/v1.InvoiceService/NewInvoice",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(InvoiceServiceServer).NewInvoice(ctx, req.(*NewInvoiceRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // InvoiceService_ServiceDesc is the grpc.ServiceDesc for InvoiceService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -270,6 +302,10 @@ var InvoiceService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetAllInvoices",
 			Handler:    _InvoiceService_GetAllInvoices_Handler,
+		},
+		{
+			MethodName: "NewInvoice",
+			Handler:    _InvoiceService_NewInvoice_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

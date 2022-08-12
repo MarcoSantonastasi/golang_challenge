@@ -10,68 +10,111 @@ import (
 	pb "github.com/marcosantonastasi/arex_challenge/api/arex/v1"
 )
 
-
 type StubDb struct {
 }
 
+func (db *StubDb) Connect() {}
+
+func (db *StubDb) Close() {}
+
 func (db *StubDb) GetAllInvestors() []*pb.Investor {
-	return FakeAllInvestorsList
+	return loadFakeInvestorsData()
 }
+
 func (db *StubDb) GetAllIssuers() []*pb.Issuer {
-	return FakeAllIssuersList
+	return loadFakeIssuersData()
 }
+
 func (db *StubDb) GetAllInvoices() []*pb.Invoice {
-	return FakeAllInvoicesList
+	return loadFakeInvoicesData()
 }
 
+func (db *StubDb) NewInvoice(*pb.Invoice) *pb.Invoice {
+	return loadFakeNewInvoiceData()
+}
 
-var FakeAllInvestorsList []*pb.Investor
-var FakeAllIssuersList []*pb.Issuer
-var FakeAllInvoicesList []*pb.Invoice
+func loadFakeInvestorsData() (allInvestorsList []*pb.Investor) {
+	_, runner, _, _ := runtime.Caller(0)
+	dataFile := path.Join(path.Dir(runner), "/..", "/fixtures/data", "fakeInvestors.json")
 
-func init() {
-	_, b, _, _ := runtime.Caller(0)
-	path := path.Dir(b)
+	investorsFile, investorsFileErr := os.Open(dataFile)
+	if investorsFileErr != nil {
+		panic("cannot open " + dataFile)
+	}
+	defer investorsFile.Close()
 
-	fakeInvestorsFile, fakeInvestorsFileErr := os.Open(path + "/../../data/fakeInvestors.json")
-	if fakeInvestorsFileErr != nil {
-		panic("cannot open " + path + "/../../data/fakeInvestors.json")
+	investorsData, investorsDataErr := io.ReadAll(investorsFile)
+	if investorsDataErr != nil {
+		panic("cannot read " + dataFile)
 	}
-	fakeInvestorsData, fakeInvestorsDataErr := io.ReadAll(fakeInvestorsFile)
-	if fakeInvestorsDataErr != nil {
-		panic("cannot read " + path + "/../../data/fakeInvestors.json")
+	investorsJsonErr := json.Unmarshal(investorsData, &allInvestorsList)
+	if investorsJsonErr != nil {
+		panic("cannot parse (unmarshall) JSON data from " + dataFile)
 	}
-	fakeInvestorsJsonErr := json.Unmarshal(fakeInvestorsData, &FakeAllInvestorsList)
-	if fakeInvestorsJsonErr != nil {
-		panic("cannot parse (unmarshall) JSON data from " + path + "/../../data/fakeInvestors.json")
-	}
-	defer fakeInvestorsFile.Close()
 
-	fakeIssuersFile, fakeIssuersFileErr := os.Open(path + "/../../data/fakeIssuers.json")
-	if fakeIssuersFileErr != nil {
-		panic("cannot open " + path + "/../../data/fakeIssuers.json")
-	}
-	fakeIssuersData, fakeIssuersDataErr := io.ReadAll(fakeIssuersFile)
-	if fakeIssuersDataErr != nil {
-		panic("cannot read " + path + "/../../data/fakeIssuers.json")
-	}
-	fakeIssuersJsonErr := json.Unmarshal(fakeIssuersData, &FakeAllIssuersList)
-	if fakeIssuersJsonErr != nil {
-		panic("cannot parse (unmarshall) JSON data form " + path + "/../../data/fakeIssuers.json")
-	}
-	defer fakeIssuersFile.Close()
+	return
+}
 
-	fakeInvoicesFile, fakeInvoicesFileErr := os.Open(path + "/../../data/fakeInvoices.json")
-	if fakeInvoicesFileErr != nil {
-		panic("cannot open " + path + "/../../data/fakeInvoices.json")
+func loadFakeIssuersData() (allIssuersList []*pb.Issuer) {
+	_, runner, _, _ := runtime.Caller(0)
+	dataFile := path.Join(path.Dir(runner), "/..", "/fixtures/data", "fakeIssuers.json")
+
+	issuersFile, issuersFileErr := os.Open(dataFile)
+	if issuersFileErr != nil {
+		panic("cannot open " + dataFile)
 	}
-	fakeInvoicesData, fakeInvoicesDataErr := io.ReadAll(fakeInvoicesFile)
-	if fakeInvoicesDataErr != nil {
-		panic("cannot read " + path + "/../../data/fakeInvoices.json")
+	defer issuersFile.Close()
+
+	issuersData, issuersDataErr := io.ReadAll(issuersFile)
+	if issuersDataErr != nil {
+		panic("cannot read " + dataFile)
 	}
-	fakeInvoicesJsonErr := json.Unmarshal(fakeInvoicesData, &FakeAllInvoicesList)
-	if fakeInvoicesJsonErr != nil {
-		panic("cannot parse (unmarshall) JSON data from " + path + "/../../data/fakeInvoices.json")
+	issuersJsonErr := json.Unmarshal(issuersData, &allIssuersList)
+	if issuersJsonErr != nil {
+		panic("cannot parse (unmarshall) JSON data form " + dataFile)
 	}
-	defer fakeInvoicesFile.Close()
+	return
+}
+
+func loadFakeInvoicesData() (allInvoicesList []*pb.Invoice) {
+	_, runner, _, _ := runtime.Caller(0)
+	dataFile := path.Join(path.Dir(runner), "/..", "/fixtures/data", "fakeInvoices.json")
+
+	invoicesFile, invoicesFileErr := os.Open(dataFile)
+	if invoicesFileErr != nil {
+		panic("cannot open " + dataFile)
+	}
+	defer invoicesFile.Close()
+
+	invoicesData, invoicesDataErr := io.ReadAll(invoicesFile)
+	if invoicesDataErr != nil {
+		panic("cannot read " + dataFile)
+	}
+	invoicesJsonErr := json.Unmarshal(invoicesData, &allInvoicesList)
+	if invoicesJsonErr != nil {
+		panic("cannot parse (unmarshall) JSON data from " + dataFile)
+	}
+	return
+}
+
+func loadFakeNewInvoiceData() (newInvoiceData *pb.Invoice) {
+	_, runner, _, _ := runtime.Caller(0)
+	dataFile := path.Join(path.Dir(runner), "/..", "/fixtures/data", "newInvoice.json")
+
+	invoiceFile, invoiceFileErr := os.Open(dataFile)
+	if invoiceFileErr != nil {
+		panic("cannot open " + dataFile)
+	}
+	defer invoiceFile.Close()
+
+	invoiceData, invoiceDataErr := io.ReadAll(invoiceFile)
+	if invoiceDataErr != nil {
+		panic("cannot read " + dataFile)
+	}
+
+	invoiceJsonErr := json.Unmarshal(invoiceData, &newInvoiceData)
+	if invoiceJsonErr != nil {
+		panic("cannot parse (unmarshall) JSON data from " + dataFile)
+	}
+	return
 }

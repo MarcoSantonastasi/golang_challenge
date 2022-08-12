@@ -15,6 +15,7 @@ type IDb interface {
 	GetAllInvestors() []*pb.Investor
 	GetAllIssuers() []*pb.Issuer
 	GetAllInvoices() []*pb.Invoice
+	NewInvoice(*pb.Invoice) *pb.Invoice
 }
 
 type PgDb struct {
@@ -79,21 +80,64 @@ func (db *PgDb) GetAllIssuers() (data []*pb.Issuer) {
 	}
 	return
 }
+
 func (db *PgDb) GetAllInvoices() (data []*pb.Invoice) {
-	rows, err := db.conn.Query(context.Background(), "select id::varchar, denom, amount, asking from invoices")
+	rows, err := db.conn.Query(
+		context.Background(),
+		`select
+			id::varchar,
+			issuer_id,
+			reference,
+			denom,
+			amount,
+			asking
+		from invoices`,
+	)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Query failed: %v\n", err)
 	}
 	defer rows.Close()
 	for rows.Next() {
 		row := new(pb.Invoice)
-		if err := rows.Scan(&row.Id, &row.Denom, &row.Amount, &row.Asking); err != nil {
+		if err := rows.Scan(&row.Id, &row.IssuerId, &row.Reference, &row.Denom, &row.Amount, &row.Asking); err != nil {
 			fmt.Printf("%v", err)
 		}
 		data = append(data, row)
 	}
 	if err := rows.Err(); err != nil {
 		fmt.Printf("%v", err)
+	}
+	return
+}
+
+func (db *PgDb) NewInvoice(newInvoiceData *pb.Invoice) (data *pb.Invoice) {
+	data = new(pb.Invoice)
+	row := db.conn.QueryRow(
+		context.Background(),
+		`insert into invoices (
+			issuer_id,
+			reference,
+			denom,
+			amount,
+			asking
+		)
+		values($1, $2, $3, $4, $5)
+		returning
+		    id,
+			issuer_id,
+			reference,
+			denom,
+			amount,
+			asking`,
+		newInvoiceData.IssuerId,
+		newInvoiceData.Reference,
+		newInvoiceData.Denom,
+		newInvoiceData.Amount,
+		newInvoiceData.Asking,
+	)
+
+	if err := row.Scan(&data.Id, &data.IssuerId, &data.Reference, &data.Denom, &data.Amount, &data.Asking); err != nil {
+		fmt.Printf("%+v", err)
 	}
 	return
 }
