@@ -1,0 +1,1 @@
+CREATE OR REPLACE VIEW issuers AS SELECT * FROM accounts WHERE type = 'ISSUER'::type_account_type;

@@ -56,16 +56,18 @@ VALUES
 
 
 INSERT INTO invoices (
-  id,
-  issuer,
-  denom,
-  amount,
-  asking
+    id,
+    issuer_id,
+    reference,
+    denom,
+    amount,
+    asking
 )
 VALUES
 (
     'acb51e7b-2cef-4081-93ad-6b3a97c68b8a'::uuid,
     '5af74869-9b16-4ddd-9f0d-4a1df2b980eb'::uuid,
+    '2019/001',
     'EUR',
     150000,
     100000
@@ -73,6 +75,7 @@ VALUES
 (
     'af80d0ea-78b9-45b1-a7b0-d1ddd0fbd6fe'::uuid,
     'be95a593-c12a-495d-ae12-6dc45d8d9970'::uuid,
+    '2022/2',
     'EUR',
     300000,
     200000
@@ -80,12 +83,13 @@ VALUES
 (
     'ceeaece4-ca5c-4d31-9fd6-90a90854fed9'::uuid,
     'de16507a-61b3-43f6-b977-4312f52ece1b'::uuid,
+    'INV-2022-3',
     'EUR',
     450000,
     300000
 );
 
--- bid( _bidder_account uuid,  _invoice uuid, _offer bigint)
-SELECT bid('991842fe-2e97-4481-a560-8d985a82ae74', 'ceeaece4-ca5c-4d31-9fd6-90a90854fed9' , 160000);
-SELECT bid('feac2610-27df-4665-afae-0f536ed06ab5', 'ceeaece4-ca5c-4d31-9fd6-90a90854fed9' , 420000);
-SELECT bid('c5f76419-eb27-4255-86ba-afbbe271114b', 'af80d0ea-78b9-45b1-a7b0-d1ddd0fbd6fe' , 195000);
+-- bid(_invoice_id uuid, _bidder_account_id uuid, _offer bigint)
+SELECT bid('ceeaece4-ca5c-4d31-9fd6-90a90854fed9', '991842fe-2e97-4481-a560-8d985a82ae74', 160000);
+SELECT bid('ceeaece4-ca5c-4d31-9fd6-90a90854fed9', 'feac2610-27df-4665-afae-0f536ed06ab5', 420000);
+SELECT bid('af80d0ea-78b9-45b1-a7b0-d1ddd0fbd6fe', 'c5f76419-eb27-4255-86ba-afbbe271114b', 195000);

@@ -7,13 +7,13 @@ INSERT INTO accounts (
 VALUES
 (
   'e0698db1-ca65-4903-94df-a4917f795562'::uuid,
-  'ESCROW',
+  'Escrow',
   'ESCROW'::type_account_type,
   DEFAULT
 ),
 (
   '93c8ee71-bda7-438c-b261-d9e97f9c5286'::uuid,
-  'CASH',
+  'Cash',
   'CASH'::type_account_type,
   DEFAULT
 ),

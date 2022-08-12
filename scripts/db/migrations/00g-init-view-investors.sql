@@ -1,0 +1,1 @@
+CREATE OR REPLACE VIEW investors AS SELECT * FROM accounts WHERE type = 'INVESTOR'::type_account_type;
