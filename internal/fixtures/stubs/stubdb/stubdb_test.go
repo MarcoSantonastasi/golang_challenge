@@ -1,6 +1,3 @@
-//go:build unit_tests
-// +build unit_tests
-
 package stubdb
 
 import (
@@ -88,7 +85,7 @@ func TestStubDb_NewInvoice(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := tt.db.NewInvoice(); !reflect.DeepEqual(got, tt.want) {
+			if got := tt.db.NewInvoice(tt.want); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("FakeDb.NewInvoice() = %v, want %v", got, tt.want)
 			}
 		})
