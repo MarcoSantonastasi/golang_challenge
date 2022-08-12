@@ -43,7 +43,7 @@ func (db *Db) Close() {
 }
 
 func (db *Db) GetAllInvestors() (data []*pb.Investor) {
-	rows, err := db.conn.Query(context.Background(), "select id::varchar, name, balance from accounts where type = 'INVESTOR'")
+	rows, err := db.conn.Query(context.Background(), "select id::varchar, name, balance from investors")
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Query failed: %v\n", err)
 	}
@@ -62,7 +62,7 @@ func (db *Db) GetAllInvestors() (data []*pb.Investor) {
 }
 
 func (db *Db) GetAllIssuers() (data []*pb.Issuer) {
-	rows, err := db.conn.Query(context.Background(), "select id::varchar, name, balance from accounts where type = 'ISSUER'")
+	rows, err := db.conn.Query(context.Background(), "select id::varchar, name, balance from issuers")
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Query failed: %v\n", err)
 	}
@@ -98,7 +98,7 @@ func (db *Db) GetAllInvoices() (data []*pb.Invoice) {
 	return
 }
 
-func NewDB(
+func NewPgDb(
 	pgUser string,
 	pgPwd string,
 	pgHostname string,
@@ -111,12 +111,3 @@ func NewDB(
 		pgDbname:   pgDbname,
 	}
 }
-
-//
-// POSTGRES_USER=postgres
-// POSTGRES_PASSWORD=postgres
-// POSTGRES_DB=postgres
-// POSTGRES_HOSTNAME=localhost
-//
-
-var DockerPG = NewDB(os.Getenv("POSTGRES_USER"), os.Getenv("POSTGRES_PASSWORD"), os.Getenv("POSTGRES_HOSTNAME"), os.Getenv("POSTGRES_DB"))

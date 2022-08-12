@@ -21,7 +21,7 @@ func TestMain(m *testing.M) {
 	pgHostname := os.Getenv("POSTGRES_HOSTNAME")
 	pgDbname := os.Getenv("POSTGRES_DB")
 
-	testDb = db.NewDB(pgUser, pgPwd, pgHostname, pgDbname)
+	testDb = db.NewPgDb(pgUser, pgPwd, pgHostname, pgDbname)
 
 	testDb.Connect()
 
@@ -97,7 +97,7 @@ func TestDb_GetAllInvoices(t *testing.T) {
 
 func loadSeededInvestorsData() (allInvestorsList []*pb.Investor) {
 	_, runner, _, _ := runtime.Caller(0)
-	dataFile := path.Join(path.Dir(runner), "/..", "/testing/data", "seededInvestors.json")
+	dataFile := path.Join(path.Dir(runner), "/..", "/fixtures/data", "seededInvestors.json")
 
 	investorsFile, investorsFileErr := os.Open(dataFile)
 	if investorsFileErr != nil {
@@ -119,7 +119,7 @@ func loadSeededInvestorsData() (allInvestorsList []*pb.Investor) {
 
 func loadSeededIssuersData() (allIssuersList []*pb.Issuer) {
 	_, runner, _, _ := runtime.Caller(0)
-	dataFile := path.Join(path.Dir(runner), "/..", "/testing/data", "seededIssuers.json")
+	dataFile := path.Join(path.Dir(runner), "/..", "/fixtures/data", "seededIssuers.json")
 
 	issuersFile, issuersFileErr := os.Open(dataFile)
 	if issuersFileErr != nil {
@@ -140,7 +140,7 @@ func loadSeededIssuersData() (allIssuersList []*pb.Issuer) {
 
 func loadSeededInvoicesData() (allInvoicesList []*pb.Invoice) {
 	_, runner, _, _ := runtime.Caller(0)
-	dataFile := path.Join(path.Dir(runner), "/..", "/testing/data", "seededInvoices.json")
+	dataFile := path.Join(path.Dir(runner), "/..", "/fixtures/data", "seededInvoices.json")
 
 	invoicesFile, invoicesFileErr := os.Open(dataFile)
 	if invoicesFileErr != nil {
