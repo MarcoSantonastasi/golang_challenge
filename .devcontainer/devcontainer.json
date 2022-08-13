@@ -21,13 +21,7 @@
       // Add the IDs of extensions you want installed when the container is created.
       "extensions": [
 		"golang.Go",
-		"ms-ossdata.vscode-postgresql",
 		"GitHub.vscode-pull-request-github",
-		"ms-ossdata.vscode-postgresql",
-		"eamodio.gitlens-insiders",
-		"VisualStudioExptTeam.intellicode-api-usage-examples",
-		"VisualStudioExptTeam.vscodeintellicode-insiders",
-		"VisualStudioExptTeam.vscodeintellicode-completions",
 		"zxh404.vscode-proto3"
 	]
     }
