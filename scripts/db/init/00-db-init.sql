@@ -18,6 +18,7 @@ COMMENT ON TABLE accounts IS
     'Accounts are abstract identifiers of parties in a monetary transaction. They are of four types: INVESTOR, ISSUER, ESCROW, CASH';
 
 
+
 DROP TABLE IF EXISTS invoices CASCADE;
 
 DROP TYPE IF EXISTS type_invoice_state;
@@ -44,6 +45,7 @@ CREATE TABLE invoices
 
 COMMENT ON TABLE invoices IS
   'Invoices are the documents that are auctioned, the asking field representing the minimum value the issuer is willing to acept. Numeric fields representing currency are always in cents of the denomination (i.e. a value of 100 = 1 currency unit)';
+
 
 
 DROP TABLE IF EXISTS bids CASCADE;
@@ -79,6 +81,7 @@ COMMENT ON TABLE bids IS
   'Bids represent Investor offers on invoices. They are the grouping abstraction for reconciling money transactions related to auctioning activity';
 
 
+
 DROP TABLE IF EXISTS transactions CASCADE;
 
 CREATE TABLE transactions
@@ -106,6 +109,7 @@ CREATE TABLE transactions
 
 COMMENT ON TABLE transactions IS
   'Transactions record all tranfers of money. Only if the bid_id field is populated it means that the transaction is relative to a bid and reconciliation can be done within a bididng round.';
+
 
 
 CREATE OR REPLACE FUNCTION check_sufficient_balance_on_transactions_insert()
@@ -156,6 +160,7 @@ AFTER INSERT ON transactions
   FOR EACH ROW EXECUTE FUNCTION update_account_balance_on_transactions_insert();
 
 
+
 CREATE OR REPLACE FUNCTION check_invoice_forsale_on_bids_insert()
 RETURNS TRIGGER AS $$
 
@@ -180,6 +185,7 @@ $$ LANGUAGE plpgsql;
 CREATE OR REPLACE TRIGGER check_invoice_forsale_on_bids_insert
 BEFORE INSERT ON bids
   FOR EACH ROW EXECUTE FUNCTION check_invoice_forsale_on_bids_insert();
+
 
 
 CREATE OR REPLACE FUNCTION bid (
@@ -218,6 +224,7 @@ BEGIN
   RETURN;
 END;
 $$ LANGUAGE plpgsql;
+
 
 
 CREATE OR REPLACE FUNCTION adjudicate (
@@ -295,3 +302,52 @@ WHERE id = _invoice_id;
 RETURN;
 END;
 $$ LANGUAGE plpgsql;
+
+
+
+CREATE OR REPLACE FUNCTION all_running_bids_to_lost (
+  INOUT _invoice_id uuid,
+  OUT _bid_id bigint
+)
+AS $$
+BEGIN
+  WITH running_bids AS (
+	  UPDATE
+		  bids
+	  SET
+		  state = 'LOST'::type_bid_state
+    WHERE
+		  state = 'RUNNING'::type_bid_state AND
+		  invoice_id = _invoice_id
+	  RETURNING
+		  id AS bid_id,
+		  bidder_account_id AS credit_account_id,
+		  offer AS amount
+  ),
+  escrow_account AS (
+	  SELECT
+		  id
+	  FROM
+		  accounts
+	  WHERE
+		  TYPE = 'ESCROW'::type_account_type FETCH FIRST ROW ONLY
+  )
+  INSERT INTO transactions (bid_id, credit_account_id, debit_account_id, amount)
+  SELECT
+	  bid_id, credit_account_id, escrow_account.id AS debit_account_id, amount
+  FROM
+	  running_bids,
+	  escrow_account;
+
+RETURN;
+END;
+$$ LANGUAGE plpgsql;
+
+
+
+CREATE OR REPLACE VIEW issuers AS SELECT * FROM accounts WHERE type = 'ISSUER'::type_account_type;
+
+
+CREATE OR REPLACE VIEW investors AS SELECT * FROM accounts WHERE type = 'INVESTOR'::type_account_type;
+
+

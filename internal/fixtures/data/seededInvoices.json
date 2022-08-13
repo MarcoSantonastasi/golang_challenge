@@ -5,7 +5,8 @@
     "reference": "2019/001",
     "denom": "EUR",
     "amount": 150000,
-    "asking": 100000
+    "asking": 100000,
+    "state": "FORSALE"
   },
   {
     "id": "af80d0ea-78b9-45b1-a7b0-d1ddd0fbd6fe",
@@ -13,7 +14,8 @@
     "reference": "2022-0002",
     "denom": "EUR",
     "amount": 300000,
-    "asking": 200000
+    "asking": 200000,
+    "state": "FORSALE"
   },
   {
     "id": "ceeaece4-ca5c-4d31-9fd6-90a90854fed9",
@@ -21,6 +23,7 @@
     "reference": "INV-2022-3",
     "denom": "EUR",
     "amount": 450000,
-    "asking": 300000
+    "asking": 300000,
+    "state": "ADJUDICATED"
   }
 ]
