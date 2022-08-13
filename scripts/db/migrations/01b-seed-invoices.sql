@@ -1,6 +1,6 @@
 INSERT INTO invoices (
     id,
-    issuer_id,
+    issuer_account_id,
     reference,
     denom,
     amount,

@@ -7,13 +7,13 @@ INSERT INTO accounts (
 VALUES
 (
   'e0698db1-ca65-4903-94df-a4917f795562'::uuid,
-  'ESCROW',
+  'Escrow',
   'ESCROW'::type_account_type,
   DEFAULT
 ),
 (
   '93c8ee71-bda7-438c-b261-d9e97f9c5286'::uuid,
-  'CASH',
+  'Cash',
   'CASH'::type_account_type,
   DEFAULT
 ),
@@ -57,7 +57,7 @@ VALUES
 
 INSERT INTO invoices (
     id,
-    issuer_id,
+    issuer_account_id,
     reference,
     denom,
     amount,
@@ -83,7 +83,7 @@ VALUES
 (
     'ceeaece4-ca5c-4d31-9fd6-90a90854fed9'::uuid,
     'de16507a-61b3-43f6-b977-4312f52ece1b'::uuid,
-    'INV-2022-3',
+    'INV-3-2022',
     'EUR',
     450000,
     300000
@@ -93,3 +93,9 @@ VALUES
 SELECT bid('ceeaece4-ca5c-4d31-9fd6-90a90854fed9', '991842fe-2e97-4481-a560-8d985a82ae74', 160000);
 SELECT bid('ceeaece4-ca5c-4d31-9fd6-90a90854fed9', 'feac2610-27df-4665-afae-0f536ed06ab5', 420000);
 SELECT bid('af80d0ea-78b9-45b1-a7b0-d1ddd0fbd6fe', 'c5f76419-eb27-4255-86ba-afbbe271114b', 195000);
+
+
+-- adjudicate(_invoice_id uuid, _bidder_account_id uuid)
+SELECT adjudicate('ceeaece4-ca5c-4d31-9fd6-90a90854fed9', 'feac2610-27df-4665-afae-0f536ed06ab5');
+
+
