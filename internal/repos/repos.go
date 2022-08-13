@@ -8,7 +8,7 @@ import (
 )
 
 type IInvestorsRepository interface {
-	GetAllInvestors() ([]*pb.Investor, error)
+	GetAllInvestors() (*[]*pb.Investor, error)
 }
 
 type InvestorsRepository struct {
@@ -24,7 +24,7 @@ func (repo *InvestorsRepository) GetAllInvestors() (*[]*pb.Investor, error) {
 }
 
 type IIssuersRepository interface {
-	GetAllIssuers() ([]*pb.Issuer, error)
+	GetAllIssuers() (*[]*pb.Issuer, error)
 }
 
 type IssuersRepository struct {
@@ -40,7 +40,7 @@ func (repo *IssuersRepository) GetAllIssuers() (*[]*pb.Issuer, error) {
 }
 
 type IInvoicesRepository interface {
-	GetAllInvoices() ([]*pb.Invoice, error)
+	GetAllInvoices() (*[]*pb.Invoice, error)
 }
 
 type InvoicesRepository struct {

@@ -33,7 +33,7 @@ func (s *InvestorServiceServer) GetAllInvestors(ctx context.Context, in *pb.Empt
 		return nil, fmt.Errorf("database error: %q", err)
 	}
 
-	return &pb.GetAllInvestorsResponse{Data: res}, nil
+	return &pb.GetAllInvestorsResponse{Data: *res}, nil
 }
 
 func (s *IssuerServiceServer) GetAllIssuers(ctx context.Context, in *pb.Empty) (*pb.GetAllIssuersResponse, error) {
@@ -44,7 +44,7 @@ func (s *IssuerServiceServer) GetAllIssuers(ctx context.Context, in *pb.Empty) (
 	if err != nil {
 		return nil, fmt.Errorf("database error: %q", err)
 	}
-	return &pb.GetAllIssuersResponse{Data: res}, nil
+	return &pb.GetAllIssuersResponse{Data: *res}, nil
 }
 
 func (s *InvoiceServiceServer) GetAllInvoices(ctx context.Context, in *pb.Empty) (*pb.GetAllInvoicesResponse, error) {
@@ -55,5 +55,5 @@ func (s *InvoiceServiceServer) GetAllInvoices(ctx context.Context, in *pb.Empty)
 	if err != nil {
 		return nil, fmt.Errorf("database error: %q", err)
 	}
-	return &pb.GetAllInvoicesResponse{Data: res}, nil
+	return &pb.GetAllInvoicesResponse{Data: *res}, nil
 }

@@ -5,19 +5,20 @@ import (
 	"testing"
 
 	pb "github.com/marcosantonastasi/arex_challenge/api/arex/v1"
+	data "github.com/marcosantonastasi/arex_challenge/internal/fixtures/data"
 )
 
 func TestFakeInvestorsRepository_GetAllInvestors(t *testing.T) {
 	tests := []struct {
 		name    string
 		repo    *FakeInvestorsRepository
-		want    []*pb.Investor
+		want    *[]*pb.Investor
 		wantErr bool
 	}{
 		{
 			name:    "GetAllInvestors () returns exactly the data json file",
 			repo:    &FakeInvestorsRepository{},
-			want:    FakeAllInvestorsList,
+			want:    data.FakeAllInvestorsList,
 			wantErr: false,
 		},
 	}
@@ -39,13 +40,13 @@ func TestFakeIssuersRepository_GetAllIssuers(t *testing.T) {
 	tests := []struct {
 		name    string
 		repo    *FakeIssuersRepository
-		want    []*pb.Issuer
+		want    *[]*pb.Issuer
 		wantErr bool
 	}{
 		{
 			name:    "GetAllIssuers () returns exactly the data json file",
 			repo:    &FakeIssuersRepository{},
-			want:    FakeAllIssuersList,
+			want:    data.FakeAllIssuersList,
 			wantErr: false,
 		},
 	}
@@ -67,13 +68,13 @@ func TestFakeInvoicesRepository_GetAllInvoices(t *testing.T) {
 	tests := []struct {
 		name    string
 		repo    *FakeInvoicesRepository
-		want    []*pb.Invoice
+		want    *[]*pb.Invoice
 		wantErr bool
 	}{
 		{
 			name:    "GetAllInvoices () returns exactly the data json file",
 			repo:    &FakeInvoicesRepository{},
-			want:    FakeAllInvoicesList,
+			want:    data.FakeAllInvoicesList,
 			wantErr: false,
 		},
 	}
