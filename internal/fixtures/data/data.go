@@ -2,7 +2,6 @@ package data
 
 import (
 	"encoding/json"
-	"fmt"
 	"io"
 	"os"
 	"path"
@@ -32,8 +31,6 @@ func init() {
 func loadFixtureDataJson(fileName string, dataVar any) {
 	_, b, _, _ := runtime.Caller(0)
 	filePath := path.Join(path.Dir(b), fileName)
-
-	fmt.Println("fileName, filePath", fileName, filePath)
 
 	file, fileErr := os.Open(filePath)
 	if fileErr != nil {

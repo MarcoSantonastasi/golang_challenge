@@ -2,32 +2,23 @@ package e2etest
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
-	"io"
 	"log"
 	"net"
 	"os"
-	"path"
 	"reflect"
-	"runtime"
 	"testing"
 	"time"
 
 	pb "github.com/marcosantonastasi/arex_challenge/api/arex/v1"
 	client "github.com/marcosantonastasi/arex_challenge/internal/client"
 	db "github.com/marcosantonastasi/arex_challenge/internal/db"
+	data "github.com/marcosantonastasi/arex_challenge/internal/fixtures/data"
 	repos "github.com/marcosantonastasi/arex_challenge/internal/repos"
 	server "github.com/marcosantonastasi/arex_challenge/internal/server"
 	grpc "google.golang.org/grpc"
 	insecure "google.golang.org/grpc/credentials/insecure"
 )
-
-var expectData = struct {
-	allInvestorsList []*pb.Investor
-	allIssuersList   []*pb.Issuer
-	allInvoicesList  []*pb.Invoice
-}{}
 
 var clientServices = struct {
 	investor client.InvestorServiceClient
@@ -36,7 +27,7 @@ var clientServices = struct {
 }{}
 
 func TestE2E_GetAllInvestors(t *testing.T) {
-	testCases := []struct {
+	tests := []struct {
 		desc    string
 		client  pb.InvestorServiceClient
 		want    *pb.GetAllInvestorsResponse
@@ -45,11 +36,11 @@ func TestE2E_GetAllInvestors(t *testing.T) {
 		{
 			desc:    "gets the list of all Investors",
 			client:  clientServices.investor,
-			want:    &pb.GetAllInvestorsResponse{Data: expectData.allInvestorsList},
+			want:    &pb.GetAllInvestorsResponse{Data: *data.SeededAllInvestorsList},
 			wantErr: false,
 		},
 	}
-	for _, tt := range testCases {
+	for _, tt := range tests {
 		t.Run(tt.desc, func(t *testing.T) {
 			ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 			defer cancel()
@@ -59,7 +50,7 @@ func TestE2E_GetAllInvestors(t *testing.T) {
 				return
 			}
 			if !reflect.DeepEqual(got.Data, tt.want.Data) {
-				t.Errorf("Got GetAllInvestors() = %v, but wanted %v", got.Data, tt.want.Data)
+				t.Errorf("Got GetAllInvestors() = %v, but wanted %v", got, tt.want)
 			}
 
 		})
@@ -76,7 +67,7 @@ func TestE2E_GetAllIssuers(t *testing.T) {
 		{
 			desc:    "gets the list of all Issuers",
 			client:  clientServices.issuer,
-			want:    &pb.GetAllIssuersResponse{Data: expectData.allIssuersList},
+			want:    &pb.GetAllIssuersResponse{Data: *data.SeededAllIssuersList},
 			wantErr: false,
 		},
 	}
@@ -90,7 +81,7 @@ func TestE2E_GetAllIssuers(t *testing.T) {
 				return
 			}
 			if !reflect.DeepEqual(got.Data, tt.want.Data) {
-				t.Errorf("Got GetAllIssuers() = %v, but wanted %v", got.Data, tt.want.Data)
+				t.Errorf("Got GetAllIssuers() = %v, but wanted %v", got, tt.want)
 			}
 
 		})
@@ -107,7 +98,7 @@ func TestE2E_GetAllInvoices(t *testing.T) {
 		{
 			desc:    "gets the list of all Invoices",
 			client:  clientServices.invoice,
-			want:    &pb.GetAllInvoicesResponse{Data: expectData.allInvoicesList},
+			want:    &pb.GetAllInvoicesResponse{Data: *data.SeededAllInvoicesList},
 			wantErr: false,
 		},
 	}
@@ -121,7 +112,7 @@ func TestE2E_GetAllInvoices(t *testing.T) {
 				return
 			}
 			if !reflect.DeepEqual(got.Data, tt.want.Data) {
-				t.Errorf("Got GetAllInvoices() = %v, but wanted %v", got.Data, tt.want.Data)
+				t.Errorf("Got GetAllInvoices() = %v, but wanted %v", got, tt.want)
 			}
 
 		})
@@ -129,77 +120,40 @@ func TestE2E_GetAllInvoices(t *testing.T) {
 }
 
 func TestMain(m *testing.M) {
-	loadTestData()
 
-	s := startBufferedServer()
+	s := startServer()
 	defer s.Stop()
 
-	conn := startBufferedClient()
-	defer conn.Close()
+	c := startClient()
+	defer c.Close()
+
+	fmt.Println(clientServices.investor, clientServices.issuer, clientServices.invoice)
 
 	os.Exit(m.Run())
 }
 
-func loadTestData() {
-	_, b, _, _ := runtime.Caller(0)
-	path := path.Dir(b)
-
-	investorsFile, investorsFileErr := os.Open(path + "/../data/seededInvestors.json")
-	if investorsFileErr != nil {
-		panic("cannot open " + path + "/../data/seededInvestors.json")
-	}
-	investorsData, investorsDataErr := io.ReadAll(investorsFile)
-	if investorsDataErr != nil {
-		panic("cannot read " + path + "/../data/seededInvestors.json")
-	}
-	investorsJsonErr := json.Unmarshal(investorsData, &expectData.allInvestorsList)
-	if investorsJsonErr != nil {
-		panic("cannot parse (unmarshall) JSON data from " + path + "/../data/seededInvestors.json")
-	}
-	defer investorsFile.Close()
-
-	issuersFile, issuersFileErr := os.Open(path + "/../data/seededIssuers.json")
-	if issuersFileErr != nil {
-		panic("cannot open " + path + "/../data/seededIssuers.json")
-	}
-	issuersData, issuersDataErr := io.ReadAll(issuersFile)
-	if issuersDataErr != nil {
-		panic("cannot read " + path + "/../data/seededIssuers.json")
-	}
-	issuersJsonErr := json.Unmarshal(issuersData, &expectData.allIssuersList)
-	if issuersJsonErr != nil {
-		panic("cannot parse (unmarshall) JSON data form " + path + "/../data/seededIssuers.json")
-	}
-	defer issuersFile.Close()
-
-	invoicesFile, invoicesFileErr := os.Open(path + "/../data/seededInvoices.json")
-	if invoicesFileErr != nil {
-		panic("cannot open " + path + "/../data/seededInvoices.json")
-	}
-	invoicesData, invoicesDataErr := io.ReadAll(invoicesFile)
-	if invoicesDataErr != nil {
-		panic("cannot read " + path + "/../data/seededInvoices.json")
-	}
-	invoicesJsonErr := json.Unmarshal(invoicesData, &expectData.allInvoicesList)
-	if invoicesJsonErr != nil {
-		panic("cannot parse (unmarshall) JSON data from " + path + "/../data/seededInvoices.json")
-	}
-	defer invoicesFile.Close()
-
-}
-
-func startBufferedServer() (s *grpc.Server) {
+func startServer() (s *grpc.Server) {
 	const port int = 50051
 
 	lis, err := net.Listen("tcp", fmt.Sprintf(":%d", port))
 	if err != nil {
 		log.Fatalf("failed to listen: %v", err)
 	}
-	s = grpc.NewServer()
 
-	pb.RegisterInvestorServiceServer(s, &server.InvestorServiceServer{Repo: &repos.InvestorsRepository{Db: &db.PgDb{Conn: db.DockerPG.Conn}}})
-	pb.RegisterIssuerServiceServer(s, &server.IssuerServiceServer{Repo: &repos.IssuersRepository{Db: &db.PgDb{Conn: db.DockerPG.Conn}}})
-	pb.RegisterInvoiceServiceServer(s, &server.InvoiceServiceServer{Repo: &repos.InvoicesRepository{Db: &db.PgDb{Conn: db.DockerPG.Conn}}})
+	pgUser := os.Getenv("POSTGRES_USER")
+	pgPwd := os.Getenv("POSTGRES_PASSWORD")
+	pgHostname := os.Getenv("POSTGRES_HOSTNAME")
+	pgDbname := os.Getenv("POSTGRES_DB")
+
+	dockerPgDb := db.NewPgDb(pgUser, pgPwd, pgHostname, pgDbname)
+
+	dockerPgDb.Connect()
+	defer dockerPgDb.Close()
+
+	s = grpc.NewServer()
+	pb.RegisterInvestorServiceServer(s, &server.InvestorServiceServer{Repo: &repos.InvestorsRepository{Db: dockerPgDb}})
+	pb.RegisterIssuerServiceServer(s, &server.IssuerServiceServer{Repo: &repos.IssuersRepository{Db: dockerPgDb}})
+	pb.RegisterInvoiceServiceServer(s, &server.InvoiceServiceServer{Repo: &repos.InvoicesRepository{Db: dockerPgDb}})
 	log.Printf("server listening at %v", lis.Addr())
 	go func() {
 		if err := s.Serve(lis); err != nil {
@@ -211,7 +165,7 @@ func startBufferedServer() (s *grpc.Server) {
 	return s
 }
 
-func startBufferedClient() (conn *grpc.ClientConn) {
+func startClient() (conn *grpc.ClientConn) {
 	addr := "localhost:50051"
 	conn, err := grpc.Dial(addr, grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {

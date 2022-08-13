@@ -6,6 +6,7 @@ import (
 	"testing"
 
 	pb "github.com/marcosantonastasi/arex_challenge/api/arex/v1"
+	data "github.com/marcosantonastasi/arex_challenge/internal/fixtures/data"
 	stubRepos "github.com/marcosantonastasi/arex_challenge/internal/fixtures/stubs/stubrepos"
 )
 
@@ -26,7 +27,7 @@ func TestInvestorServiceServer_GetAllInvestors(t *testing.T) {
 			name:    "gets all Investors on the repository (3 for newly seeded db)",
 			s:       &InvestorServiceServer{Repo: &stubRepos.FakeInvestorsRepository{}},
 			args:    args{ctx: context.Background(), in: &pb.Empty{}},
-			want:    &pb.GetAllInvestorsResponse{Data: stubRepos.FakeAllInvestorsList},
+			want:    &pb.GetAllInvestorsResponse{Data: *data.FakeAllInvestorsList},
 			wantErr: false,
 		},
 	}
@@ -60,7 +61,7 @@ func TestIssuerServiceServer_GetAllIssuers(t *testing.T) {
 			name:    "gets all Issuers on the repository (3 for newly seeded db)",
 			s:       &IssuerServiceServer{Repo: &stubRepos.FakeIssuersRepository{}},
 			args:    args{ctx: context.Background(), in: &pb.Empty{}},
-			want:    &pb.GetAllIssuersResponse{Data: stubRepos.FakeAllIssuersList},
+			want:    &pb.GetAllIssuersResponse{Data: *data.FakeAllIssuersList},
 			wantErr: false,
 		},
 	}
@@ -94,7 +95,7 @@ func TestInvoiceServiceServer_GetAllInvoices(t *testing.T) {
 			name:    "gets all Invoices on the repository (3 for newly seeded db)",
 			s:       &InvoiceServiceServer{Repo: &stubRepos.FakeInvoicesRepository{}},
 			args:    args{ctx: context.Background(), in: &pb.Empty{}},
-			want:    &pb.GetAllInvoicesResponse{Data: stubRepos.FakeAllInvoicesList},
+			want:    &pb.GetAllInvoicesResponse{Data: *data.FakeAllInvoicesList},
 			wantErr: false,
 		}}
 	for _, tt := range tests {
