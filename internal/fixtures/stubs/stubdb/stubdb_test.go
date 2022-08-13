@@ -6,18 +6,19 @@ import (
 
 	pb "github.com/marcosantonastasi/arex_challenge/api/arex/v1"
 	db "github.com/marcosantonastasi/arex_challenge/internal/db"
+	data "github.com/marcosantonastasi/arex_challenge/internal/fixtures/data"
 )
 
 func TestStubDb_GetAllInvestors(t *testing.T) {
 	tests := []struct {
 		name string
 		db   db.IDb
-		want []*pb.Investor
+		want *[]*pb.Investor
 	}{
 		{
 			name: "returns exactly the data json file",
-			db:   &StubDb{},
-			want: loadFakeInvestorsData(),
+			db:   TestStubDb,
+			want: data.FakeAllInvestorsList,
 		},
 	}
 	for _, tt := range tests {
@@ -33,12 +34,12 @@ func TestStubDb_GetAllIssuers(t *testing.T) {
 	tests := []struct {
 		name string
 		db   db.IDb
-		want []*pb.Issuer
+		want *[]*pb.Issuer
 	}{
 		{
 			name: "returns exactly the data json file",
-			db:   &StubDb{},
-			want: loadFakeIssuersData(),
+			db:   TestStubDb,
+			want: data.FakeAllIssuersList,
 		},
 	}
 	for _, tt := range tests {
@@ -54,12 +55,12 @@ func TestStubDb_GetAllInvoices(t *testing.T) {
 	tests := []struct {
 		name string
 		db   db.IDb
-		want []*pb.Invoice
+		want *[]*pb.Invoice
 	}{
 		{
 			name: "returns exactly the data json file",
-			db:   &StubDb{},
-			want: loadFakeInvoicesData(),
+			db:   TestStubDb,
+			want: data.FakeAllInvoicesList,
 		},
 	}
 	for _, tt := range tests {
@@ -79,8 +80,8 @@ func TestStubDb_NewInvoice(t *testing.T) {
 	}{
 		{
 			name: "returns exactly the data json file",
-			db:   &StubDb{},
-			want: loadFakeNewInvoiceData(),
+			db:   TestStubDb,
+			want: data.NewInvoiceData,
 		},
 	}
 	for _, tt := range tests {

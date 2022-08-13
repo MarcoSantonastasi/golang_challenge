@@ -5,20 +5,21 @@ import (
 	"testing"
 
 	pb "github.com/marcosantonastasi/arex_challenge/api/arex/v1"
-	fakedb "github.com/marcosantonastasi/arex_challenge/test/fakes/fakedb"
+	data "github.com/marcosantonastasi/arex_challenge/internal/fixtures/data"
+	stubdb "github.com/marcosantonastasi/arex_challenge/internal/fixtures/stubs/stubdb"
 )
 
 func TestInvestorsRepository_GetAllInvestors(t *testing.T) {
 	tests := []struct {
 		name    string
 		repo    *InvestorsRepository
-		want    []*pb.Investor
+		want    *[]*pb.Investor
 		wantErr bool
 	}{
 		{
 			name:    "gets all Investors on the database (3 for newly seeded db)",
-			repo:    &InvestorsRepository{Db: &fakedb.FakeDb{}},
-			want:    fakedb.FakeAllInvestorsList,
+			repo:    &InvestorsRepository{Db: stubdb.TestStubDb},
+			want:    data.FakeAllInvestorsList,
 			wantErr: false,
 		},
 	}
@@ -40,13 +41,13 @@ func TestIssuersRepository_GetAllIssuers(t *testing.T) {
 	tests := []struct {
 		name    string
 		repo    *IssuersRepository
-		want    []*pb.Issuer
+		want    *[]*pb.Issuer
 		wantErr bool
 	}{
 		{
 			name:    "gets all Issuers on the database (3 for newly seeded db)",
-			repo:    &IssuersRepository{Db: &fakedb.FakeDb{}},
-			want:    fakedb.FakeAllIssuersList,
+			repo:    &IssuersRepository{Db: stubdb.TestStubDb},
+			want:    data.FakeAllIssuersList,
 			wantErr: false,
 		},
 	}
@@ -68,13 +69,13 @@ func TestInvoicesRepository_GetAllInvoices(t *testing.T) {
 	tests := []struct {
 		name    string
 		repo    *InvoicesRepository
-		want    []*pb.Invoice
+		want    *[]*pb.Invoice
 		wantErr bool
 	}{
 		{
 			name:    "gets all Invoices on the database (3 for newly seeded db)",
-			repo:    &InvoicesRepository{Db: &fakedb.FakeDb{}},
-			want:    fakedb.FakeAllInvoicesList,
+			repo:    &InvoicesRepository{Db: stubdb.TestStubDb},
+			want:    data.FakeAllInvoicesList,
 			wantErr: false,
 		},
 	}

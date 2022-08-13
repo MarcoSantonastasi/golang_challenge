@@ -15,6 +15,6 @@ Time has been spent mostly learning and applying knowledge at a slow pace to mak
 ### Iteration 1: Basic DB APIs
 
 At the end of Iteration 1 I have basic database APIs with a corresponding storage model in place, comprising all the entities and the triggers and the fucnitons to support the following basic functionality:
-    1. new_invoice(issuer_id, ref, denom, amount, ask) => creates a new invoice in the corresponding table
+    1. new_invoice(issuer_account_id, ref, denom, amount, ask) => creates a new invoice in the corresponding table
     1. new_bid(bidder_id, invoice, amount) => creates a new bid veryfying sufficient funds and reserving funds
 The DB is also seeded accordingly with just a few entries to make testing possible

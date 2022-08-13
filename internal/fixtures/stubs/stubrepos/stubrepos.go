@@ -1,4 +1,4 @@
-package fakerepos
+package stubrepos
 
 import (
 	"encoding/json"

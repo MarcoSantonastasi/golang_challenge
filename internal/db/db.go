@@ -12,10 +12,13 @@ import (
 type IDb interface {
 	Connect()
 	Close()
-	GetAllInvestors() []*pb.Investor
-	GetAllIssuers() []*pb.Issuer
-	GetAllInvoices() []*pb.Invoice
+	GetAllInvestors() *[]*pb.Investor
+	GetAllIssuers() *[]*pb.Issuer
+	GetAllInvoices() *[]*pb.Invoice
 	NewInvoice(*pb.Invoice) *pb.Invoice
+	Bid(invoiceId string) any
+	Adjudicate(invoiceId string) any
+	AllRunningBidsToLost(invoiceId string) any
 }
 
 type PgDb struct {
@@ -30,7 +33,6 @@ func (db *PgDb) Connect() {
 	conn, err := pg.Connect(context.Background(), fmt.Sprintf("postgres://%s:%s@%s:5432/%s", db.pgUser, db.pgPwd, db.pgHostname, db.pgDbname))
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Unable to connect to database: %v\n", err)
-		os.Exit(1)
 	}
 	db.conn = conn
 }
@@ -43,7 +45,8 @@ func (db *PgDb) Close() {
 	db.conn = nil
 }
 
-func (db *PgDb) GetAllInvestors() (data []*pb.Investor) {
+func (db *PgDb) GetAllInvestors() *[]*pb.Investor {
+	data := new([]*pb.Investor)
 	rows, err := db.conn.Query(context.Background(), "select id::varchar, name, balance from investors")
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Query failed: %v\n", err)
@@ -54,15 +57,16 @@ func (db *PgDb) GetAllInvestors() (data []*pb.Investor) {
 		if err := rows.Scan(&row.Id, &row.Name, &row.Balance); err != nil {
 			fmt.Printf("%v", err)
 		}
-		data = append(data, row)
+		*data = append(*data, row)
 	}
 	if err := rows.Err(); err != nil {
 		fmt.Printf("%v", err)
 	}
-	return
+	return data
 }
 
-func (db *PgDb) GetAllIssuers() (data []*pb.Issuer) {
+func (db *PgDb) GetAllIssuers() *[]*pb.Issuer {
+	data := new([]*pb.Issuer)
 	rows, err := db.conn.Query(context.Background(), "select id::varchar, name, balance from issuers")
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Query failed: %v\n", err)
@@ -73,20 +77,21 @@ func (db *PgDb) GetAllIssuers() (data []*pb.Issuer) {
 		if err := rows.Scan(&row.Id, &row.Name, &row.Balance); err != nil {
 			fmt.Printf("%v", err)
 		}
-		data = append(data, row)
+		*data = append(*data, row)
 	}
 	if err := rows.Err(); err != nil {
 		fmt.Printf("%v", err)
 	}
-	return
+	return data
 }
 
-func (db *PgDb) GetAllInvoices() (data []*pb.Invoice) {
+func (db *PgDb) GetAllInvoices() *[]*pb.Invoice {
+	data := new([]*pb.Invoice)
 	rows, err := db.conn.Query(
 		context.Background(),
 		`select
 			id::varchar,
-			issuer_id,
+			issuer_account_id,
 			reference,
 			denom,
 			amount,
@@ -99,23 +104,23 @@ func (db *PgDb) GetAllInvoices() (data []*pb.Invoice) {
 	defer rows.Close()
 	for rows.Next() {
 		row := new(pb.Invoice)
-		if err := rows.Scan(&row.Id, &row.IssuerId, &row.Reference, &row.Denom, &row.Amount, &row.Asking); err != nil {
+		if err := rows.Scan(&row.Id, &row.IssuerAccountId, &row.Reference, &row.Denom, &row.Amount, &row.Asking); err != nil {
 			fmt.Printf("%v", err)
 		}
-		data = append(data, row)
+		*data = append(*data, row)
 	}
 	if err := rows.Err(); err != nil {
 		fmt.Printf("%v", err)
 	}
-	return
+	return data
 }
 
-func (db *PgDb) NewInvoice(newInvoiceData *pb.Invoice) (data *pb.Invoice) {
-	data = new(pb.Invoice)
+func (db *PgDb) NewInvoice(newInvoiceData *pb.Invoice) *pb.Invoice {
+	data := new(pb.Invoice)
 	row := db.conn.QueryRow(
 		context.Background(),
 		`insert into invoices (
-			issuer_id,
+			issuer_account_id,
 			reference,
 			denom,
 			amount,
@@ -124,22 +129,80 @@ func (db *PgDb) NewInvoice(newInvoiceData *pb.Invoice) (data *pb.Invoice) {
 		values($1, $2, $3, $4, $5)
 		returning
 		    id,
-			issuer_id,
+			issuer_account_id,
 			reference,
 			denom,
 			amount,
 			asking`,
-		newInvoiceData.IssuerId,
+		newInvoiceData.IssuerAccountId,
 		newInvoiceData.Reference,
 		newInvoiceData.Denom,
 		newInvoiceData.Amount,
 		newInvoiceData.Asking,
 	)
 
-	if err := row.Scan(&data.Id, &data.IssuerId, &data.Reference, &data.Denom, &data.Amount, &data.Asking); err != nil {
+	if err := row.Scan(&data.Id, &data.IssuerAccountId, &data.Reference, &data.Denom, &data.Amount, &data.Asking); err != nil {
 		fmt.Printf("%+v", err)
 	}
-	return
+	return data
+}
+
+func (db *PgDb) Bid(invoiceId string) any {
+
+	data := new(struct {
+		invoiceId       string
+		bidderAccountId string
+		offer           int64
+	})
+
+	row := db.conn.QueryRow(
+		context.Background(),
+		"select bid($1)",
+		invoiceId,
+	)
+
+	if err := row.Scan(&data.invoiceId, &data.bidderAccountId, &data.offer); err != nil {
+		fmt.Printf("%+v", err)
+	}
+	return data
+}
+
+func (db *PgDb) Adjudicate(invoiceId string) any {
+	data := new(struct {
+		invoiceId       string
+		bidderAccountId string
+		amount          int64
+	})
+
+	row := db.conn.QueryRow(
+		context.Background(),
+		"select adjudicate($1)",
+		invoiceId,
+	)
+
+	if err := row.Scan(&data.invoiceId, &data.bidderAccountId, &data.amount); err != nil {
+		fmt.Printf("%+v", err)
+	}
+
+	return data
+}
+
+func (db *PgDb) AllRunningBidsToLost(invoiceId string) any {
+	data := new(struct {
+		invoiceId string
+		bidId     string
+	})
+
+	row := db.conn.QueryRow(
+		context.Background(),
+		"select adjudicate($1)",
+		invoiceId,
+	)
+
+	if err := row.Scan(&data.invoiceId, &data.bidId); err != nil {
+		fmt.Printf("%+v", err)
+	}
+	return data
 }
 
 func NewPgDb(
