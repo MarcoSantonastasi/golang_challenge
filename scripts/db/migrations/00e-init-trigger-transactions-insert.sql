@@ -2,15 +2,15 @@ CREATE OR REPLACE FUNCTION check_sufficient_balance_on_transactions_insert()
 RETURNS TRIGGER AS $$
 
 DECLARE
-  _debit_balance bigint;
+  _debit_account_balance bigint;
 
 BEGIN
 
   SELECT balance FROM accounts
   WHERE id = new.debit_account_id
-  INTO _debit_balance;
+  INTO _debit_account_balance;
   
-  IF new.amount > _debit_balance THEN
+  IF new.amount > _debit_account_balance THEN
     RAISE EXCEPTION 'insufficient funds';
   END IF;
 

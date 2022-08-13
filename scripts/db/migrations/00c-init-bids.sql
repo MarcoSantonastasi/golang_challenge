@@ -2,7 +2,7 @@ DROP TABLE IF EXISTS bids CASCADE;
 
 DROP TYPE IF EXISTS type_bid_state;
 
-CREATE TYPE type_bid_state AS ENUM ('ACTIVE', 'LOST', 'WON');
+CREATE TYPE type_bid_state AS ENUM ('RUNNING', 'WIDTHDRAWN', 'WON', 'LOST');
 
 CREATE TABLE bids
 (
@@ -11,7 +11,7 @@ CREATE TABLE bids
     invoice_id uuid NOT NULL,
     bidder_account_id uuid NOT NULL,
     offer bigint NOT NULL,
-    state type_bid_state NOT NULL DEFAULT 'ACTIVE'::type_bid_state,
+    state type_bid_state NOT NULL DEFAULT 'RUNNING'::type_bid_state,
     CONSTRAINT bids_pkey PRIMARY KEY (id),
     CONSTRAINT bids_invoice_id_fkey FOREIGN KEY (invoice_id)
       REFERENCES invoices(id) MATCH SIMPLE
@@ -20,9 +20,12 @@ CREATE TABLE bids
     CONSTRAINT bids_bidder_account_id_fkey FOREIGN KEY (bidder_account_id)
       REFERENCES accounts(id) MATCH SIMPLE
       ON UPDATE NO ACTION
-      ON DELETE NO ACTION,
-    CONSTRAINT bids_invoice_id_bidder_account_id_state_unique UNIQUE(invoice_id, bidder_account_id, state)
+      ON DELETE NO ACTION
 );
 
-COMMENT ON TABLE ledger IS
+CREATE UNIQUE INDEX bids_invoice_id_bidder_account_id_state_running_unique
+ON bids (invoice_id, bidder_account_id, state)
+  WHERE state = 'RUNNING'::type_bid_state;
+
+COMMENT ON TABLE bids IS
   'Bids represent Investor offers on invoices. They are the grouping abstraction for reconciling money transactions related to auctioning activity';
