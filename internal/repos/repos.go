@@ -15,7 +15,7 @@ type InvestorsRepository struct {
 	Db db.IDb
 }
 
-func (repo *InvestorsRepository) GetAllInvestors() ([]*pb.Investor, error) {
+func (repo *InvestorsRepository) GetAllInvestors() (*[]*pb.Investor, error) {
 	if repo.Db == nil {
 		return nil, status.Error(codes.Internal, "no database found for Investors")
 	}
@@ -31,7 +31,7 @@ type IssuersRepository struct {
 	Db db.IDb
 }
 
-func (repo *IssuersRepository) GetAllIssuers() ([]*pb.Issuer, error) {
+func (repo *IssuersRepository) GetAllIssuers() (*[]*pb.Issuer, error) {
 	if repo.Db == nil {
 		return nil, status.Error(codes.Internal, "no database found for Issuers")
 	}
@@ -47,7 +47,7 @@ type InvoicesRepository struct {
 	Db db.IDb
 }
 
-func (repo *InvoicesRepository) GetAllInvoices() ([]*pb.Invoice, error) {
+func (repo *InvoicesRepository) GetAllInvoices() (*[]*pb.Invoice, error) {
 	if repo.Db == nil {
 		return nil, status.Error(codes.Internal, "no database found for Invoices")
 	}

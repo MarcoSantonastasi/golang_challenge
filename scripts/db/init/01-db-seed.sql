@@ -84,7 +84,7 @@ VALUES
 (
     'ceeaece4-ca5c-4d31-9fd6-90a90854fed9'::uuid,
     'de16507a-61b3-43f6-b977-4312f52ece1b'::uuid,
-    'INV-3-2022',
+    'INV-2022-3',
     'EUR',
     450000,
     300000

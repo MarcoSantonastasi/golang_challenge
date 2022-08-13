@@ -6,7 +6,7 @@ import (
 	"testing"
 
 	pb "github.com/marcosantonastasi/arex_challenge/api/arex/v1"
-	fakeRepos "github.com/marcosantonastasi/arex_challenge/test/fakes/fakerepos"
+	stubRepos "github.com/marcosantonastasi/arex_challenge/internal/fixtures/stubs/stubrepos"
 )
 
 func TestInvestorServiceServer_GetAllInvestors(t *testing.T) {
@@ -24,9 +24,9 @@ func TestInvestorServiceServer_GetAllInvestors(t *testing.T) {
 	}{
 		{
 			name:    "gets all Investors on the repository (3 for newly seeded db)",
-			s:       &InvestorServiceServer{Repo: &fakeRepos.FakeInvestorsRepository{}},
+			s:       &InvestorServiceServer{Repo: &stubRepos.FakeInvestorsRepository{}},
 			args:    args{ctx: context.Background(), in: &pb.Empty{}},
-			want:    &pb.GetAllInvestorsResponse{Data: fakeRepos.FakeAllInvestorsList},
+			want:    &pb.GetAllInvestorsResponse{Data: stubRepos.FakeAllInvestorsList},
 			wantErr: false,
 		},
 	}
@@ -58,9 +58,9 @@ func TestIssuerServiceServer_GetAllIssuers(t *testing.T) {
 	}{
 		{
 			name:    "gets all Issuers on the repository (3 for newly seeded db)",
-			s:       &IssuerServiceServer{Repo: &fakeRepos.FakeIssuersRepository{}},
+			s:       &IssuerServiceServer{Repo: &stubRepos.FakeIssuersRepository{}},
 			args:    args{ctx: context.Background(), in: &pb.Empty{}},
-			want:    &pb.GetAllIssuersResponse{Data: fakeRepos.FakeAllIssuersList},
+			want:    &pb.GetAllIssuersResponse{Data: stubRepos.FakeAllIssuersList},
 			wantErr: false,
 		},
 	}
@@ -92,9 +92,9 @@ func TestInvoiceServiceServer_GetAllInvoices(t *testing.T) {
 	}{
 		{
 			name:    "gets all Invoices on the repository (3 for newly seeded db)",
-			s:       &InvoiceServiceServer{Repo: &fakeRepos.FakeInvoicesRepository{}},
+			s:       &InvoiceServiceServer{Repo: &stubRepos.FakeInvoicesRepository{}},
 			args:    args{ctx: context.Background(), in: &pb.Empty{}},
-			want:    &pb.GetAllInvoicesResponse{Data: fakeRepos.FakeAllInvoicesList},
+			want:    &pb.GetAllInvoicesResponse{Data: stubRepos.FakeAllInvoicesList},
 			wantErr: false,
 		}}
 	for _, tt := range tests {

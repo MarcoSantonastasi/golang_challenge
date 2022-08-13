@@ -20,7 +20,7 @@ message Issuer {
 
 message Invoice {
     string id = 1;
-    string issuer_id = 2;
+    string issuer_account_id = 2;
     string reference = 3;
     string denom = 4;
     int64 amount = 5;
@@ -51,7 +51,7 @@ message GetAllInvoicesResponse{
 }
 
 message NewInvoiceRequest{
-    string issuer_id = 1;
+    string issuer_account_id = 1;
     string reference = 2;
     string denom = 3;
     int64 amount = 4;
