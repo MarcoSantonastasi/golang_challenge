@@ -34,7 +34,7 @@ func TestE2E_GetAllInvestors(t *testing.T) {
 				return
 			}
 			if !reflect.DeepEqual(got.Data, tt.want.Data) {
-				t.Errorf("Got GetAllInvestors() = %v, but wanted %v", got, tt.want)
+				t.Errorf("Got GetAllInvestors() = \n%+v,\nbut wanted \n%+v", got, tt.want)
 			}
 
 		})

@@ -2,6 +2,7 @@ package data
 
 import (
 	"encoding/json"
+	"fmt"
 	"io"
 	"os"
 	"path"
@@ -32,6 +33,9 @@ func init() {
 	loadFixtureDataJson("seededBids.json", SeededAllBidsList)
 	loadFixtureDataJson("fakeBids.json", FakeAllBidsList)
 	loadFixtureDataJson("newBid.json", NewBidData)
+
+	fmt.Println(NewInvoiceData)
+	fmt.Println(NewBidData)
 }
 
 func loadFixtureDataJson(fileName string, dataVar any) {
@@ -51,6 +55,6 @@ func loadFixtureDataJson(fileName string, dataVar any) {
 
 	jsonErr := json.Unmarshal(data, dataVar)
 	if jsonErr != nil {
-		panic("cannot parse (unmarshall) JSON data from newInvoice.json")
+		panic("cannot parse (unmarshall) JSON data from " + filePath)
 	}
 }
