@@ -193,7 +193,7 @@ CREATE OR REPLACE FUNCTION bid (
   INOUT _invoice_id uuid,
   INOUT _bidder_account_id uuid,
   INOUT _offer bigint,
-  OUT _state
+  OUT _state type_bid_state
 )
 AS $$
 
