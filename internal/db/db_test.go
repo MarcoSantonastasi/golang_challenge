@@ -127,7 +127,13 @@ func TestDb_NewInvoice(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got := tt.db.NewInvoice(tt.want)
+			got := tt.db.NewInvoice(
+				&pb.NewInvoiceRequest{
+					IssuerAccountId: data.NewInvoiceData.IssuerAccountId,
+					Reference:       data.NewInvoiceData.Reference,
+					Denom:           data.NewInvoiceData.Denom,
+					Amount:          data.NewInvoiceData.Amount,
+					Asking:          data.NewInvoiceData.Asking})
 			got.Id = ""
 			if !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("Got:\n \t%v\n expected:\n \t%v\n", got, tt.want)

@@ -8,6 +8,7 @@ import (
 
 	pb "github.com/marcosantonastasi/arex_challenge/api/arex/v1"
 	client "github.com/marcosantonastasi/arex_challenge/internal/client"
+	"github.com/marcosantonastasi/arex_challenge/internal/fixtures/data"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 )
@@ -56,4 +57,9 @@ func main() {
 	}
 	log.Printf("All Bids: %v", resGetAllBids.GetData())
 
+	resBid, errBid := bidServiceClient.NewBid(ctx, &pb.NewBidRequest{InvoiceId: data.NewBidData.InvoiceId, BidderAccountId: data.NewBidData.BidderAccountId, Offer: data.NewBidData.Offer})
+	if errBid != nil {
+		log.Fatalf("could not Bid: %v", errGetAllBids)
+	}
+	log.Printf("Bid: %v", resBid.GetData())
 }
