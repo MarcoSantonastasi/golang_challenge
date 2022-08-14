@@ -41,6 +41,7 @@ func (repo *IssuersRepository) GetAllIssuers() (*[]*pb.Issuer, error) {
 
 type IBidsRepository interface {
 	GetAllBids() (*[]*pb.Bid, error)
+	NewBid(*pb.NewBidRequest) (*pb.Bid, error)
 }
 
 type BidsRepository struct {
@@ -55,8 +56,17 @@ func (repo *BidsRepository) GetAllBids() (*[]*pb.Bid, error) {
 	return data, nil
 }
 
+func (repo *BidsRepository) NewBid(newBid *pb.NewBidRequest) (*pb.Bid, error) {
+	if repo.Db == nil {
+		return nil, status.Error(codes.Internal, "no database found for Bids")
+	}
+	data := repo.Db.NewBid(newBid)
+	return data, nil
+}
+
 type IInvoicesRepository interface {
 	GetAllInvoices() (*[]*pb.Invoice, error)
+	NewInvoice(*pb.NewInvoiceRequest) (*pb.Invoice, error)
 }
 
 type InvoicesRepository struct {
@@ -68,5 +78,13 @@ func (repo *InvoicesRepository) GetAllInvoices() (*[]*pb.Invoice, error) {
 		return nil, status.Error(codes.Internal, "no database found for Invoices")
 	}
 	data := repo.Db.GetAllInvoices()
+	return data, nil
+}
+
+func (repo *InvoicesRepository) NewInvoice(newInvoice *pb.NewInvoiceRequest) (*pb.Invoice, error) {
+	if repo.Db == nil {
+		return nil, status.Error(codes.Internal, "no database found for Invoices")
+	}
+	data := repo.Db.NewInvoice(newInvoice)
 	return data, nil
 }

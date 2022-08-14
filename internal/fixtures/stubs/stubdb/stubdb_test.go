@@ -86,7 +86,13 @@ func TestStubDb_NewInvoice(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := tt.db.NewInvoice(tt.want); !reflect.DeepEqual(got, tt.want) {
+			newInvoiceRequest := &pb.NewInvoiceRequest{
+				IssuerAccountId: data.NewInvoiceData.IssuerAccountId,
+				Reference:       data.NewInvoiceData.Reference,
+				Denom:           data.NewInvoiceData.Denom,
+				Amount:          data.NewInvoiceData.Amount,
+				Asking:          data.NewInvoiceData.Asking}
+			if got := tt.db.NewInvoice(newInvoiceRequest); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("FakeDb.NewInvoice() = %v, want %v", got, tt.want)
 			}
 		})

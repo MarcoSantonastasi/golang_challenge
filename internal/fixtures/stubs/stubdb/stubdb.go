@@ -24,24 +24,16 @@ func (db *StubDb) GetAllBids() *[]*pb.Bid {
 	return data.FakeAllBidsList
 }
 
+func (db *StubDb) NewBid(*pb.NewBidRequest) *pb.Bid {
+	return data.NewBidData
+}
+
 func (db *StubDb) GetAllInvoices() *[]*pb.Invoice {
 	return data.FakeAllInvoicesList
 }
 
-func (db *StubDb) NewInvoice(*pb.Invoice) *pb.Invoice {
+func (db *StubDb) NewInvoice(*pb.NewInvoiceRequest) *pb.Invoice {
 	return data.NewInvoiceData
-}
-
-func (db *StubDb) Bid(invoiceId string) any {
-	return struct {
-		invoiceId       string
-		bidderAccountId string
-		offer           int64
-	}{
-		invoiceId:       "",
-		bidderAccountId: "",
-		offer:           0,
-	}
 }
 
 func (db *StubDb) Adjudicate(invoiceId string) any {

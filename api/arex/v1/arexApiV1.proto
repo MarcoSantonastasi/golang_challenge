@@ -9,13 +9,13 @@ message Empty {}
 message Investor {
     string id = 1;
     string name = 2;
-    int32  balance = 3;
+    int64  balance = 3;
 }
 
 message Issuer {
     string id = 1;
     string name = 2;
-    int32  balance = 3;
+    int64  balance = 3;
 }
 
 message Invoice {
@@ -58,8 +58,19 @@ message GetAllBidsResponse{
     repeated Bid data = 1;
 }
 
+message NewBidRequest{
+    string invoice_id = 1;
+    string bidder_account_id = 2;
+    int64 offer = 3;
+}
+
+message NewBidResponse{
+    Bid data = 1;
+}
+
 service BidService {
     rpc GetAllBids(Empty) returns (GetAllBidsResponse);
+    rpc NewBid(NewBidRequest) returns (NewBidResponse);
 }
 
 

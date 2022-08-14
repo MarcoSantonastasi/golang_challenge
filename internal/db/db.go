@@ -16,8 +16,8 @@ type IDb interface {
 	GetAllIssuers() *[]*pb.Issuer
 	GetAllBids() *[]*pb.Bid
 	GetAllInvoices() *[]*pb.Invoice
-	NewInvoice(*pb.Invoice) *pb.Invoice
-	Bid(invoiceId string) any
+	NewInvoice(*pb.NewInvoiceRequest) *pb.Invoice
+	NewBid(*pb.NewBidRequest) *pb.Bid
 	Adjudicate(invoiceId string) any
 	AllRunningBidsToLost(invoiceId string) any
 }
@@ -115,6 +115,24 @@ func (db *PgDb) GetAllBids() *[]*pb.Bid {
 	return data
 }
 
+func (db *PgDb) NewBid(newBid *pb.NewBidRequest) *pb.Bid {
+
+	data := new(pb.Bid)
+
+	row := db.conn.QueryRow(
+		context.Background(),
+		"select bid($1, $2, $3)",
+		newBid.InvoiceId,
+		newBid.BidderAccountId,
+		newBid.Offer,
+	)
+
+	if err := row.Scan(&data.Id, &data.InvoiceId, &data.BidderAccountId, &data.Offer); err != nil {
+		fmt.Printf("%+v", err)
+	}
+	return data
+}
+
 func (db *PgDb) GetAllInvoices() *[]*pb.Invoice {
 	data := new([]*pb.Invoice)
 	rows, err := db.conn.Query(
@@ -146,7 +164,7 @@ func (db *PgDb) GetAllInvoices() *[]*pb.Invoice {
 	return data
 }
 
-func (db *PgDb) NewInvoice(newInvoiceData *pb.Invoice) *pb.Invoice {
+func (db *PgDb) NewInvoice(newInvoiceData *pb.NewInvoiceRequest) *pb.Invoice {
 	data := new(pb.Invoice)
 	row := db.conn.QueryRow(
 		context.Background(),
@@ -173,26 +191,6 @@ func (db *PgDb) NewInvoice(newInvoiceData *pb.Invoice) *pb.Invoice {
 	)
 
 	if err := row.Scan(&data.Id, &data.IssuerAccountId, &data.Reference, &data.Denom, &data.Amount, &data.Asking); err != nil {
-		fmt.Printf("%+v", err)
-	}
-	return data
-}
-
-func (db *PgDb) Bid(invoiceId string) any {
-
-	data := new(struct {
-		invoiceId       string
-		bidderAccountId string
-		offer           int64
-	})
-
-	row := db.conn.QueryRow(
-		context.Background(),
-		"select bid($1)",
-		invoiceId,
-	)
-
-	if err := row.Scan(&data.invoiceId, &data.bidderAccountId, &data.offer); err != nil {
 		fmt.Printf("%+v", err)
 	}
 	return data

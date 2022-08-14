@@ -25,3 +25,18 @@ type FakeInvoicesRepository struct {
 func (repo *FakeInvoicesRepository) GetAllInvoices() (*[]*pb.Invoice, error) {
 	return data.FakeAllInvoicesList, nil
 }
+
+func (repo *FakeInvoicesRepository) NewInvoice(*pb.NewInvoiceRequest) (*pb.Invoice, error) {
+	return data.NewInvoiceData, nil
+}
+
+type FakeBidsRepository struct {
+}
+
+func (repo *FakeBidsRepository) GetAllBids() (*[]*pb.Bid, error) {
+	return data.FakeAllBidsList, nil
+}
+
+func (repo *FakeBidsRepository) NewBid(*pb.NewBidRequest) (*pb.Bid, error) {
+	return data.NewBidData, nil
+}

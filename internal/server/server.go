@@ -65,6 +65,17 @@ func (s *BidServiceServer) GetAllBids(ctx context.Context, in *pb.Empty) (*pb.Ge
 	return &pb.GetAllBidsResponse{Data: *res}, nil
 }
 
+func (s *BidServiceServer) NewBid(ctx context.Context, in *pb.NewBidRequest) (*pb.NewBidResponse, error) {
+	if s.Repo == nil {
+		return nil, status.Error(codes.Internal, "no repository found for Bids")
+	}
+	res, err := s.Repo.NewBid(in)
+	if err != nil {
+		return nil, fmt.Errorf("database error: %q", err)
+	}
+	return &pb.NewBidResponse{Data: res}, nil
+}
+
 func (s *InvoiceServiceServer) GetAllInvoices(ctx context.Context, in *pb.Empty) (*pb.GetAllInvoicesResponse, error) {
 	if s.Repo == nil {
 		return nil, status.Error(codes.Internal, "no repository found for Invoices")
@@ -74,4 +85,15 @@ func (s *InvoiceServiceServer) GetAllInvoices(ctx context.Context, in *pb.Empty)
 		return nil, fmt.Errorf("database error: %q", err)
 	}
 	return &pb.GetAllInvoicesResponse{Data: *res}, nil
+}
+
+func (s *InvoiceServiceServer) NewInvoice(ctx context.Context, in *pb.NewInvoiceRequest) (*pb.NewInvoiceResponse, error) {
+	if s.Repo == nil {
+		return nil, status.Error(codes.Internal, "no repository found for Invoices")
+	}
+	res, err := s.Repo.NewInvoice(in)
+	if err != nil {
+		return nil, fmt.Errorf("database error: %q", err)
+	}
+	return &pb.NewInvoiceResponse{Data: res}, nil
 }
