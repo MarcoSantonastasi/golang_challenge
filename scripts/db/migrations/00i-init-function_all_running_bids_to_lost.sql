@@ -30,7 +30,8 @@ BEGIN
 	  bid_id, credit_account_id, escrow_account.id AS debit_account_id, amount
   FROM
 	  running_bids,
-	  escrow_account;
+	  escrow_account
+  RETURNING bid_id INTO _bid_id;
 
 RETURN;
 END;
