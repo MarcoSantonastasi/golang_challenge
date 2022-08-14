@@ -118,8 +118,9 @@ func TestDb_NewBid(t *testing.T) {
 			}
 
 			// Trick to pass the test withou killing myself with json values
-			tt.want.Id = got.Id
-			got.State = tt.want.State
+			if got != nil {
+				tt.want.Id = got.Id
+			}
 
 			if !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("Got:\n%v\nexpected:\n%v", got, tt.want)

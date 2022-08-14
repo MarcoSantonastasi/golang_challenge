@@ -64,7 +64,10 @@ func TestE2E_NewBid(t *testing.T) {
 				return
 			}
 
-			tt.want.Data.Id = got.Data.Id
+			// trick to not go crazy with json data
+			if got != nil {
+				tt.want.Data.Id = got.Data.Id
+			}
 
 			if !reflect.DeepEqual(got.Data, tt.want.Data) {
 				t.Errorf("Got Bid() = %v, but wanted %v", got, tt.want)

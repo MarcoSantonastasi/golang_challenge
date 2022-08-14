@@ -51,13 +51,29 @@ func main() {
 	}
 	log.Printf("All Invoices: %v", resGetAllInvoices.GetData())
 
+	resNewInvoice, errNewInvoice := invoiceServiceClient.NewInvoice(ctx, &pb.NewInvoiceRequest{
+		IssuerAccountId: data.NewInvoiceData.IssuerAccountId,
+		Reference:       data.NewInvoiceData.Reference,
+		Denom:           data.NewInvoiceData.Denom,
+		Amount:          data.NewInvoiceData.Amount,
+		Asking:          data.NewInvoiceData.Asking,
+	})
+	if errNewInvoice != nil {
+		log.Fatalf("could not create new Invoice: %v", errNewInvoice)
+	}
+	log.Printf("New Invoice: %v", resNewInvoice.GetData())
+
 	resGetAllBids, errGetAllBids := bidServiceClient.GetAllBids(ctx, &pb.Empty{})
 	if errGetAllBids != nil {
 		log.Fatalf("could not get Bids: %v", errGetAllBids)
 	}
 	log.Printf("All Bids: %v", resGetAllBids.GetData())
 
-	resBid, errBid := bidServiceClient.NewBid(ctx, &pb.NewBidRequest{InvoiceId: data.NewBidData.InvoiceId, BidderAccountId: data.NewBidData.BidderAccountId, Offer: data.NewBidData.Offer})
+	resBid, errBid := bidServiceClient.NewBid(ctx, &pb.NewBidRequest{
+		InvoiceId: data.NewBidData.InvoiceId,
+		BidderAccountId: data.NewBidData.BidderAccountId,
+		Offer: data.NewBidData.Offer,
+	})
 	if errBid != nil {
 		log.Fatalf("could not Bid: %v", errBid)
 	}

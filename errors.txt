@@ -1,2 +1,0 @@
-2022/08/14 12:34:19 could not Bid: rpc error: code = Unknown desc = database error: "number of field descriptions must equal number of destinations, got 1 and 4"
-exit status 1
