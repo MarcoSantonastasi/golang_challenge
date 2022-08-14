@@ -71,6 +71,27 @@ func TestDb_GetAllIssuers(t *testing.T) {
 	}
 }
 
+func TestDb_GetAllBids(t *testing.T) {
+	tests := []struct {
+		name string
+		db   db.IDb
+		want *[]*pb.Bid
+	}{
+		{
+			name: "gets the list of all Bids from the bids table",
+			db:   testDb,
+			want: data.SeededAllBidsList,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := tt.db.GetAllBids(); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("Got:\n \t%v\n expected:\n \t%v\n", got, tt.want)
+			}
+		})
+	}
+}
+
 func TestDb_GetAllInvoices(t *testing.T) {
 	tests := []struct {
 		name string

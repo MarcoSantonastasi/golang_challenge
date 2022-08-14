@@ -17,6 +17,8 @@ var FakeAllIssuersList = new([]*pb.Issuer)
 var SeededAllInvoicesList = new([]*pb.Invoice)
 var FakeAllInvoicesList = new([]*pb.Invoice)
 var NewInvoiceData = new(pb.Invoice)
+var SeededAllBidsList = new([]*pb.Bid)
+var FakeAllBidsList = new([]*pb.Bid)
 
 func init() {
 	loadFixtureDataJson("seededInvestors.json", SeededAllInvestorsList)
@@ -26,6 +28,8 @@ func init() {
 	loadFixtureDataJson("seededInvoices.json", SeededAllInvoicesList)
 	loadFixtureDataJson("fakeInvoices.json", FakeAllInvoicesList)
 	loadFixtureDataJson("newInvoice.json", NewInvoiceData)
+	loadFixtureDataJson("seededBids.json", SeededAllBidsList)
+	loadFixtureDataJson("fakeBids.json", FakeAllBidsList)
 }
 
 func loadFixtureDataJson(fileName string, dataVar any) {

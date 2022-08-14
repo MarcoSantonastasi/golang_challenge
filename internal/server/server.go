@@ -15,13 +15,20 @@ type InvestorServiceServer struct {
 	pb.UnimplementedInvestorServiceServer
 	Repo repos.IInvestorsRepository
 }
+
 type IssuerServiceServer struct {
 	pb.UnimplementedIssuerServiceServer
 	Repo repos.IIssuersRepository
 }
+
 type InvoiceServiceServer struct {
 	pb.UnimplementedInvoiceServiceServer
 	Repo repos.IInvoicesRepository
+}
+
+type BidServiceServer struct {
+	pb.UnimplementedBidServiceServer
+	Repo repos.IBidsRepository
 }
 
 func (s *InvestorServiceServer) GetAllInvestors(ctx context.Context, in *pb.Empty) (*pb.GetAllInvestorsResponse, error) {
@@ -45,6 +52,17 @@ func (s *IssuerServiceServer) GetAllIssuers(ctx context.Context, in *pb.Empty) (
 		return nil, fmt.Errorf("database error: %q", err)
 	}
 	return &pb.GetAllIssuersResponse{Data: *res}, nil
+}
+
+func (s *BidServiceServer) GetAllBids(ctx context.Context, in *pb.Empty) (*pb.GetAllBidsResponse, error) {
+	if s.Repo == nil {
+		return nil, status.Error(codes.Internal, "no repository found for Bids")
+	}
+	res, err := s.Repo.GetAllBids()
+	if err != nil {
+		return nil, fmt.Errorf("database error: %q", err)
+	}
+	return &pb.GetAllBidsResponse{Data: *res}, nil
 }
 
 func (s *InvoiceServiceServer) GetAllInvoices(ctx context.Context, in *pb.Empty) (*pb.GetAllInvoicesResponse, error) {

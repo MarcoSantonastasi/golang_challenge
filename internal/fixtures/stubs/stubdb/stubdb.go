@@ -20,6 +20,10 @@ func (db *StubDb) GetAllIssuers() *[]*pb.Issuer {
 	return data.FakeAllIssuersList
 }
 
+func (db *StubDb) GetAllBids() *[]*pb.Bid {
+	return data.FakeAllBidsList
+}
+
 func (db *StubDb) GetAllInvoices() *[]*pb.Invoice {
 	return data.FakeAllInvoicesList
 }
