@@ -73,6 +73,8 @@ func (s *BidServiceServer) NewBid(ctx context.Context, in *pb.NewBidRequest) (*p
 	if err != nil {
 		return nil, fmt.Errorf("database error: %q", err)
 	}
+
+	fmt.Println("server: ",res)
 	return &pb.NewBidResponse{Data: res}, nil
 }
 

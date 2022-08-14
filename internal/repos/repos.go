@@ -1,6 +1,8 @@
 package repos
 
 import (
+	"fmt"
+
 	pb "github.com/marcosantonastasi/arex_challenge/api/arex/v1"
 	db "github.com/marcosantonastasi/arex_challenge/internal/db"
 	"google.golang.org/grpc/codes"
@@ -60,7 +62,12 @@ func (repo *BidsRepository) NewBid(newBid *pb.NewBidRequest) (*pb.Bid, error) {
 	if repo.Db == nil {
 		return nil, status.Error(codes.Internal, "no database found for Bids")
 	}
-	data := repo.Db.NewBid(newBid)
+	data, err := repo.Db.NewBid(newBid)
+
+	if err != nil {
+		return nil, err
+	}
+	fmt.Println("repo: ", data)
 	return data, nil
 }
 
@@ -85,6 +92,12 @@ func (repo *InvoicesRepository) NewInvoice(newInvoice *pb.NewInvoiceRequest) (*p
 	if repo.Db == nil {
 		return nil, status.Error(codes.Internal, "no database found for Invoices")
 	}
-	data := repo.Db.NewInvoice(newInvoice)
+	data, err := repo.Db.NewInvoice(newInvoice)
+
+	if err != nil {
+		return nil, err
+	}
+	fmt.Println("repo: ", data)
+
 	return data, nil
 }

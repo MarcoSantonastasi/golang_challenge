@@ -92,7 +92,12 @@ func TestStubDb_NewInvoice(t *testing.T) {
 				Denom:           data.NewInvoiceData.Denom,
 				Amount:          data.NewInvoiceData.Amount,
 				Asking:          data.NewInvoiceData.Asking}
-			if got := tt.db.NewInvoice(newInvoiceRequest); !reflect.DeepEqual(got, tt.want) {
+
+			got, err := tt.db.NewInvoice(newInvoiceRequest)
+			if err != nil {
+				t.Errorf("FakeDb.NewInvoice() error %+v", err)
+			}
+			if !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("FakeDb.NewInvoice() = %v, want %v", got, tt.want)
 			}
 		})

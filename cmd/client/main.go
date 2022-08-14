@@ -59,7 +59,7 @@ func main() {
 
 	resBid, errBid := bidServiceClient.NewBid(ctx, &pb.NewBidRequest{InvoiceId: data.NewBidData.InvoiceId, BidderAccountId: data.NewBidData.BidderAccountId, Offer: data.NewBidData.Offer})
 	if errBid != nil {
-		log.Fatalf("could not Bid: %v", errGetAllBids)
+		log.Fatalf("could not Bid: %v", errBid)
 	}
 	log.Printf("Bid: %v", resBid.GetData())
 }

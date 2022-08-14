@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/jackc/pgtype"
 	pg "github.com/jackc/pgx/v4"
 	pb "github.com/marcosantonastasi/arex_challenge/api/arex/v1"
 )
@@ -16,8 +17,8 @@ type IDb interface {
 	GetAllIssuers() *[]*pb.Issuer
 	GetAllBids() *[]*pb.Bid
 	GetAllInvoices() *[]*pb.Invoice
-	NewInvoice(*pb.NewInvoiceRequest) *pb.Invoice
-	NewBid(*pb.NewBidRequest) *pb.Bid
+	NewInvoice(*pb.NewInvoiceRequest) (*pb.Invoice, error)
+	NewBid(*pb.NewBidRequest) (*pb.Bid, error)
 	Adjudicate(invoiceId string) any
 	AllRunningBidsToLost(invoiceId string) any
 }
@@ -48,7 +49,7 @@ func (db *PgDb) Close() {
 
 func (db *PgDb) GetAllInvestors() *[]*pb.Investor {
 	data := new([]*pb.Investor)
-	rows, err := db.conn.Query(context.Background(), "select id::varchar, name, balance from investors")
+	rows, err := db.conn.Query(context.Background(), "select id, name, balance from investors")
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Query failed: %v\n", err)
 	}
@@ -68,7 +69,7 @@ func (db *PgDb) GetAllInvestors() *[]*pb.Investor {
 
 func (db *PgDb) GetAllIssuers() *[]*pb.Issuer {
 	data := new([]*pb.Issuer)
-	rows, err := db.conn.Query(context.Background(), "select id::varchar, name, balance from issuers")
+	rows, err := db.conn.Query(context.Background(), "select id, name, balance from issuers")
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Query failed: %v\n", err)
 	}
@@ -115,27 +116,44 @@ func (db *PgDb) GetAllBids() *[]*pb.Bid {
 	return data
 }
 
-func (db *PgDb) NewBid(newBid *pb.NewBidRequest) *pb.Bid {
-
+func (db *PgDb) NewBid(newBid *pb.NewBidRequest) (*pb.Bid, error) {
+	var buff pgtype.Record
 	data := new(pb.Bid)
-
-	fmt.Println(newBid)
-
 	row := db.conn.QueryRow(
 		context.Background(),
-		"select bid($1::uuid, $2::uuid, $3::bigint)",
+		"select bid($1, $2, $3)",
 		newBid.InvoiceId,
 		newBid.BidderAccountId,
 		newBid.Offer,
 	)
-
-	if err := row.Scan(&data.Id, &data.InvoiceId, &data.BidderAccountId, &data.Offer); err != nil {
-		fmt.Printf("%+v", err)
+	if err := row.Scan(&buff); err != nil {
+		fmt.Printf("error scanning db response row: %+v", err)
+		return nil, err
 	}
 
-	fmt.Println(data)
+	if err := buff.Fields[0].AssignTo(&data.Id); err != nil {
+		fmt.Printf("error assigning db response row: %+v", err)
+		return nil, err
+	}
+	if err := buff.Fields[1].AssignTo(&data.InvoiceId); err != nil {
+		fmt.Printf("error assigning db response row: %+v", err)
+		return nil, err
+	}
+	if err := buff.Fields[2].AssignTo(&data.BidderAccountId); err != nil {
+		fmt.Printf("error assigning db response row: %+v", err)
+		return nil, err
+	}
+	if err := buff.Fields[3].AssignTo(&data.Offer); err != nil {
+		fmt.Printf("error assigning db response row: %+v", err)
+		return nil, err
+	}
+	if err := buff.Fields[3].AssignTo(&data.State); err != nil {
+		fmt.Printf("error assigning db response row: %+v", err)
+		return nil, err
+	}
 
-	return data
+	fmt.Printf("response into data: %+v", data)
+	return data, nil
 }
 
 func (db *PgDb) GetAllInvoices() *[]*pb.Invoice {
@@ -143,7 +161,7 @@ func (db *PgDb) GetAllInvoices() *[]*pb.Invoice {
 	rows, err := db.conn.Query(
 		context.Background(),
 		`select
-			id::varchar,
+			id,
 			issuer_account_id,
 			reference,
 			denom,
@@ -169,7 +187,7 @@ func (db *PgDb) GetAllInvoices() *[]*pb.Invoice {
 	return data
 }
 
-func (db *PgDb) NewInvoice(newInvoiceData *pb.NewInvoiceRequest) *pb.Invoice {
+func (db *PgDb) NewInvoice(newInvoiceData *pb.NewInvoiceRequest) (*pb.Invoice, error) {
 	data := new(pb.Invoice)
 	row := db.conn.QueryRow(
 		context.Background(),
@@ -180,7 +198,7 @@ func (db *PgDb) NewInvoice(newInvoiceData *pb.NewInvoiceRequest) *pb.Invoice {
 			amount,
 			asking
 		)
-		values($1::uuid, $2::varchar, $3::bigint, $4::bigint, $5::bigint)
+		values($1, $2, $3, $4, $5)
 		returning
 		    id,
 			issuer_account_id,
@@ -197,8 +215,9 @@ func (db *PgDb) NewInvoice(newInvoiceData *pb.NewInvoiceRequest) *pb.Invoice {
 
 	if err := row.Scan(&data.Id, &data.IssuerAccountId, &data.Reference, &data.Denom, &data.Amount, &data.Asking); err != nil {
 		fmt.Printf("%+v", err)
+		return nil, err
 	}
-	return data
+	return data, nil
 }
 
 func (db *PgDb) Adjudicate(invoiceId string) any {

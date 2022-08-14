@@ -24,16 +24,16 @@ func (db *StubDb) GetAllBids() *[]*pb.Bid {
 	return data.FakeAllBidsList
 }
 
-func (db *StubDb) NewBid(*pb.NewBidRequest) *pb.Bid {
-	return data.NewBidData
+func (db *StubDb) NewBid(*pb.NewBidRequest) (*pb.Bid, error) {
+	return data.NewBidData, nil
 }
 
 func (db *StubDb) GetAllInvoices() *[]*pb.Invoice {
 	return data.FakeAllInvoicesList
 }
 
-func (db *StubDb) NewInvoice(*pb.NewInvoiceRequest) *pb.Invoice {
-	return data.NewInvoiceData
+func (db *StubDb) NewInvoice(*pb.NewInvoiceRequest) (*pb.Invoice, error) {
+	return data.NewInvoiceData, nil
 }
 
 func (db *StubDb) Adjudicate(invoiceId string) any {
@@ -42,19 +42,23 @@ func (db *StubDb) Adjudicate(invoiceId string) any {
 		bidderAccountId string
 		amount          int64
 	}{
-		invoiceId:       "",
-		bidderAccountId: "",
-		amount:          0,
+		invoiceId:       "af80d0ea-78b9-45b1-a7b0-d1ddd0fbd6fe",
+		bidderAccountId: "991842fe-2e97-4481-a560-8d985a82ae74",
+		amount:          420000,
 	}
 }
 
 func (db *StubDb) AllRunningBidsToLost(invoiceId string) any {
 	return struct {
-		invoiceId string
-		bidId     string
+		id                int64
+		invoice_id        string
+		bidder_account_id string
+		offer             int64
 	}{
-		invoiceId: "",
-		bidId:     "",
+		id:                4,
+		invoice_id:        "ceeaece4-ca5c-4d31-9fd6-90a90854fed9",
+		bidder_account_id: "991842fe-2e97-4481-a560-8d985a82ae74",
+		offer:             200001,
 	}
 }
 

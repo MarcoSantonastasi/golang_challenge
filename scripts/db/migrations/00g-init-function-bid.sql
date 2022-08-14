@@ -19,8 +19,8 @@ BEGIN
 		VALUES(_invoice_id, _bidder_account_id, _offer)
 	RETURNING
 		id, invoice_id, bidder_account_id, offer
-  INTO
-    _bid_id, _invoice_id, _bidder_account_id, _offer;
+    INTO
+        _bid_id, _invoice_id, _bidder_account_id, _offer;
 	
   INSERT INTO transactions (bid_id, credit_account_id, debit_account_id, amount)
 		VALUES(_bid_id, _escrow_account_id, _bidder_account_id, _offer);
