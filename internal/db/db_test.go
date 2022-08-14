@@ -15,10 +15,10 @@ var testDb db.IDb
 func TestMain(m *testing.M) {
 	pgUser := os.Getenv("POSTGRES_USER")
 	pgPwd := os.Getenv("POSTGRES_PASSWORD")
-	pgHostname := os.Getenv("POSTGRES_HOSTNAME")
-	pgDbname := os.Getenv("POSTGRES_DB")
+	pgHostName := os.Getenv("POSTGRES_HOSTNAME")
+	pgDbName := os.Getenv("POSTGRES_STUB_DB")
 
-	testDb = db.NewPgDb(pgUser, pgPwd, pgHostname, pgDbname)
+	testDb = db.NewPgDb(pgUser, pgPwd, pgHostName, pgDbName)
 
 	testDb.Connect()
 
