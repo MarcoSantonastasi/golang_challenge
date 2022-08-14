@@ -119,6 +119,7 @@ func (db *PgDb) GetAllBids() *[]*pb.Bid {
 func (db *PgDb) NewBid(newBid *pb.NewBidRequest) (*pb.Bid, error) {
 	var buff pgtype.Record
 	data := new(pb.Bid)
+
 	row := db.conn.QueryRow(
 		context.Background(),
 		"select bid($1, $2, $3)",
@@ -147,7 +148,7 @@ func (db *PgDb) NewBid(newBid *pb.NewBidRequest) (*pb.Bid, error) {
 		fmt.Printf("error assigning db response row: %+v", err)
 		return nil, err
 	}
-	if err := buff.Fields[3].AssignTo(&data.State); err != nil {
+	if err := buff.Fields[4].AssignTo(&data.State); err != nil {
 		fmt.Printf("error assigning db response row: %+v", err)
 		return nil, err
 	}
