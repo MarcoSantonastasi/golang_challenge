@@ -31,8 +31,6 @@ func TestMain(m *testing.M) {
 	c := startClient()
 	defer c.Close()
 
-	fmt.Println(clientServices.investor, clientServices.issuer, clientServices.invoice)
-
 	os.Exit(m.Run())
 }
 
@@ -46,13 +44,12 @@ func startServer() (s *grpc.Server) {
 
 	pgUser := os.Getenv("POSTGRES_USER")
 	pgPwd := os.Getenv("POSTGRES_PASSWORD")
-	pgHostname := os.Getenv("POSTGRES_HOSTNAME")
-	pgDbname := os.Getenv("POSTGRES_DB")
+	pgHostName := os.Getenv("POSTGRES_HOSTNAME")
+	pgDbName := os.Getenv("POSTGRES_TEST_DB")
 
-	dockerPgDb := db.NewPgDb(pgUser, pgPwd, pgHostname, pgDbname)
+	dockerPgDb := db.NewPgDb(pgUser, pgPwd, pgHostName, pgDbName)
 
 	dockerPgDb.Connect()
-	defer dockerPgDb.Close()
 
 	s = grpc.NewServer()
 	pb.RegisterInvestorServiceServer(s, &server.InvestorServiceServer{Repo: &repos.InvestorsRepository{Db: dockerPgDb}})

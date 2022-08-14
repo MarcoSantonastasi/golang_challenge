@@ -27,10 +27,10 @@ func main() {
 
 	pgUser := os.Getenv("POSTGRES_USER")
 	pgPwd := os.Getenv("POSTGRES_PASSWORD")
-	pgHostname := os.Getenv("POSTGRES_HOSTNAME")
-	pgDbname := os.Getenv("POSTGRES_DB")
+	pgHostName := os.Getenv("POSTGRES_HOSTNAME")
+	pgDbName := os.Getenv("POSTGRES_PROD_DB")
 
-	dockerPgDb := db.NewPgDb(pgUser, pgPwd, pgHostname, pgDbname)
+	dockerPgDb := db.NewPgDb(pgUser, pgPwd, pgHostName, pgDbName)
 
 	dockerPgDb.Connect()
 	defer dockerPgDb.Close()
