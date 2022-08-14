@@ -30,6 +30,7 @@ func main() {
 	investorServiceClient := client.NewInvestorServiceClient(conn)
 	issuerServiceClient := client.NewIssuerServiceClient(conn)
 	invoiceServiceClient := client.NewInvoiceServiceClient(conn)
+	bidServiceClient := client.NewBidServiceClient(conn)
 
 	resGetAllInvestors, errGetAllInvestors := investorServiceClient.GetAllInvestors(ctx, &pb.Empty{})
 	if errGetAllInvestors != nil {
@@ -48,5 +49,11 @@ func main() {
 		log.Fatalf("could not get Invoices: %v", errGetAllInvoices)
 	}
 	log.Printf("All Invoices: %v", resGetAllInvoices.GetData())
+
+	resGetAllBids, errGetAllBids := bidServiceClient.GetAllBids(ctx, &pb.Empty{})
+	if errGetAllBids != nil {
+		log.Fatalf("could not get Bids: %v", errGetAllBids)
+	}
+	log.Printf("All Bids: %v", resGetAllBids.GetData())
 
 }

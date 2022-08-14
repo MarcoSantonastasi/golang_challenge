@@ -190,6 +190,92 @@ var IssuerService_ServiceDesc = grpc.ServiceDesc{
 	Metadata: "api/arex/v1/arexApiV1.proto",
 }
 
+// BidServiceClient is the client API for BidService service.
+//
+// For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
+type BidServiceClient interface {
+	GetAllBids(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*GetAllBidsResponse, error)
+}
+
+type bidServiceClient struct {
+	cc grpc.ClientConnInterface
+}
+
+func NewBidServiceClient(cc grpc.ClientConnInterface) BidServiceClient {
+	return &bidServiceClient{cc}
+}
+
+func (c *bidServiceClient) GetAllBids(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*GetAllBidsResponse, error) {
+	out := new(GetAllBidsResponse)
+	err := c.cc.Invoke(ctx, "/v1.BidService/GetAllBids", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+// BidServiceServer is the server API for BidService service.
+// All implementations must embed UnimplementedBidServiceServer
+// for forward compatibility
+type BidServiceServer interface {
+	GetAllBids(context.Context, *Empty) (*GetAllBidsResponse, error)
+	mustEmbedUnimplementedBidServiceServer()
+}
+
+// UnimplementedBidServiceServer must be embedded to have forward compatible implementations.
+type UnimplementedBidServiceServer struct {
+}
+
+func (UnimplementedBidServiceServer) GetAllBids(context.Context, *Empty) (*GetAllBidsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetAllBids not implemented")
+}
+func (UnimplementedBidServiceServer) mustEmbedUnimplementedBidServiceServer() {}
+
+// UnsafeBidServiceServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to BidServiceServer will
+// result in compilation errors.
+type UnsafeBidServiceServer interface {
+	mustEmbedUnimplementedBidServiceServer()
+}
+
+func RegisterBidServiceServer(s grpc.ServiceRegistrar, srv BidServiceServer) {
+	s.RegisterService(&BidService_ServiceDesc, srv)
+}
+
+func _BidService_GetAllBids_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(BidServiceServer).GetAllBids(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/v1.BidService/GetAllBids",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(BidServiceServer).GetAllBids(ctx, req.(*Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+// BidService_ServiceDesc is the grpc.ServiceDesc for BidService service.
+// It's only intended for direct use with grpc.RegisterService,
+// and not to be introspected or modified (even as a copy)
+var BidService_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "v1.BidService",
+	HandlerType: (*BidServiceServer)(nil),
+	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "GetAllBids",
+			Handler:    _BidService_GetAllBids_Handler,
+		},
+	},
+	Streams:  []grpc.StreamDesc{},
+	Metadata: "api/arex/v1/arexApiV1.proto",
+}
+
 // InvoiceServiceClient is the client API for InvoiceService service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
