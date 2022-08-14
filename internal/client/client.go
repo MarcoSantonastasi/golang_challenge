@@ -26,3 +26,7 @@ func NewIssuerServiceClient(conn *grpc.ClientConn) pb.IssuerServiceClient {
 func NewInvoiceServiceClient(conn *grpc.ClientConn) pb.InvoiceServiceClient {
 	return pb.NewInvoiceServiceClient(conn)
 }
+
+func NewBidServiceClient(conn *grpc.ClientConn) pb.BidServiceClient {
+	return pb.NewBidServiceClient(conn)
+}

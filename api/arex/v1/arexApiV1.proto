@@ -25,6 +25,15 @@ message Invoice {
     string denom = 4;
     int64 amount = 5;
     int64 asking = 6;
+    string state = 7;
+}
+
+message Bid {
+    int64 id = 1;
+    string invoice_id = 2;
+    string bidder_account_id = 3;
+    int64 amount = 4;
+    string state = 5;
 }
 
 
@@ -37,12 +46,21 @@ service InvestorService {
 }
 
 
+message GetAllIssuersResponse{
+    repeated Issuer data = 1;
+}
+
 service IssuerService {
     rpc GetAllIssuers(Empty) returns (GetAllIssuersResponse);
 }
 
-message GetAllIssuersResponse{
-    repeated Issuer data = 1;
+
+message GetAllBidsResponse{
+    repeated Bid data = 1;
+}
+
+service BidService {
+    rpc GetAllBids(Empty) returns (GetAllBidsResponse);
 }
 
 
