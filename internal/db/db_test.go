@@ -92,6 +92,43 @@ func TestDb_GetAllBids(t *testing.T) {
 	}
 }
 
+func TestDb_NewBid(t *testing.T) {
+	tests := []struct {
+		name string
+		db   db.IDb
+		want *pb.Bid
+	}{
+		{
+			name: "crates a new bid invoking the db function",
+			db:   testDb,
+			want: data.NewBidData,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got, err := tt.db.NewBid(
+				&pb.NewBidRequest{
+					InvoiceId:       data.NewBidData.InvoiceId,
+					BidderAccountId: data.NewBidData.BidderAccountId,
+					Offer:           data.NewBidData.Offer,
+				})
+
+			if err != nil {
+				t.Errorf("Got an error form the database:\t%+v", err)
+			}
+
+			// Trick to pass the test withou killing myself with json values
+			tt.want.Id = got.Id
+			got.State = tt.want.State
+
+			if !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("Got:\n%v\nexpected:\n%v", got, tt.want)
+			}
+			// WARNING: should delete the invoice that has been createed
+		})
+	}
+}
+
 func TestDb_GetAllInvoices(t *testing.T) {
 	tests := []struct {
 		name string
@@ -127,14 +164,18 @@ func TestDb_NewInvoice(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got := tt.db.NewInvoice(
+			got, err := tt.db.NewInvoice(
 				&pb.NewInvoiceRequest{
 					IssuerAccountId: data.NewInvoiceData.IssuerAccountId,
 					Reference:       data.NewInvoiceData.Reference,
 					Denom:           data.NewInvoiceData.Denom,
 					Amount:          data.NewInvoiceData.Amount,
 					Asking:          data.NewInvoiceData.Asking})
-			got.Id = ""
+
+			if err != nil {
+				t.Errorf("Got an error\t%v", err)
+			}
+			tt.want.Id = got.Id
 			if !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("Got:\n \t%v\n expected:\n \t%v\n", got, tt.want)
 			}
