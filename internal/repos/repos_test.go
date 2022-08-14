@@ -65,6 +65,34 @@ func TestIssuersRepository_GetAllIssuers(t *testing.T) {
 	}
 }
 
+func TestBidsRepository_GetAllBids(t *testing.T) {
+	tests := []struct {
+		name    string
+		repo    *BidsRepository
+		want    *[]*pb.Bid
+		wantErr bool
+	}{
+		{
+			name:    "gets all Bids on the database (3 for newly seeded db)",
+			repo:    &BidsRepository{Db: stubdb.TestStubDb},
+			want:    data.FakeAllBidsList,
+			wantErr: false,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got, err := tt.repo.GetAllBids()
+			if (err != nil) != tt.wantErr {
+				t.Errorf("BidsRepository.GetAllBids() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("BidsRepository.GetAllBids() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
 func TestInvoicesRepository_GetAllInvoices(t *testing.T) {
 	tests := []struct {
 		name    string

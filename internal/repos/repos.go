@@ -39,6 +39,22 @@ func (repo *IssuersRepository) GetAllIssuers() (*[]*pb.Issuer, error) {
 	return data, nil
 }
 
+type IBidsRepository interface {
+	GetAllBids() (*[]*pb.Bid, error)
+}
+
+type BidsRepository struct {
+	Db db.IDb
+}
+
+func (repo *BidsRepository) GetAllBids() (*[]*pb.Bid, error) {
+	if repo.Db == nil {
+		return nil, status.Error(codes.Internal, "no database found for Bids")
+	}
+	data := repo.Db.GetAllBids()
+	return data, nil
+}
+
 type IInvoicesRepository interface {
 	GetAllInvoices() (*[]*pb.Invoice, error)
 }

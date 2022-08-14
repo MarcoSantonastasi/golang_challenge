@@ -32,10 +32,9 @@ message Bid {
     int64 id = 1;
     string invoice_id = 2;
     string bidder_account_id = 3;
-    int64 amount = 4;
+    int64 offer = 4;
     string state = 5;
 }
-
 
 message GetAllInvestorsResponse{
     repeated Investor data = 1;

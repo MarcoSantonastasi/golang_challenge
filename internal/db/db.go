@@ -14,6 +14,7 @@ type IDb interface {
 	Close()
 	GetAllInvestors() *[]*pb.Investor
 	GetAllIssuers() *[]*pb.Issuer
+	GetAllBids() *[]*pb.Bid
 	GetAllInvoices() *[]*pb.Invoice
 	NewInvoice(*pb.Invoice) *pb.Invoice
 	Bid(invoiceId string) any
@@ -85,6 +86,35 @@ func (db *PgDb) GetAllIssuers() *[]*pb.Issuer {
 	return data
 }
 
+func (db *PgDb) GetAllBids() *[]*pb.Bid {
+	data := new([]*pb.Bid)
+	rows, err := db.conn.Query(
+		context.Background(),
+		`select
+			id,
+			invoice_id,
+			bidder_account_id,
+			offer,
+			state
+		from bids`,
+	)
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "Query failed: %v\n", err)
+	}
+	defer rows.Close()
+	for rows.Next() {
+		row := new(pb.Bid)
+		if err := rows.Scan(&row.Id, &row.InvoiceId, &row.BidderAccountId, &row.Offer, &row.State); err != nil {
+			fmt.Printf("%v", err)
+		}
+		*data = append(*data, row)
+	}
+	if err := rows.Err(); err != nil {
+		fmt.Printf("%v", err)
+	}
+	return data
+}
+
 func (db *PgDb) GetAllInvoices() *[]*pb.Invoice {
 	data := new([]*pb.Invoice)
 	rows, err := db.conn.Query(
@@ -95,7 +125,8 @@ func (db *PgDb) GetAllInvoices() *[]*pb.Invoice {
 			reference,
 			denom,
 			amount,
-			asking
+			asking,
+			state
 		from invoices`,
 	)
 	if err != nil {
@@ -104,7 +135,7 @@ func (db *PgDb) GetAllInvoices() *[]*pb.Invoice {
 	defer rows.Close()
 	for rows.Next() {
 		row := new(pb.Invoice)
-		if err := rows.Scan(&row.Id, &row.IssuerAccountId, &row.Reference, &row.Denom, &row.Amount, &row.Asking); err != nil {
+		if err := rows.Scan(&row.Id, &row.IssuerAccountId, &row.Reference, &row.Denom, &row.Amount, &row.Asking, &row.State); err != nil {
 			fmt.Printf("%v", err)
 		}
 		*data = append(*data, row)
