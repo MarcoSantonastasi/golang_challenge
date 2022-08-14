@@ -119,9 +119,11 @@ func (db *PgDb) NewBid(newBid *pb.NewBidRequest) *pb.Bid {
 
 	data := new(pb.Bid)
 
+	fmt.Println(newBid)
+
 	row := db.conn.QueryRow(
 		context.Background(),
-		"select bid($1, $2, $3)",
+		"select bid($1::uuid, $2::uuid, $3::bigint)",
 		newBid.InvoiceId,
 		newBid.BidderAccountId,
 		newBid.Offer,
@@ -130,6 +132,9 @@ func (db *PgDb) NewBid(newBid *pb.NewBidRequest) *pb.Bid {
 	if err := row.Scan(&data.Id, &data.InvoiceId, &data.BidderAccountId, &data.Offer); err != nil {
 		fmt.Printf("%+v", err)
 	}
+
+	fmt.Println(data)
+
 	return data
 }
 
@@ -175,7 +180,7 @@ func (db *PgDb) NewInvoice(newInvoiceData *pb.NewInvoiceRequest) *pb.Invoice {
 			amount,
 			asking
 		)
-		values($1, $2, $3, $4, $5)
+		values($1::uuid, $2::varchar, $3::bigint, $4::bigint, $5::bigint)
 		returning
 		    id,
 			issuer_account_id,

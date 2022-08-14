@@ -33,8 +33,8 @@ func TestE2E_GetAllBids(t *testing.T) {
 				t.Errorf("Got GetAllBids() error = %v, instead expected error %v", err, tt.wantErr)
 				return
 			}
-			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("Got GetAllBids() = %v, but wanted %v", got, tt.want)
+			if !reflect.DeepEqual(got.Data, tt.want.Data) {
+				t.Errorf("Got GetAllBids() = \n%+v,\nbut wanted \n%+v", got, tt.want)
 			}
 
 		})
@@ -63,7 +63,10 @@ func TestE2E_NewBid(t *testing.T) {
 				t.Errorf("Got Bid() error = %v, instead expected error %v", err, tt.wantErr)
 				return
 			}
-			if !reflect.DeepEqual(got, tt.want) {
+
+			tt.want.Data.Id = got.Data.Id
+
+			if !reflect.DeepEqual(got.Data, tt.want.Data) {
 				t.Errorf("Got Bid() = %v, but wanted %v", got, tt.want)
 			}
 
