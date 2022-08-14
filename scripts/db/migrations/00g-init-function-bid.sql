@@ -2,7 +2,8 @@ CREATE OR REPLACE FUNCTION bid (
   OUT _bid_id bigint,
   INOUT _invoice_id uuid,
   INOUT _bidder_account_id uuid,
-  INOUT _offer bigint
+  INOUT _offer bigint,
+  OUT _state
 )
 AS $$
 
@@ -18,9 +19,9 @@ BEGIN
 	INSERT INTO bids (invoice_id, bidder_account_id, offer)
 		VALUES(_invoice_id, _bidder_account_id, _offer)
 	RETURNING
-		id, invoice_id, bidder_account_id, offer
+		id, invoice_id, bidder_account_id, offer, state
     INTO
-        _bid_id, _invoice_id, _bidder_account_id, _offer;
+        _bid_id, _invoice_id, _bidder_account_id, _offer, _state;
 	
   INSERT INTO transactions (bid_id, credit_account_id, debit_account_id, amount)
 		VALUES(_bid_id, _escrow_account_id, _bidder_account_id, _offer);
