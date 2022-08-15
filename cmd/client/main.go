@@ -78,4 +78,12 @@ func main() {
 		log.Fatalf("could not Bid: %v", errBid)
 	}
 	log.Printf("Bid: %v", resBid.GetData())
+
+	resAdj, errAdj := invoiceClient.AdjudicateInvoice(ctx, &pb.NewAdjudicateInvoiceRequest{
+		InvoiceId: data.AdjudicateInvoiceData.InvoiceId,
+	})
+	if errAdj != nil {
+		log.Fatalf("could not Adjudicate invoice: %v", errBid)
+	}
+	log.Printf("Adjudicated: %v", resAdj.GetData())
 }
