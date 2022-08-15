@@ -101,3 +101,17 @@ func (repo *InvoicesRepository) NewInvoice(newInvoice *pb.NewInvoiceRequest) (*p
 
 	return data, nil
 }
+
+func (repo *InvoicesRepository) AdjudicateInvoice(invoiceToAdjudicate *pb.AdjudicateInvoiceRequest) (*pb.Invoice, error) {
+	if repo.Db == nil {
+		return nil, status.Error(codes.Internal, "no database found for Invoices")
+	}
+	data, err := repo.Db.AdjudicateInvoice(invoiceToAdjudicate.id)
+
+	if err != nil {
+		return nil, err
+	}
+	fmt.Println("repo: ", data)
+
+	return data, nil
+}

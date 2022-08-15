@@ -98,4 +98,14 @@ func (s *InvoiceServiceServer) NewInvoice(ctx context.Context, in *pb.NewInvoice
 		return nil, fmt.Errorf("database error: %q", err)
 	}
 	return &pb.NewInvoiceResponse{Data: res}, nil
+
+func (s *InvoiceServiceServer) AdjudicateInvoice(ctx context.Context, in *pb.AdjudicateInvoiceRequest) (*pb.AdjudicateInvoiceResponse, error) {
+	if s.Repo == nil {
+		return nil, status.Error(codes.Internal, "no repository found for Invoices")
+	}
+	res, err := s.Repo.AdjudicateInvoice(in)
+	if err != nil {
+		return nil, fmt.Errorf("database error: %q", err)
+	}
+	return &pb.AdjudicateInvoiceResponse{Data: res}, nil
 }
