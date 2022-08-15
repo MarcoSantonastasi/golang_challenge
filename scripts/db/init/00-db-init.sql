@@ -335,7 +335,7 @@ BEGIN
   FROM
 	  running_bids,
 	  escrow_account
-  RETURNING bid_id INTO _bid_id;
+  RETURNING transactions.bid_id INTO _bid_id;
 
 RETURN;
 END;

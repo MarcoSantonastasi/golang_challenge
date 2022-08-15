@@ -15,19 +15,23 @@ proddbseed:
 	  -f ./scripts/db/init/01-db-seed.sql
 
 
-.PHONY: testdbseed
-testdbseed:
-	psql -U $(POSTGRES_USER) -h $(POSTGRES_HOSTNAME) -a \
-	  -c "DROP DATABASE IF EXISTS $(POSTGRES_TEST_DB);" \
-	  -c "CREATE DATABASE $(POSTGRES_TEST_DB) OWNER postgres;" \
+.PHONY: testingdbseed
+testingdbseed:
+	psql -U $(POSTGRES_USER) -d $(POSTGRES_PROD_DB) -h $(POSTGRES_HOSTNAME) -a \
+	  -c "DROP DATABASE IF EXISTS $(POSTGRES_TESTING_DB);" \
+	  -c "CREATE DATABASE $(POSTGRES_TESTING_DB);"
+
+	psql -U $(POSTGRES_USER) -d $(POSTGRES_TESTING_DB) -h $(POSTGRES_HOSTNAME) -a \
 	  -f ./scripts/db/init/00-db-init.sql \
 	  -f ./scripts/db/init/01-db-seed.sql
 
 
 .PHONY: stubdbseed
 stubdbseed:
-	psql -U $(POSTGRES_USER) -h $(POSTGRES_HOSTNAME) -a \
+	psql -U $(POSTGRES_USER) -d $(POSTGRES_PROD_DB) -h $(POSTGRES_HOSTNAME) -a \
 	  -c "DROP DATABASE IF EXISTS $(POSTGRES_STUB_DB);" \
-	  -c "CREATE DATABASE $(POSTGRES_STUB_DB) OWNER postgres;" \
+	  -c "CREATE DATABASE $(POSTGRES_STUB_DB);"
+
+	psql -U $(POSTGRES_USER) -d $(POSTGRES_STUB_DB) -h $(POSTGRES_HOSTNAME) -a \
 	  -f ./scripts/db/init/00-db-init.sql \
 	  -f ./scripts/db/init/01-db-seed.sql
