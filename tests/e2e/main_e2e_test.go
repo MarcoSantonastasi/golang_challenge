@@ -45,7 +45,7 @@ func startServer() (s *grpc.Server) {
 	pgUser := os.Getenv("POSTGRES_USER")
 	pgPwd := os.Getenv("POSTGRES_PASSWORD")
 	pgHostName := os.Getenv("POSTGRES_HOSTNAME")
-	pgDbName := os.Getenv("POSTGRES_TEST_DB")
+	pgDbName := os.Getenv("POSTGRES_TESTING_DB")
 
 	dockerPgDb := db.NewPgDb(pgUser, pgPwd, pgHostName, pgDbName)
 
