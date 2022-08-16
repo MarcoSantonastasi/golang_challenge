@@ -1,22 +1,22 @@
 [
  {
     "id": 3,
-    "invoice_id": "af80d0ea-78b9-45b1-a7b0-d1ddd0fbd6fe",
-    "bidder_account_id": "c5f76419-eb27-4255-86ba-afbbe271114b",
+    "invoiceId": "af80d0ea-78b9-45b1-a7b0-d1ddd0fbd6fe",
+    "bidderAccountId": "c5f76419-eb27-4255-86ba-afbbe271114b",
     "offer": 195000,
     "state": "RUNNING"
   },
   {
     "id": 2,
-    "invoice_id": "ceeaece4-ca5c-4d31-9fd6-90a90854fed9",
-    "bidder_account_id": "feac2610-27df-4665-afae-0f536ed06ab5",
+    "invoiceId": "ceeaece4-ca5c-4d31-9fd6-90a90854fed9",
+    "bidderAccountId": "feac2610-27df-4665-afae-0f536ed06ab5",
     "offer": 420000,
     "state": "WON"
   },
   {
     "id": 1,
-    "invoice_id": "ceeaece4-ca5c-4d31-9fd6-90a90854fed9",
-    "bidder_account_id": "991842fe-2e97-4481-a560-8d985a82ae74",
+    "invoiceId": "ceeaece4-ca5c-4d31-9fd6-90a90854fed9",
+    "bidderAccountId": "991842fe-2e97-4481-a560-8d985a82ae74",
     "offer": 160000,
     "state": "LOST"
   }

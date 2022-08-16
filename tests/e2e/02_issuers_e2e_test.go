@@ -33,7 +33,7 @@ func TestE2E_GetAllIssuers(t *testing.T) {
 				t.Errorf("Got GetAllIssuers() error = %v, instead expected error %v", err, tt.wantErr)
 				return
 			}
-			if !reflect.DeepEqual(got, tt.want) {
+			if !reflect.DeepEqual(got.Data, tt.want.Data) {
 				t.Errorf("Got GetAllIssuers() = %v, but wanted %v", got, tt.want)
 			}
 
