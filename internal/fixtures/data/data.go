@@ -7,20 +7,23 @@ import (
 	"path"
 	"runtime"
 
-	pb "github.com/marcosantonastasi/arex_challenge/api/arex/v1"
+	db "github.com/marcosantonastasi/arex_challenge/internal/db"
 )
 
-var SeededAllInvestorsList = new([]*pb.Investor)
-var FakeAllInvestorsList = new([]*pb.Investor)
-var SeededAllIssuersList = new([]*pb.Issuer)
-var FakeAllIssuersList = new([]*pb.Issuer)
-var SeededAllInvoicesList = new([]*pb.Invoice)
-var FakeAllInvoicesList = new([]*pb.Invoice)
-var NewInvoiceData = new(pb.Invoice)
-var SeededAllBidsList = new([]*pb.Bid)
-var FakeAllBidsList = new([]*pb.Bid)
-var NewBidData = new(pb.Bid)
-var AdjudicateBidData = new(struct {Id int64; Amount int64})
+var SeededAllInvestorsList = new([]*db.Account)
+var FakeAllInvestorsList = new([]*db.Account)
+var SeededAllIssuersList = new([]*db.Account)
+var FakeAllIssuersList = new([]*db.Account)
+var SeededAllInvoicesList = new([]*db.Invoice)
+var FakeAllInvoicesList = new([]*db.Invoice)
+var NewInvoiceData = new(db.Invoice)
+var SeededAllBidsList = new([]*db.Bid)
+var FakeAllBidsList = new([]*db.Bid)
+var NewBidData = new(db.Bid)
+var AdjudicateBidData = new(struct {
+	Id     int64
+	Amount int64
+})
 
 func init() {
 	loadFixtureDataJson("seededInvestors.json", SeededAllInvestorsList)
