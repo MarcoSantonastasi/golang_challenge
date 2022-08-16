@@ -70,20 +70,20 @@ func main() {
 	log.Printf("All Bids: %v", resGetAllBids.GetData())
 
 	resBid, errBid := bidServiceClient.NewBid(ctx, &pb.NewBidRequest{
-		InvoiceId: data.NewBidData.InvoiceId,
+		InvoiceId:       data.NewBidData.InvoiceId,
 		BidderAccountId: data.NewBidData.BidderAccountId,
-		Offer: data.NewBidData.Offer,
+		Offer:           data.NewBidData.Offer,
 	})
 	if errBid != nil {
 		log.Fatalf("could not Bid: %v", errBid)
 	}
 	log.Printf("Bid: %v", resBid.GetData())
 
-	resAdj, errAdj := invoiceClient.AdjudicateInvoice(ctx, &pb.NewAdjudicateInvoiceRequest{
-		InvoiceId: data.AdjudicateInvoiceData.InvoiceId,
+	resAdj, errAdj := bidServiceClient.AdjudicateBid(ctx, &pb.AdjudicateBidRequest{
+		BidId: data.AdjudicateBidData.Id,
 	})
 	if errAdj != nil {
-		log.Fatalf("could not Adjudicate invoice: %v", errBid)
+		log.Fatalf("could not AdjudicateBid: %v", errBid)
 	}
-	log.Printf("Adjudicated: %v", resAdj.GetData())
+	log.Printf("Adjudicated: %v", resAdj.GetAmount())
 }
