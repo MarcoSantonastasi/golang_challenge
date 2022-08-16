@@ -99,7 +99,7 @@ SELECT bid('af80d0ea-78b9-45b1-a7b0-d1ddd0fbd6fe', 'c5f76419-eb27-4255-86ba-afbb
 
 
 -- adjudicate(_invoice_id uuid, _bidder_account_id uuid)
-SELECT adjudicate('ceeaece4-ca5c-4d31-9fd6-90a90854fed9', 'feac2610-27df-4665-afae-0f536ed06ab5');
+SELECT adjudicate_bid(2);
 
 
 
