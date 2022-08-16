@@ -58,6 +58,30 @@ message GetAllBidsResponse{
     repeated Bid data = 1;
 }
 
+message GetBidByIdRequest {
+    int64 bidId =1;
+}
+
+message GetBidByIdResponse{
+    Bid data = 1;
+}
+
+message GetBidsByInvoiceIdRequest {
+    string InvoiceId = 1;
+}
+
+message GetBidsByInvoiceIdResponse {
+    repeated Bid data = 1;
+}
+
+message GetBidsByInvestorIdRequest {
+    string InvestorId = 1;
+}
+
+message GetBidsByInvestorIdResponse {
+    repeated Bid data = 1;
+}
+
 message NewBidRequest{
     string invoice_id = 1;
     string bidder_account_id = 2;
@@ -68,14 +92,52 @@ message NewBidResponse{
     Bid data = 1;
 }
 
+message GetFulfillingBidsRequest{
+    string InvoiceId = 1;
+}
+
+message GetFulfillingBidsResponse {
+    repeated Bid data = 1;
+}
+
+message AdjudicateBidRequest {
+    int64 bidId =1;
+}
+
+message AdjudicateBidResponse{
+    int64 amount =1;
+}
+
+message AllRunningBidsToLostRequest {
+    string InvoiceId = 1;
+}
+
+message AllRunningBidsToLostResponse {
+    repeated Bid data = 1;
+}
+
 service BidService {
     rpc GetAllBids(Empty) returns (GetAllBidsResponse);
+    rpc GetBidById(GetBidByIdRequest) returns (GetBidByIdResponse);
+    rpc GetBidsByInvoiceId(GetBidsByInvoiceIdRequest) returns (GetBidsByInvoiceIdResponse);
+    rpc GetBidsByInvestorId(GetBidsByInvestorIdRequest) returns (GetBidsByInvestorIdResponse);
     rpc NewBid(NewBidRequest) returns (NewBidResponse);
+    rpc GetFulfillingBids(GetFulfillingBidsRequest) returns (GetFulfillingBidsResponse);
+    rpc AdjudicateBid(AdjudicateBidRequest) returns (AdjudicateBidResponse);
+    rpc AllRunningBidsToLost(AllRunningBidsToLostRequest) returns (AllRunningBidsToLostResponse);
 }
 
 
 message GetAllInvoicesResponse{
     repeated Invoice data = 1;
+}
+
+message GetInvoiceByIdRequest{
+    string invoiceId =1;
+}
+
+message GetInvoiceByIdResponse{
+    Invoice data =1;
 }
 
 message NewInvoiceRequest{
@@ -92,5 +154,6 @@ message NewInvoiceResponse{
 
 service InvoiceService {
     rpc GetAllInvoices(Empty) returns (GetAllInvoicesResponse);
+    rpc GetInvoiceById(GetInvoiceByIdRequest) returns (GetInvoiceByIdResponse);
     rpc NewInvoice(NewInvoiceRequest) returns (NewInvoiceResponse);
 }
