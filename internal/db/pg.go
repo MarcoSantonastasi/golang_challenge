@@ -400,7 +400,7 @@ func (db *PgDb) AdjudicateBid(bidId int64) (*int64, error) {
 	saleAmount := new(int64)
 	row := db.conn.QueryRow(
 		context.Background(),
-		"select adjudicate($1)",
+		"select adjudicate_bid($1)",
 		bidId,
 	)
 	if err := row.Scan(&saleAmount); err != nil {
