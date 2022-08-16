@@ -4,7 +4,7 @@ import (
 	"reflect"
 	"testing"
 
-	pb "github.com/marcosantonastasi/arex_challenge/api/arex/v1"
+	db "github.com/marcosantonastasi/arex_challenge/internal/db"
 	data "github.com/marcosantonastasi/arex_challenge/internal/fixtures/data"
 )
 
@@ -12,7 +12,7 @@ func TestFakeInvestorsRepository_GetAllInvestors(t *testing.T) {
 	tests := []struct {
 		name    string
 		repo    *FakeInvestorsRepository
-		want    *[]*pb.Investor
+		want    *[]*db.Account
 		wantErr bool
 	}{
 		{
@@ -40,7 +40,7 @@ func TestFakeIssuersRepository_GetAllIssuers(t *testing.T) {
 	tests := []struct {
 		name    string
 		repo    *FakeIssuersRepository
-		want    *[]*pb.Issuer
+		want    *[]*db.Account
 		wantErr bool
 	}{
 		{
@@ -68,7 +68,7 @@ func TestFakeInvoicesRepository_GetAllInvoices(t *testing.T) {
 	tests := []struct {
 		name    string
 		repo    *FakeInvoicesRepository
-		want    *[]*pb.Invoice
+		want    *[]*db.Invoice
 		wantErr bool
 	}{
 		{
