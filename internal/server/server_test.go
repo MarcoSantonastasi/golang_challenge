@@ -13,7 +13,7 @@ import (
 func TestInvestorServiceServer_GetAllInvestors(t *testing.T) {
 	type args struct {
 		ctx context.Context
-		in  *pb.Empty
+		req *pb.Empty
 	}
 
 	tests := []struct {
@@ -25,15 +25,15 @@ func TestInvestorServiceServer_GetAllInvestors(t *testing.T) {
 	}{
 		{
 			name:    "gets all Investors on the repository (3 for newly seeded db)",
-			s:       &InvestorServiceServer{Repo: &stubRepos.FakeInvestorsRepository{}},
-			args:    args{ctx: context.Background(), in: &pb.Empty{}},
-			want:    &pb.GetAllInvestorsResponse{Data: *data.FakeAllInvestorsList},
+			s:       &InvestorServiceServer{Repo: &stubRepos.StubInvestorsRepository{}},
+			args:    args{ctx: context.Background(), req: data.RequestGetAllInvestors},
+			want:    data.ResponseGetAllInvestors,
 			wantErr: false,
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, err := tt.s.GetAllInvestors(tt.args.ctx, tt.args.in)
+			got, err := tt.s.GetAllInvestors(tt.args.ctx, tt.args.req)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("Got InvestorServiceServer.GetAllInvestors() error = %v, instead expected error %v", err, tt.wantErr)
 				return
@@ -48,7 +48,7 @@ func TestInvestorServiceServer_GetAllInvestors(t *testing.T) {
 func TestIssuerServiceServer_GetAllIssuers(t *testing.T) {
 	type args struct {
 		ctx context.Context
-		in  *pb.Empty
+		req *pb.Empty
 	}
 	tests := []struct {
 		name    string
@@ -59,15 +59,15 @@ func TestIssuerServiceServer_GetAllIssuers(t *testing.T) {
 	}{
 		{
 			name:    "gets all Issuers on the repository (3 for newly seeded db)",
-			s:       &IssuerServiceServer{Repo: &stubRepos.FakeIssuersRepository{}},
-			args:    args{ctx: context.Background(), in: &pb.Empty{}},
-			want:    &pb.GetAllIssuersResponse{Data: *data.FakeAllIssuersList},
+			s:       &IssuerServiceServer{Repo: &stubRepos.StubIssuersRepository{}},
+			args:    args{ctx: context.Background(), req: data.RequestGetAllIssuers},
+			want:    data.ResponseGetAllIssuers,
 			wantErr: false,
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, err := tt.s.GetAllIssuers(tt.args.ctx, tt.args.in)
+			got, err := tt.s.GetAllIssuers(tt.args.ctx, tt.args.req)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("IssuerServiceServer.GetAllIssuers() error = %v, wantErr %v", err, tt.wantErr)
 				return
@@ -82,7 +82,7 @@ func TestIssuerServiceServer_GetAllIssuers(t *testing.T) {
 func TestInvoiceServiceServer_GetAllInvoices(t *testing.T) {
 	type args struct {
 		ctx context.Context
-		in  *pb.Empty
+		req *pb.Empty
 	}
 	tests := []struct {
 		name    string
@@ -93,14 +93,14 @@ func TestInvoiceServiceServer_GetAllInvoices(t *testing.T) {
 	}{
 		{
 			name:    "gets all Invoices on the repository (3 for newly seeded db)",
-			s:       &InvoiceServiceServer{Repo: &stubRepos.FakeInvoicesRepository{}},
-			args:    args{ctx: context.Background(), in: &pb.Empty{}},
-			want:    &pb.GetAllInvoicesResponse{Data: *data.FakeAllInvoicesList},
+			s:       &InvoiceServiceServer{Repo: &stubRepos.StubInvoicesRepository{}},
+			args:    args{ctx: context.Background(), req: data.RequestGetAllInvoices},
+			want:    data.ResponseGetAllInvoices,
 			wantErr: false,
 		}}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, err := tt.s.GetAllInvoices(tt.args.ctx, tt.args.in)
+			got, err := tt.s.GetAllInvoices(tt.args.ctx, tt.args.req)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("InvoiceServiceServer.GetAllinvoices() error = %v, wantErr %v", err, tt.wantErr)
 				return

@@ -49,7 +49,7 @@ func (repo *IssuersRepository) GetAllIssuers() (*[]*db.Account, error) {
 type IInvoicesRepository interface {
 	GetAllInvoices() (*[]*db.Invoice, error)
 	GetInvoiceById(invoiceId string) (*db.Invoice, error)
-	NewInvoice(db.Invoice) (*db.Invoice, error)
+	NewInvoice(*db.Invoice) (*db.Invoice, error)
 }
 
 type InvoicesRepository struct {
@@ -80,11 +80,11 @@ func (repo *InvoicesRepository) GetInvoiceById(invoiceId string) (*db.Invoice, e
 	return data, nil
 }
 
-func (repo *InvoicesRepository) NewInvoice(newInvoiceData db.Invoice) (*db.Invoice, error) {
+func (repo *InvoicesRepository) NewInvoice(newInvoiceData *db.Invoice) (*db.Invoice, error) {
 	if repo.Db == nil {
 		return nil, fmt.Errorf("no database found for Invoices")
 	}
-	data, err := repo.Db.NewInvoice(newInvoiceData)
+	data, err := repo.Db.NewInvoice(*newInvoiceData)
 	if err != nil {
 		return nil, fmt.Errorf("repository error for NewInvoice: %+v", err)
 	}
@@ -97,7 +97,7 @@ type IBidsRepository interface {
 	GetBidById(bidId int64) (*db.Bid, error)
 	GetBidsByInvoiceId(invoiceId string) (*[]*db.Bid, error)
 	GetBidsByInvestorId(investorId string) (*[]*db.Bid, error)
-	NewBid(db.Bid) (*db.Bid, error)
+	NewBid(*db.Bid) (*db.Bid, error)
 	GetFulfillingBids(invoiceId string) (*[]*db.Bid, error)
 	AdjudicateBid(bidId int64) (*int64, error)
 	AllRunningBidsToLost(invoiceId string) (*[]*db.Bid, error)
@@ -155,11 +155,11 @@ func (repo *BidsRepository) GetBidsByInvestorId(investorId string) (*[]*db.Bid, 
 	return data, nil
 }
 
-func (repo *BidsRepository) NewBid(newBidData db.Bid) (*db.Bid, error) {
+func (repo *BidsRepository) NewBid(newBidData *db.Bid) (*db.Bid, error) {
 	if repo.Db == nil {
 		return nil, fmt.Errorf("no database found for Bids")
 	}
-	data, err := repo.Db.NewBid(newBidData)
+	data, err := repo.Db.NewBid(*newBidData)
 
 	if err != nil {
 		return nil, fmt.Errorf("repository error for NewBid: %+v", err)
