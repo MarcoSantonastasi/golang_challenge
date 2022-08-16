@@ -49,9 +49,11 @@ func TestPgDb_GetAllInvestors(t *testing.T) {
 				t.Errorf("PgDb.GetAllInvestors() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
+
 			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("PgDb.GetAllInvestors() = %v, want %v", got, tt.want)
+				t.Errorf("PgDb.GetAllInvestors() = %+v, want %+v", got, tt.want)
 			}
+
 		})
 	}
 }

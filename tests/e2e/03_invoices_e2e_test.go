@@ -33,7 +33,7 @@ func TestE2E_GetAllInvoices(t *testing.T) {
 				t.Errorf("Got GetAllInvoices() error = %v, instead expected error %v", err, tt.wantErr)
 				return
 			}
-			if !reflect.DeepEqual(got, tt.want) {
+			if !reflect.DeepEqual(got.Data, tt.want.Data) {
 				t.Errorf("Got GetAllInvoices() = %v, but wanted %v", got, tt.want)
 			}
 

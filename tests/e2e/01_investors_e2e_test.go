@@ -33,7 +33,7 @@ func TestE2E_GetAllInvestors(t *testing.T) {
 				t.Errorf("Got GetAllInvestors() error = %v, instead expected error %v", err, tt.wantErr)
 				return
 			}
-			if !reflect.DeepEqual(got, tt.want) {
+			if !reflect.DeepEqual(got.Data, tt.want.Data) {
 				t.Errorf("Got GetAllInvestors() = \n%+v,\nbut wanted \n%+v", got, tt.want)
 			}
 

@@ -1,0 +1,8 @@
+{Id:c5f76419-eb27-4255-86ba-afbbe271114b Name:Investor C Type:INVESTOR Balance:5000}
+{Id:c5f76419-eb27-4255-86ba-afbbe271114b Name:Investor C Type: Balance:5000}
+
+{Id:feac2610-27df-4665-afae-0f536ed06ab5 Name:Investor B Type:INVESTOR Balance:4700000}
+{Id:feac2610-27df-4665-afae-0f536ed06ab5 Name:Investor B Type: Balance:4700000}
+
+{Id:991842fe-2e97-4481-a560-8d985a82ae74 Name:Investor A Type:INVESTOR Balance:9899999}
+{Id:991842fe-2e97-4481-a560-8d985a82ae74 Name:Investor A Type: Balance:10000000}
