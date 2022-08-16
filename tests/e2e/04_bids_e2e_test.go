@@ -20,7 +20,7 @@ func TestE2E_GetAllBids(t *testing.T) {
 		{
 			desc:    "gets the list of all Bids",
 			client:  clientServices.bid,
-			want:    &pb.GetAllBidsResponse{Data: *data.SeededAllBidsList},
+			want:    data.ResponseGetAllBids,
 			wantErr: false,
 		},
 	}
@@ -28,12 +28,12 @@ func TestE2E_GetAllBids(t *testing.T) {
 		t.Run(tt.desc, func(t *testing.T) {
 			ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 			defer cancel()
-			got, err := tt.client.GetAllBids(ctx, &pb.Empty{})
+			got, err := tt.client.GetAllBids(ctx, data.RequestGetAllBids)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("Got GetAllBids() error = %v, instead expected error %v", err, tt.wantErr)
 				return
 			}
-			if !reflect.DeepEqual(got.Data, tt.want.Data) {
+			if !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("Got GetAllBids() = \n%+v,\nbut wanted \n%+v", got, tt.want)
 			}
 
@@ -50,7 +50,7 @@ func TestE2E_NewBid(t *testing.T) {
 		{
 			desc:    "bids on an invoice",
 			client:  clientServices.bid,
-			want:    &pb.NewBidResponse{Data: data.NewBidData},
+			want:    data.ResponseNewBid,
 			wantErr: false,
 		},
 	}
@@ -58,18 +58,18 @@ func TestE2E_NewBid(t *testing.T) {
 		t.Run(tt.desc, func(t *testing.T) {
 			ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 			defer cancel()
-			got, err := tt.client.NewBid(ctx, &pb.NewBidRequest{InvoiceId: data.NewBidData.InvoiceId, BidderAccountId: data.NewBidData.BidderAccountId, Offer: data.NewBidData.Offer})
+			got, err := tt.client.NewBid(ctx, data.RequesteNewBid)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("Got Bid() error = %v, instead expected error %v", err, tt.wantErr)
 				return
 			}
 
-			// trick to not go crazy with json data
+			// trick to not go crazy with indexes and ids
 			if got != nil {
 				tt.want.Data.Id = got.Data.Id
 			}
 
-			if !reflect.DeepEqual(got.Data, tt.want.Data) {
+			if !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("Got Bid() = %v, but wanted %v", got, tt.want)
 			}
 

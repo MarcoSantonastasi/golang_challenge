@@ -6,38 +6,42 @@ import (
 	data "github.com/marcosantonastasi/arex_challenge/internal/fixtures/data"
 )
 
-type FakeInvestorsRepository struct {
+type StubInvestorsRepository struct {
 }
 
-func (repo *FakeInvestorsRepository) GetAllInvestors() (*[]*db.Account, error) {
-	return data.FakeAllInvestorsList, nil
+func (repo *StubInvestorsRepository) GetAllInvestors() (*[]*db.Account, error) {
+	return data.SeededAllInvestorsList, nil
 }
 
-type FakeIssuersRepository struct {
+type StubIssuersRepository struct {
 }
 
-func (repo *FakeIssuersRepository) GetAllIssuers() (*[]*db.Account, error) {
-	return data.FakeAllIssuersList, nil
+func (repo *StubIssuersRepository) GetAllIssuers() (*[]*db.Account, error) {
+	return data.SeededAllIssuersList, nil
 }
 
-type FakeInvoicesRepository struct {
+type StubInvoicesRepository struct {
 }
 
-func (repo *FakeInvoicesRepository) GetAllInvoices() (*[]*db.Invoice, error) {
-	return data.FakeAllInvoicesList, nil
+func (repo *StubInvoicesRepository) GetAllInvoices() (*[]*db.Invoice, error) {
+	return data.SeededAllInvoicesList, nil
 }
 
-func (repo *FakeInvoicesRepository) NewInvoice(*pb.NewInvoiceRequest) (*db.Invoice, error) {
+func (repo *StubInvoicesRepository) GetInvoiceById(invoiceId string) (*db.Invoice, error) {
+	return (*data.SeededAllInvoicesList)[1], nil
+}
+
+func (repo *StubInvoicesRepository) NewInvoice(*db.Invoice) (*db.Invoice, error) {
 	return data.NewInvoiceData, nil
 }
 
-type FakeBidsRepository struct {
+type StubBidsRepository struct {
 }
 
-func (repo *FakeBidsRepository) GetAllBids() (*[]*db.Bid, error) {
-	return data.FakeAllBidsList, nil
+func (repo *StubBidsRepository) GetAllBids() (*[]*db.Bid, error) {
+	return data.SeededAllBidsList, nil
 }
 
-func (repo *FakeBidsRepository) NewBid(*pb.NewBidRequest) (*db.Bid, error) {
+func (repo *StubBidsRepository) NewBid(*pb.NewBidRequest) (*db.Bid, error) {
 	return data.NewBidData, nil
 }

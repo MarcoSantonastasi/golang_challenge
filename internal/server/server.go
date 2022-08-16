@@ -133,7 +133,7 @@ func (s *InvoiceServiceServer) NewInvoice(ctx context.Context, req *pb.NewInvoic
 	if s.Repo == nil {
 		return nil, status.Error(codes.Internal, "no repository found for Invoices")
 	}
-	newInvoiceData := db.Invoice{
+	newInvoiceData := &db.Invoice{
 		IssuerAccountId: req.IssuerAccountId,
 		Reference:       req.Reference,
 		Denom:           req.Denom,
@@ -263,7 +263,7 @@ func (s *BidServiceServer) NewBid(ctx context.Context, req *pb.NewBidRequest) (*
 		return nil, fmt.Errorf("no repository found for Bids")
 	}
 
-	newBidData := db.Bid{
+	newBidData := &db.Bid{
 		InvoiceId:       req.InvoiceId,
 		BidderAccountId: req.BidderAccountId,
 		Offer:           req.Offer,

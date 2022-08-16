@@ -19,7 +19,7 @@ func TestInvestorsRepository_GetAllInvestors(t *testing.T) {
 		{
 			name:    "gets all Investors on the database (3 for newly seeded db)",
 			repo:    &InvestorsRepository{Db: stubdb.TestStubDb},
-			want:    data.FakeAllInvestorsList,
+			want:    data.SeededAllInvestorsList,
 			wantErr: false,
 		},
 	}
@@ -47,7 +47,7 @@ func TestIssuersRepository_GetAllIssuers(t *testing.T) {
 		{
 			name:    "gets all Issuers on the database (3 for newly seeded db)",
 			repo:    &IssuersRepository{Db: stubdb.TestStubDb},
-			want:    data.FakeAllIssuersList,
+			want:    data.SeededAllIssuersList,
 			wantErr: false,
 		},
 	}
@@ -75,7 +75,7 @@ func TestBidsRepository_GetAllBids(t *testing.T) {
 		{
 			name:    "gets all Bids on the database (3 for newly seeded db)",
 			repo:    &BidsRepository{Db: stubdb.TestStubDb},
-			want:    data.FakeAllBidsList,
+			want:    data.SeededAllBidsList,
 			wantErr: false,
 		},
 	}
@@ -103,7 +103,7 @@ func TestInvoicesRepository_GetAllInvoices(t *testing.T) {
 		{
 			name:    "gets all Invoices on the database (3 for newly seeded db)",
 			repo:    &InvoicesRepository{Db: stubdb.TestStubDb},
-			want:    data.FakeAllInvoicesList,
+			want:    data.SeededAllInvoicesList,
 			wantErr: false,
 		},
 	}

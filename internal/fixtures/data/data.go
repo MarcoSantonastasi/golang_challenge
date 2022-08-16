@@ -12,43 +12,33 @@ import (
 )
 
 var SeededAllInvestorsList = new([]*db.Account)
-var FakeAllInvestorsList = new([]*db.Account)
 var SeededAllIssuersList = new([]*db.Account)
-var FakeAllIssuersList = new([]*db.Account)
 var SeededAllInvoicesList = new([]*db.Invoice)
-var FakeAllInvoicesList = new([]*db.Invoice)
 var NewInvoiceData = new(db.Invoice)
 var SeededAllBidsList = new([]*db.Bid)
-var FakeAllBidsList = new([]*db.Bid)
 var NewBidData = new(db.Bid)
-var AdjudicateBidData = new(struct {
-	Id     int64
-	Amount int64
-})
 
-var ResponseGetAllInvestors = new([]*pb.Investor)
-var ResponseGetAllIssuers = new([]*pb.Issuer)
-var ResponseGetAllInvoices = new([]*pb.Invoice)
-var ResponseNewInvoice = new(pb.Invoice)
-var ResponseGetAllBids = new([]*pb.Bid)
-var ResponseNewBid = new(pb.Bid)
-var ResponseAdjudicateBid = new(struct {
-	Id     int64
-	Amount int64
-})
+var RequestGetAllInvestors = &pb.Empty{}
+var RequestGetAllIssuers = &pb.Empty{}
+var RequestGetAllInvoices = &pb.Empty{}
+var RequestNewInvoice = &pb.NewInvoiceRequest{}
+var RequestGetAllBids = &pb.Empty{}
+var RequesteNewBid = new(pb.NewBidRequest)
+
+var ResponseGetAllInvestors = new(pb.GetAllInvestorsResponse)
+var ResponseGetAllIssuers = new(pb.GetAllIssuersResponse)
+var ResponseGetAllInvoices = new(pb.GetAllInvoicesResponse)
+var ResponseNewInvoice = new(pb.NewInvoiceResponse)
+var ResponseGetAllBids = new(pb.GetAllBidsResponse)
+var ResponseNewBid = new(pb.NewBidResponse)
 
 func init() {
 	loadFixtureDataJson("seededInvestors.json", SeededAllInvestorsList)
-	loadFixtureDataJson("fakeInvestors.json", FakeAllInvestorsList)
 	loadFixtureDataJson("seededIssuers.json", SeededAllIssuersList)
-	loadFixtureDataJson("fakeIssuers.json", FakeAllIssuersList)
 	loadFixtureDataJson("seededInvoices.json", SeededAllInvoicesList)
-	loadFixtureDataJson("fakeInvoices.json", FakeAllInvoicesList)
 	loadFixtureDataJson("newInvoice.json", NewInvoiceData)
 	loadFixtureDataJson("seededBids.json", SeededAllBidsList)
-	loadFixtureDataJson("fakeBids.json", FakeAllBidsList)
 	loadFixtureDataJson("newBid.json", NewBidData)
-	loadFixtureDataJson("adjudicateBid.json", AdjudicateBidData)
 
 	makeResponseFromDataVars()
 
@@ -77,8 +67,22 @@ func loadFixtureDataJson(fileName string, dataVar any) {
 
 func makeResponseFromDataVars() {
 
+	RequestNewInvoice = &pb.NewInvoiceRequest{
+		IssuerAccountId: NewInvoiceData.IssuerAccountId,
+		Reference:       NewInvoiceData.Reference,
+		Denom:           NewInvoiceData.Denom,
+		Amount:          NewInvoiceData.Amount,
+		Asking:          NewInvoiceData.Asking,
+	}
+
+	RequesteNewBid = &pb.NewBidRequest{
+		InvoiceId:       NewBidData.InvoiceId,
+		BidderAccountId: NewBidData.BidderAccountId,
+		Offer:           NewBidData.Offer,
+	}
+
 	for _, i := range *SeededAllInvestorsList {
-		*ResponseGetAllInvestors = append(*ResponseGetAllInvestors, &pb.Investor{
+		ResponseGetAllInvestors.Data = append(ResponseGetAllInvestors.Data, &pb.Investor{
 			Id:      i.Id,
 			Name:    i.Name,
 			Balance: i.Balance,
@@ -86,7 +90,7 @@ func makeResponseFromDataVars() {
 	}
 
 	for _, i := range *SeededAllIssuersList {
-		*ResponseGetAllIssuers = append(*ResponseGetAllIssuers, &pb.Issuer{
+		ResponseGetAllIssuers.Data = append(ResponseGetAllIssuers.Data, &pb.Issuer{
 			Id:      i.Id,
 			Name:    i.Name,
 			Balance: i.Balance,
@@ -94,7 +98,7 @@ func makeResponseFromDataVars() {
 	}
 
 	for _, b := range *SeededAllBidsList {
-		*ResponseGetAllBids = append(*ResponseGetAllBids, &pb.Bid{
+		ResponseGetAllBids.Data = append(ResponseGetAllBids.Data, &pb.Bid{
 			Id:              b.Id,
 			InvoiceId:       b.InvoiceId,
 			BidderAccountId: b.BidderAccountId,
@@ -104,7 +108,7 @@ func makeResponseFromDataVars() {
 	}
 
 	for _, i := range *SeededAllInvoicesList {
-		*ResponseGetAllInvoices = append(*ResponseGetAllInvoices, &pb.Invoice{
+		ResponseGetAllInvoices.Data = append(ResponseGetAllInvoices.Data, &pb.Invoice{
 			Id:              i.Id,
 			IssuerAccountId: i.IssuerAccountId,
 			Reference:       i.Reference,
@@ -115,12 +119,21 @@ func makeResponseFromDataVars() {
 		})
 	}
 
-	ResponseNewInvoice = ResponseNewInvoice{}
+	ResponseNewInvoice.Data = &pb.Invoice{
+		Id:              NewInvoiceData.Id,
+		IssuerAccountId: NewInvoiceData.IssuerAccountId,
+		Reference:       NewInvoiceData.Reference,
+		Denom:           NewInvoiceData.Denom,
+		Amount:          NewInvoiceData.Amount,
+		Asking:          NewInvoiceData.Asking,
+		State:           NewInvoiceData.State,
+	}
 
-	var ResponseNewInvoice = new(pb.Invoice)
-	var ResponseNewBid = new(pb.Bid)
-	var ResponseAdjudicateBid = new(struct {
-		Id     int64
-		Amount int64
-	})
+	ResponseNewBid.Data = &pb.Bid{
+		Id:              NewBidData.Id,
+		InvoiceId:       NewBidData.InvoiceId,
+		BidderAccountId: NewBidData.BidderAccountId,
+		Offer:           NewBidData.Offer,
+		State:           NewBidData.State,
+	}
 }

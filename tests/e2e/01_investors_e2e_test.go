@@ -20,7 +20,7 @@ func TestE2E_GetAllInvestors(t *testing.T) {
 		{
 			desc:    "gets the list of all Investors",
 			client:  clientServices.investor,
-			want:    &pb.GetAllInvestorsResponse{Data: *data.SeededAllInvestorsList},
+			want:    data.ResponseGetAllInvestors,
 			wantErr: false,
 		},
 	}
@@ -28,12 +28,12 @@ func TestE2E_GetAllInvestors(t *testing.T) {
 		t.Run(tt.desc, func(t *testing.T) {
 			ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 			defer cancel()
-			got, err := tt.client.GetAllInvestors(ctx, &pb.Empty{})
+			got, err := tt.client.GetAllInvestors(ctx, data.RequestGetAllInvestors)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("Got GetAllInvestors() error = %v, instead expected error %v", err, tt.wantErr)
 				return
 			}
-			if !reflect.DeepEqual(got.Data, tt.want.Data) {
+			if !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("Got GetAllInvestors() = \n%+v,\nbut wanted \n%+v", got, tt.want)
 			}
 

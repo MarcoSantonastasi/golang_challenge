@@ -11,14 +11,14 @@ import (
 func TestFakeInvestorsRepository_GetAllInvestors(t *testing.T) {
 	tests := []struct {
 		name    string
-		repo    *FakeInvestorsRepository
+		repo    *StubInvestorsRepository
 		want    *[]*db.Account
 		wantErr bool
 	}{
 		{
 			name:    "GetAllInvestors () returns exactly the data json file",
-			repo:    &FakeInvestorsRepository{},
-			want:    data.FakeAllInvestorsList,
+			repo:    &StubInvestorsRepository{},
+			want:    data.SeededAllInvestorsList,
 			wantErr: false,
 		},
 	}
@@ -39,14 +39,14 @@ func TestFakeInvestorsRepository_GetAllInvestors(t *testing.T) {
 func TestFakeIssuersRepository_GetAllIssuers(t *testing.T) {
 	tests := []struct {
 		name    string
-		repo    *FakeIssuersRepository
+		repo    *StubIssuersRepository
 		want    *[]*db.Account
 		wantErr bool
 	}{
 		{
 			name:    "GetAllIssuers () returns exactly the data json file",
-			repo:    &FakeIssuersRepository{},
-			want:    data.FakeAllIssuersList,
+			repo:    &StubIssuersRepository{},
+			want:    data.SeededAllIssuersList,
 			wantErr: false,
 		},
 	}
@@ -67,14 +67,14 @@ func TestFakeIssuersRepository_GetAllIssuers(t *testing.T) {
 func TestFakeInvoicesRepository_GetAllInvoices(t *testing.T) {
 	tests := []struct {
 		name    string
-		repo    *FakeInvoicesRepository
+		repo    *StubInvoicesRepository
 		want    *[]*db.Invoice
 		wantErr bool
 	}{
 		{
 			name:    "GetAllInvoices () returns exactly the data json file",
-			repo:    &FakeInvoicesRepository{},
-			want:    data.FakeAllInvoicesList,
+			repo:    &StubInvoicesRepository{},
+			want:    data.SeededAllInvoicesList,
 			wantErr: false,
 		},
 	}

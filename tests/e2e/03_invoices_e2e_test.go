@@ -20,7 +20,7 @@ func TestE2E_GetAllInvoices(t *testing.T) {
 		{
 			desc:    "gets the list of all Invoices",
 			client:  clientServices.invoice,
-			want:    &pb.GetAllInvoicesResponse{Data: *data.SeededAllInvoicesList},
+			want:    data.ResponseGetAllInvoices,
 			wantErr: false,
 		},
 	}
@@ -28,12 +28,12 @@ func TestE2E_GetAllInvoices(t *testing.T) {
 		t.Run(tt.desc, func(t *testing.T) {
 			ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 			defer cancel()
-			got, err := tt.client.GetAllInvoices(ctx, &pb.Empty{})
+			got, err := tt.client.GetAllInvoices(ctx, data.RequestGetAllInvoices)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("Got GetAllInvoices() error = %v, instead expected error %v", err, tt.wantErr)
 				return
 			}
-			if !reflect.DeepEqual(got.Data, tt.want.Data) {
+			if !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("Got GetAllInvoices() = %v, but wanted %v", got, tt.want)
 			}
 

@@ -20,7 +20,7 @@ func TestE2E_GetAllIssuers(t *testing.T) {
 		{
 			desc:    "gets the list of all Issuers",
 			client:  clientServices.issuer,
-			want:    &pb.GetAllIssuersResponse{Data: *data.SeededAllIssuersList},
+			want:    data.ResponseGetAllIssuers,
 			wantErr: false,
 		},
 	}
@@ -28,12 +28,12 @@ func TestE2E_GetAllIssuers(t *testing.T) {
 		t.Run(tt.desc, func(t *testing.T) {
 			ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 			defer cancel()
-			got, err := tt.client.GetAllIssuers(ctx, &pb.Empty{})
+			got, err := tt.client.GetAllIssuers(ctx, data.RequestGetAllIssuers)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("Got GetAllIssuers() error = %v, instead expected error %v", err, tt.wantErr)
 				return
 			}
-			if !reflect.DeepEqual(got.Data, tt.want.Data) {
+			if !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("Got GetAllIssuers() = %v, but wanted %v", got, tt.want)
 			}
 
