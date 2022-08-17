@@ -196,6 +196,7 @@ var IssuerService_ServiceDesc = grpc.ServiceDesc{
 type BidServiceClient interface {
 	GetAllBids(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*GetAllBidsResponse, error)
 	GetBidById(ctx context.Context, in *GetBidByIdRequest, opts ...grpc.CallOption) (*GetBidByIdResponse, error)
+	GetBidWithInvoiceById(ctx context.Context, in *GetBidWithInvoiceByIdRequest, opts ...grpc.CallOption) (*GetBidWithInvoiceByIdResponse, error)
 	GetBidsByInvoiceId(ctx context.Context, in *GetBidsByInvoiceIdRequest, opts ...grpc.CallOption) (*GetBidsByInvoiceIdResponse, error)
 	GetBidsByInvestorId(ctx context.Context, in *GetBidsByInvestorIdRequest, opts ...grpc.CallOption) (*GetBidsByInvestorIdResponse, error)
 	NewBid(ctx context.Context, in *NewBidRequest, opts ...grpc.CallOption) (*NewBidResponse, error)
@@ -224,6 +225,15 @@ func (c *bidServiceClient) GetAllBids(ctx context.Context, in *Empty, opts ...gr
 func (c *bidServiceClient) GetBidById(ctx context.Context, in *GetBidByIdRequest, opts ...grpc.CallOption) (*GetBidByIdResponse, error) {
 	out := new(GetBidByIdResponse)
 	err := c.cc.Invoke(ctx, "/v1.BidService/GetBidById", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *bidServiceClient) GetBidWithInvoiceById(ctx context.Context, in *GetBidWithInvoiceByIdRequest, opts ...grpc.CallOption) (*GetBidWithInvoiceByIdResponse, error) {
+	out := new(GetBidWithInvoiceByIdResponse)
+	err := c.cc.Invoke(ctx, "/v1.BidService/GetBidWithInvoiceById", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -290,6 +300,7 @@ func (c *bidServiceClient) AllRunningBidsToLost(ctx context.Context, in *AllRunn
 type BidServiceServer interface {
 	GetAllBids(context.Context, *Empty) (*GetAllBidsResponse, error)
 	GetBidById(context.Context, *GetBidByIdRequest) (*GetBidByIdResponse, error)
+	GetBidWithInvoiceById(context.Context, *GetBidWithInvoiceByIdRequest) (*GetBidWithInvoiceByIdResponse, error)
 	GetBidsByInvoiceId(context.Context, *GetBidsByInvoiceIdRequest) (*GetBidsByInvoiceIdResponse, error)
 	GetBidsByInvestorId(context.Context, *GetBidsByInvestorIdRequest) (*GetBidsByInvestorIdResponse, error)
 	NewBid(context.Context, *NewBidRequest) (*NewBidResponse, error)
@@ -308,6 +319,9 @@ func (UnimplementedBidServiceServer) GetAllBids(context.Context, *Empty) (*GetAl
 }
 func (UnimplementedBidServiceServer) GetBidById(context.Context, *GetBidByIdRequest) (*GetBidByIdResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetBidById not implemented")
+}
+func (UnimplementedBidServiceServer) GetBidWithInvoiceById(context.Context, *GetBidWithInvoiceByIdRequest) (*GetBidWithInvoiceByIdResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetBidWithInvoiceById not implemented")
 }
 func (UnimplementedBidServiceServer) GetBidsByInvoiceId(context.Context, *GetBidsByInvoiceIdRequest) (*GetBidsByInvoiceIdResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetBidsByInvoiceId not implemented")
@@ -372,6 +386,24 @@ func _BidService_GetBidById_Handler(srv interface{}, ctx context.Context, dec fu
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(BidServiceServer).GetBidById(ctx, req.(*GetBidByIdRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _BidService_GetBidWithInvoiceById_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetBidWithInvoiceByIdRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(BidServiceServer).GetBidWithInvoiceById(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/v1.BidService/GetBidWithInvoiceById",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(BidServiceServer).GetBidWithInvoiceById(ctx, req.(*GetBidWithInvoiceByIdRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -498,6 +530,10 @@ var BidService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetBidById",
 			Handler:    _BidService_GetBidById_Handler,
+		},
+		{
+			MethodName: "GetBidWithInvoiceById",
+			Handler:    _BidService_GetBidWithInvoiceById_Handler,
 		},
 		{
 			MethodName: "GetBidsByInvoiceId",

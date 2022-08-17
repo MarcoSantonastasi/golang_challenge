@@ -24,3 +24,17 @@ type Bid struct {
 	Offer           int64
 	State           string
 }
+
+type BidWithInvoice struct {
+	Id                     int64
+	InvoiceId              string
+	BidderAccountId        string
+	Offer                  int64
+	State                  string
+	InvoiceIssuerAccountId string
+	InvoiceReference       string
+	InvoiceDenom           string
+	InvoiceAmount          int64
+	InvoiceAsking          int64
+	InvoiceState           string
+}

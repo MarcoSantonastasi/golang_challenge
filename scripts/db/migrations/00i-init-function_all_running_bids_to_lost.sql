@@ -1,38 +1,49 @@
-CREATE OR REPLACE FUNCTION all_running_bids_to_lost (
-  INOUT _invoice_id uuid,
-  OUT _bid_id bigint
+CREATE OR REPLACE FUNCTION all_running_bids_to_lost ( _invoice_id uuid )
+RETURNS TABLE (
+	id bigint,
+    created_at timestamp with time zone,
+    invoice_id uuid,
+    bidder_account_id uuid,
+    offer bigint,
+    state type_bid_state
 )
 AS $$
 BEGIN
   WITH running_bids AS (
 	  UPDATE
-		  bids
+		  bids AS rb
 	  SET
 		  state = 'LOST'::type_bid_state
     WHERE
-		  state = 'RUNNING'::type_bid_state AND
-		  invoice_id = _invoice_id
+		  rb.state = 'RUNNING'::type_bid_state AND
+		  rb.invoice_id = _invoice_id
 	  RETURNING
-		  id AS bid_id,
-		  bidder_account_id AS credit_account_id,
-		  offer AS amount
+		  rb.id AS bid_id,
+		  rb.bidder_account_id AS credit_account_id,
+		  rb.offer AS amount
   ),
   escrow_account AS (
 	  SELECT
-		  id
+		  a.id
 	  FROM
-		  accounts
+		  accounts as a
 	  WHERE
-		  TYPE = 'ESCROW'::type_account_type FETCH FIRST ROW ONLY
+		  a.type = 'ESCROW'::type_account_type FETCH FIRST ROW ONLY
   )
-  INSERT INTO transactions (bid_id, credit_account_id, debit_account_id, amount)
+  INSERT INTO transactions AS t (bid_id, credit_account_id, debit_account_id, amount)
   SELECT
-	  bid_id, credit_account_id, escrow_account.id AS debit_account_id, amount
+	  running_bids.bid_id, running_bids.credit_account_id, escrow_account.id AS debit_account_id, running_bids.amount
   FROM
 	  running_bids,
-	  escrow_account
-  RETURNING bid_id INTO _bid_id;
+	  escrow_account;
 
+  SELECT
+    ub.*
+  FROM
+    bids AS ub
+  WHERE
+    ub.state = 'LOST'::type_bid_state
+    AND ub.invoice_id = _invoice_id;
 RETURN;
 END;
 $$ LANGUAGE plpgsql;

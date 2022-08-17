@@ -95,11 +95,15 @@ func (repo *InvoicesRepository) NewInvoice(newInvoiceData *db.Invoice) (*db.Invo
 type IBidsRepository interface {
 	GetAllBids() (*[]*db.Bid, error)
 	GetBidById(bidId int64) (*db.Bid, error)
+	GetBidWithInvoiceById(bidId int64) (*db.BidWithInvoice, error)
 	GetBidsByInvoiceId(invoiceId string) (*[]*db.Bid, error)
-	GetBidsByInvestorId(investorId string) (*[]*db.Bid, error)
+	GetBidsByInvestorId(investorId string) (*[]*db.BidWithInvoice, error)
 	NewBid(*db.Bid) (*db.Bid, error)
 	GetFulfillingBids(invoiceId string) (*[]*db.Bid, error)
-	AdjudicateBid(bidId int64) (*int64, error)
+	AdjudicateBid(bidId int64) (*struct {
+		BidId      int64
+		PaidAmount int64
+	}, error)
 	AllRunningBidsToLost(invoiceId string) (*[]*db.Bid, error)
 }
 
@@ -131,6 +135,18 @@ func (repo *BidsRepository) GetBidById(bidId int64) (*db.Bid, error) {
 	return data, nil
 }
 
+func (repo *BidsRepository) GetBidWithInvoiceById(bidId int64) (*db.BidWithInvoice, error) {
+	if repo.Db == nil {
+		return nil, fmt.Errorf("no database found for Bids")
+	}
+	data, err := repo.Db.GetBidWithInvoiceById(bidId)
+	if err != nil {
+		return nil, fmt.Errorf("repository error for GetBidById: %+v", err)
+	}
+
+	return data, nil
+}
+
 func (repo *BidsRepository) GetBidsByInvoiceId(invoiceId string) (*[]*db.Bid, error) {
 	if repo.Db == nil {
 		return nil, fmt.Errorf("no database found for Bids")
@@ -143,7 +159,7 @@ func (repo *BidsRepository) GetBidsByInvoiceId(invoiceId string) (*[]*db.Bid, er
 	return data, nil
 }
 
-func (repo *BidsRepository) GetBidsByInvestorId(investorId string) (*[]*db.Bid, error) {
+func (repo *BidsRepository) GetBidsByInvestorId(investorId string) (*[]*db.BidWithInvoice, error) {
 	if repo.Db == nil {
 		return nil, fmt.Errorf("no database found for Bids")
 	}
@@ -181,14 +197,19 @@ func (repo *BidsRepository) GetFulfillingBids(invoiceId string) (*[]*db.Bid, err
 	return data, nil
 }
 
-func (repo *BidsRepository) AdjudicateBid(bidId int64) (*int64, error) {
+func (repo *BidsRepository) AdjudicateBid(bidId int64) (*struct {
+	BidId      int64
+	PaidAmount int64
+}, error) {
+
 	if repo.Db == nil {
 		return nil, fmt.Errorf("no database found for Invoices")
 	}
+
 	data, err := repo.Db.AdjudicateBid(bidId)
 
 	if err != nil {
-		return nil, fmt.Errorf("repository error for AdjudicateInvoice: %+v", err)
+		return nil, fmt.Errorf("repository error for AdjudicateBid: %+v", err)
 	}
 
 	return data, nil
