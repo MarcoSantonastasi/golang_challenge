@@ -1,12 +1,5 @@
-CREATE OR REPLACE FUNCTION all_running_bids_to_lost ( _invoice_id uuid )
-RETURNS TABLE (
-	id bigint,
-    created_at timestamp with time zone,
-    invoice_id uuid,
-    bidder_account_id uuid,
-    offer bigint,
-    state type_bid_state
-)
+CREATE OR REPLACE FUNCTION all_running_bids_to_lost ( _invoice_id uuid)
+RETURNS SETOF bids
 AS $$
 BEGIN
   WITH running_bids AS (
@@ -37,13 +30,14 @@ BEGIN
 	  running_bids,
 	  escrow_account;
 
-  SELECT
+RETURN QUERY
+SELECT
     ub.*
   FROM
     bids AS ub
   WHERE
     ub.state = 'LOST'::type_bid_state
     AND ub.invoice_id = _invoice_id;
-RETURN;
+
 END;
 $$ LANGUAGE plpgsql;

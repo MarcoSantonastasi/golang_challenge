@@ -578,8 +578,11 @@ func (db *PgDb) AllRunningBidsToLost(invoiceId string) (*[]*Bid, error) {
 	rows, err := db.conn.Query(
 		context.Background(),
 		`select
+			id,
 			invoice_id,
-			bid_id bigint
+			bidder_account_id,
+			offer,
+			state 
 		from
 			all_running_bids_to_lost($1)`,
 		invoiceId,

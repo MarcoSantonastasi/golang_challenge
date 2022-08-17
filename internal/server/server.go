@@ -305,6 +305,7 @@ func (s *BidServiceServer) NewBid(ctx context.Context, req *pb.NewBidRequest) (*
 	}
 
 	resNewBid, errNewBid := s.Repo.NewBid(newBidData)
+	fmt.Println("new bid", resNewBid.Id, resNewBid.InvoiceId)
 	if errNewBid != nil {
 		return nil, fmt.Errorf("error in response from repository for NewBid: %+v", errNewBid)
 	}
@@ -327,7 +328,7 @@ func (s *BidServiceServer) NewBid(ctx context.Context, req *pb.NewBidRequest) (*
 			return nil, fmt.Errorf("error in response from repository for AllRunningBidsToLost: %+v", errBidsToLost)
 		}
 		// we need to query again for the latest status update on the Bid
-		resUpdBid, errUpdBid := s.Repo.GetBidById(newBidData.Id)
+		resUpdBid, errUpdBid := s.Repo.GetBidById(resNewBid.Id)
 		if errUpdBid != nil {
 			return nil, fmt.Errorf("error in response from repository for GetBidById: %+v", errUpdBid)
 		}

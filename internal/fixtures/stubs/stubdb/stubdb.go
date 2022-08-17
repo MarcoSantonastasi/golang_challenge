@@ -39,12 +39,21 @@ func (db *StubDb) GetBidById(bidId int64) (*db.Bid, error) {
 	}
 }
 
+func (db *StubDb) GetBidWithInvoiceById(bidId int64) (*db.BidWithInvoice, error) {
+	data := data.SeededAllBidsWithInvoiceList
+	if bidId >= 0 && int(bidId) < len(*data) {
+		return (*data)[bidId], nil
+	} else {
+		return nil, fmt.Errorf("bidId does not exist on the stubDb")
+	}
+}
+
 func (db *StubDb) GetBidsByInvoiceId(invoiceId string) (*[]*db.Bid, error) {
 	return data.SeededAllBidsList, nil
 }
 
-func (db *StubDb) GetBidsByInvestorId(invoiceId string) (*[]*db.Bid, error) {
-	return data.SeededAllBidsList, nil
+func (db *StubDb) GetBidsByInvestorId(invoiceId string) (*[]*db.BidWithInvoice, error) {
+	return data.SeededAllBidsWithInvoiceList, nil
 }
 
 func (db *StubDb) NewBid(db.Bid) (*db.Bid, error) {
@@ -55,9 +64,14 @@ func (db *StubDb) GetFulfillingBids(invoiceId string) (*[]*db.Bid, error) {
 	return data.SeededAllBidsList, nil
 }
 
-func (db *StubDb) AdjudicateBid(bidId int64) (*int64, error) {
-	var paidAmount int64 = 300000
-	return &paidAmount, nil
+func (db *StubDb) AdjudicateBid(bidId int64) (*struct {
+	BidId      int64
+	PaidAmount int64
+}, error) {
+	return &struct {
+		BidId      int64
+		PaidAmount int64
+	}{BidId: 4, PaidAmount: 200000}, nil
 }
 
 func (db *StubDb) AllRunningBidsToLost(invoiceId string) (*[]*db.Bid, error) {

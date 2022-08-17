@@ -21,7 +21,7 @@ func main() {
 	flag.Parse()
 	conn, err := grpc.Dial(*addr, grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
-		log.Fatalf("could not not connect to the gRPC server: %v", err)
+		log.Fatalf("\ncould not not connect to the gRPC server: %+v", err)
 	}
 	defer conn.Close()
 
@@ -35,21 +35,21 @@ func main() {
 
 	resGetAllInvestors, errGetAllInvestors := investorServiceClient.GetAllInvestors(ctx, &pb.Empty{})
 	if errGetAllInvestors != nil {
-		log.Fatalf("could not get Investors: %v", errGetAllInvestors)
+		log.Fatalf("\ncould not get Investors: %+v", errGetAllInvestors)
 	}
-	log.Printf("All Investors: %v", resGetAllInvestors.GetData())
+	log.Printf("\nAll Investors: %+v", resGetAllInvestors.GetData())
 
 	resGetAllIssuers, errGetAllIssuers := issuerServiceClient.GetAllIssuers(ctx, &pb.Empty{})
 	if errGetAllIssuers != nil {
-		log.Fatalf("could not get Issuers: %v", errGetAllIssuers)
+		log.Fatalf("\ncould not get Issuers: %+v", errGetAllIssuers)
 	}
-	log.Printf("All Issuers: %v", resGetAllIssuers.GetData())
+	log.Printf("\nAll Issuers: %+v", resGetAllIssuers.GetData())
 
 	resGetAllInvoices, errGetAllInvoices := invoiceServiceClient.GetAllInvoices(ctx, &pb.Empty{})
 	if errGetAllInvoices != nil {
-		log.Fatalf("could not get Invoices: %v", errGetAllInvoices)
+		log.Fatalf("\ncould not get Invoices: %+v", errGetAllInvoices)
 	}
-	log.Printf("All Invoices: %v", resGetAllInvoices.GetData())
+	log.Printf("\nAll Invoices: %+v", resGetAllInvoices.GetData())
 
 	resNewInvoice, errNewInvoice := invoiceServiceClient.NewInvoice(ctx, &pb.NewInvoiceRequest{
 		IssuerAccountId: data.NewInvoiceData.IssuerAccountId,
@@ -59,15 +59,24 @@ func main() {
 		Asking:          data.NewInvoiceData.Asking,
 	})
 	if errNewInvoice != nil {
-		log.Fatalf("could not create new Invoice: %v", errNewInvoice)
+		log.Fatalf("\ncould not create new Invoice: %+v", errNewInvoice)
 	}
-	log.Printf("New Invoice: %v", resNewInvoice.GetData())
+	log.Printf("\nNew Invoice: %+v", resNewInvoice.GetData())
 
 	resGetAllBids, errGetAllBids := bidServiceClient.GetAllBids(ctx, &pb.Empty{})
 	if errGetAllBids != nil {
-		log.Fatalf("could not get Bids: %v", errGetAllBids)
+		log.Fatalf("\ncould not get Bids: %+v", errGetAllBids)
 	}
-	log.Printf("All Bids: %v", resGetAllBids.GetData())
+	log.Printf("\nAll Bids: %+v", resGetAllBids.GetData())
+
+	resGetAllBidsWithInvoice, errGetAllBidsWithInvoice := bidServiceClient.GetBidWithInvoiceById(
+		ctx,
+		&pb.GetBidWithInvoiceByIdRequest{
+			BidId: resGetAllBids.GetData()[0].Id})
+	if errGetAllBidsWithInvoice != nil {
+		log.Fatalf("\ncould not get BidsWithInvoices: %+v", errGetAllBidsWithInvoice)
+	}
+	log.Printf("\nAll Bids: %+v", resGetAllBidsWithInvoice.GetData())
 
 	resBid, errBid := bidServiceClient.NewBid(ctx, &pb.NewBidRequest{
 		InvoiceId:       data.NewBidData.InvoiceId,
@@ -75,15 +84,15 @@ func main() {
 		Offer:           data.NewBidData.Offer,
 	})
 	if errBid != nil {
-		log.Fatalf("could not Bid: %v", errBid)
+		log.Fatalf("\ncould not Bid: %+v", errBid)
 	}
-	log.Printf("Bid: %v", resBid.GetData())
+	log.Printf("\nBid: %+v", resBid.GetData())
 
 	resAdj, errAdj := bidServiceClient.AdjudicateBid(ctx, &pb.AdjudicateBidRequest{
 		BidId: 1,
 	})
 	if errAdj != nil {
-		log.Fatalf("could not AdjudicateBid: %v", errBid)
+		log.Fatalf("\ncould not AdjudicateBid: %+v", errBid)
 	}
-	log.Printf("Adjudicated: %v", resAdj.GetAmount())
+	log.Printf("\nAdjudicated: %+v", resAdj.GetAmount())
 }
