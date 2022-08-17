@@ -1,0 +1,13 @@
+{
+    "id": null,
+    "invoiceId": "acb51e7b-2cef-4081-93ad-6b3a97c68b8a",
+    "bidderAccountId": "991842fe-2e97-4481-a560-8d985a82ae74",
+    "offer": 100001,
+    "state": "RUNNING",
+	"invoiceIssuerAccountId": "string",
+    "invoiceReference":       "string",
+    "invoiceDenom":           "string",
+    "invoiceAmount":          0,
+    "invoiceAsking":          0,
+	"invoiceState":           "string"
+}

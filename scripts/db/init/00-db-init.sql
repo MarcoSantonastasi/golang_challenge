@@ -1,6 +1,6 @@
 DROP TABLE IF EXISTS accounts CASCADE;
 
-DROP TYPE IF EXISTS type_account_type;
+DROP TYPE IF EXISTS type_account_type CASCADE;
 
 CREATE TYPE type_account_type AS ENUM ('INVESTOR', 'ISSUER', 'ESCROW', 'CASH');
 
@@ -21,7 +21,7 @@ COMMENT ON TABLE accounts IS
 
 DROP TABLE IF EXISTS invoices CASCADE;
 
-DROP TYPE IF EXISTS type_invoice_state;
+DROP TYPE IF EXISTS type_invoice_state CASCADE;
 
 CREATE TYPE type_invoice_state AS ENUM ('FORSALE', 'ADJUDICATED', 'FINANCED');
 
@@ -50,7 +50,7 @@ COMMENT ON TABLE invoices IS
 
 DROP TABLE IF EXISTS bids CASCADE;
 
-DROP TYPE IF EXISTS type_bid_state;
+DROP TYPE IF EXISTS type_bid_state CASCADE;
 
 CREATE TYPE type_bid_state AS ENUM ('RUNNING', 'WIDTHDRAWN', 'WON', 'LOST');
 
@@ -112,6 +112,8 @@ COMMENT ON TABLE transactions IS
 
 
 
+DROP FUNCTION IF EXISTS check_sufficient_balance_on_transactions_insert;
+
 CREATE OR REPLACE FUNCTION check_sufficient_balance_on_transactions_insert()
 RETURNS TRIGGER AS $$
 
@@ -133,10 +135,14 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
+DROP TRIGGER IF EXISTS check_sufficient_balance_on_transactions_insert;
+
 CREATE OR REPLACE TRIGGER check_sufficient_balance_on_transactions_insert
 BEFORE INSERT ON transactions
   FOR EACH ROW EXECUTE FUNCTION check_sufficient_balance_on_transactions_insert();
 
+
+DROP FUNCTION IF EXISTS update_account_balance_on_transactions_insert;
 
 CREATE OR REPLACE FUNCTION update_account_balance_on_transactions_insert() 
 RETURNS TRIGGER AS $$
@@ -155,11 +161,15 @@ RETURN new;
 END;
 $$ LANGUAGE plpgsql;
 
+DROP TRIGGER IF EXISTS update_account_balance_on_transactions_insert;
+
 CREATE OR REPLACE TRIGGER update_account_balance_on_transactions_insert
 AFTER INSERT ON transactions
   FOR EACH ROW EXECUTE FUNCTION update_account_balance_on_transactions_insert();
 
 
+
+DROP FUNCTION IF EXISTS check_invoice_forsale_on_bids_insert;
 
 CREATE OR REPLACE FUNCTION check_invoice_forsale_on_bids_insert()
 RETURNS TRIGGER AS $$
@@ -182,18 +192,22 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
+DROP TRIGGER IF EXISTS check_invoice_forsale_on_bids_insert;
+
 CREATE OR REPLACE TRIGGER check_invoice_forsale_on_bids_insert
 BEFORE INSERT ON bids
   FOR EACH ROW EXECUTE FUNCTION check_invoice_forsale_on_bids_insert();
 
 
 
+DROP FUNCTION IF EXISTS bid;
+
 CREATE OR REPLACE FUNCTION bid (
-  OUT _bid_id bigint,
-  INOUT _invoice_id uuid,
-  INOUT _bidder_account_id uuid,
-  INOUT _offer bigint,
-  OUT _state type_bid_state
+  OUT new_bid_id bigint,
+  INOUT invoice_id uuid,
+  INOUT bidder_account_id uuid,
+  INOUT new_bid_offer bigint,
+  OUT new_bid_state type_bid_state
 )
 AS $$
 
@@ -202,19 +216,19 @@ DECLARE
 	_invoice_state type_invoice_state;
 
 BEGIN
-	SELECT id FROM accounts
+	SELECT id FROM accounts AS a
 	WHERE
-		type = 'ESCROW'::type_account_type FETCH FIRST ROW ONLY INTO _escrow_account_id;
+		a.type = 'ESCROW'::type_account_type FETCH FIRST ROW ONLY INTO _escrow_account_id;
 
-	INSERT INTO bids (invoice_id, bidder_account_id, offer)
-		VALUES(_invoice_id, _bidder_account_id, _offer)
+	INSERT INTO bids AS b (invoice_id, bidder_account_id, offer)
+		VALUES(invoice_id, bidder_account_id, new_bid_offer)
 	RETURNING
-		id, invoice_id, bidder_account_id, offer, state
-  INTO
-    _bid_id, _invoice_id, _bidder_account_id, _offer, _state;
+		b.id, b.invoice_id, b.bidder_account_id, b.offer, b.state
+    INTO
+        new_bid_id, invoice_id, bidder_account_id, new_bid_offer, new_bid_state;
 	
   INSERT INTO transactions (bid_id, credit_account_id, debit_account_id, amount)
-		VALUES(_bid_id, _escrow_account_id, _bidder_account_id, _offer);
+		VALUES(new_bid_id, _escrow_account_id, bidder_account_id, new_bid_offer);
 	
   RETURN;
 END;
@@ -224,7 +238,9 @@ LANGUAGE plpgsql;
 
 
 
-CREATE OR REPLACE FUNCTION adjudicate_bid (INOUT _bid_id bigint, OUT _paid_amount bigint)
+DROP FUNCTION IF EXISTS adjudicate_bid;
+
+CREATE OR REPLACE FUNCTION adjudicate_bid (INOUT bid_id bigint, OUT paid_amount bigint)
 AS $$
 
 DECLARE
@@ -239,12 +255,12 @@ _invoice_asking bigint;
 
 BEGIN
 
-SELECT id FROM accounts
-WHERE type = 'ESCROW'::type_account_type
+SELECT id FROM accounts AS e
+WHERE e.type = 'ESCROW'::type_account_type
 FETCH FIRST ROW ONLY INTO _escrow_account_id ;
 
-SELECT id FROM accounts
-WHERE type = 'CASH'::type_account_type
+SELECT id FROM accounts AS c
+WHERE c.type = 'CASH'::type_account_type
 FETCH FIRST ROW ONLY INTO _cash_account_id;
 
 SELECT
@@ -258,7 +274,7 @@ SELECT
     LEFT JOIN invoices AS i
     ON i.id = b.invoice_id
   WHERE
-    b.id = _bid_id
+    b.id = bid_id
     AND b.state = 'RUNNING'::type_bid_state
     AND i.state = 'FORSALE'::type_invoice_state
   FETCH FIRST ROW ONLY
@@ -272,29 +288,29 @@ SELECT
 INSERT INTO transactions (bid_id, credit_account_id, debit_account_id, amount)
 	VALUES
 		-- Pay the issuer 90% the asking amount on the invoice debiting the escrow account
-		(_bid_id, _invoice_issuer_account_id, _escrow_account_id, (_invoice_asking * 0.90)),
+		(bid_id, _invoice_issuer_account_id, _escrow_account_id, (_invoice_asking * 0.90)),
 		-- Retain 10% as our fee debiting the escrow account
-		(_bid_id, _cash_account_id, _escrow_account_id, (_invoice_asking * 0.10)),
+		(bid_id, _cash_account_id, _escrow_account_id, (_invoice_asking * 0.10)),
 		-- Reinburse the difference between the asking and the offer to the bidder account debiting the escrow account
-		(_bid_id, _bidder_account_id, _escrow_account_id, (_bid_offer - _invoice_asking));
+		(bid_id, _bidder_account_id, _escrow_account_id, (_bid_offer - _invoice_asking));
     
 
 UPDATE
-	bids
+	bids AS ub
 SET
 	state = 'WON'::type_bid_state
 WHERE
-	id = _bid_id;
+	ub.id = bid_id;
 
 UPDATE
-	invoices
+	invoices AS ui
 SET
 	state = 'ADJUDICATED'::type_invoice_state
 WHERE
-	id = _invoice_id;
+	ui.id = _invoice_id;
 
 -- Can be different than asking when adjudicating for a lower price is implemented
-_paid_amount = _invoice_asking;
+paid_amount = _invoice_asking;
 
 RETURN;
 END;
@@ -304,53 +320,73 @@ LANGUAGE plpgsql;
 
 
 
-CREATE OR REPLACE FUNCTION all_running_bids_to_lost (
-  INOUT _invoice_id uuid,
-  OUT _bid_id bigint
+DROP FUNCTION IF EXISTS all_running_bids_to_lost;
+
+CREATE OR REPLACE FUNCTION all_running_bids_to_lost ( _invoice_id uuid )
+RETURNS TABLE (
+	id bigint,
+  created_at timestamp with time zone,
+  invoice_id uuid,
+  bidder_account_id uuid,
+  offer bigint,
+  state type_bid_state
 )
 AS $$
 BEGIN
   WITH running_bids AS (
 	  UPDATE
-		  bids
+		  bids AS rb
 	  SET
 		  state = 'LOST'::type_bid_state
     WHERE
-		  state = 'RUNNING'::type_bid_state AND
-		  invoice_id = _invoice_id
+		  rb.state = 'RUNNING'::type_bid_state AND
+		  rb.invoice_id = _invoice_id
 	  RETURNING
-		  id AS bid_id,
-		  bidder_account_id AS credit_account_id,
-		  offer AS amount
+		  rb.id AS bid_id,
+		  rb.bidder_account_id AS credit_account_id,
+		  rb.offer AS amount
   ),
   escrow_account AS (
 	  SELECT
-		  id
+		  a.id
 	  FROM
-		  accounts
+		  accounts as a
 	  WHERE
-		  TYPE = 'ESCROW'::type_account_type FETCH FIRST ROW ONLY
+		  a.type = 'ESCROW'::type_account_type FETCH FIRST ROW ONLY
   )
-  INSERT INTO transactions (bid_id, credit_account_id, debit_account_id, amount)
+  INSERT INTO transactions AS t (bid_id, credit_account_id, debit_account_id, amount)
   SELECT
-	  bid_id, credit_account_id, escrow_account.id AS debit_account_id, amount
+	  running_bids.bid_id, running_bids.credit_account_id, escrow_account.id AS debit_account_id, running_bids.amount
   FROM
 	  running_bids,
-	  escrow_account
-  RETURNING transactions.bid_id INTO _bid_id;
+	  escrow_account;
 
-RETURN;
+  SELECT
+    ub.*
+  FROM
+    bids AS ub
+  WHERE
+    ub.state = 'LOST'::type_bid_state
+    AND ub.invoice_id = _invoice_id;
+RETRUN;
 END;
 $$ LANGUAGE plpgsql;
 
 
 
 
+
+DROP VIEW IF EXISTS issuers;
+
 CREATE OR REPLACE VIEW issuers AS SELECT * FROM accounts WHERE type = 'ISSUER'::type_account_type;
 
 
+DROP VIEW IF EXISTS investors;
+
 CREATE OR REPLACE VIEW investors AS SELECT * FROM accounts WHERE type = 'INVESTOR'::type_account_type;
 
+
+DROP VIEW IF EXISTS bids_with_invoice;
 
 CREATE OR REPLACE VIEW bids_with_invoice
 AS

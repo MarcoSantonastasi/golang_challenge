@@ -2,7 +2,7 @@ package stubrepos
 
 import (
 	pb "github.com/marcosantonastasi/arex_challenge/api/arex/v1"
-	"github.com/marcosantonastasi/arex_challenge/internal/db"
+	db "github.com/marcosantonastasi/arex_challenge/internal/db"
 	data "github.com/marcosantonastasi/arex_challenge/internal/fixtures/data"
 )
 
@@ -40,6 +40,14 @@ type StubBidsRepository struct {
 
 func (repo *StubBidsRepository) GetAllBids() (*[]*db.Bid, error) {
 	return data.SeededAllBidsList, nil
+}
+
+func (repo *StubBidsRepository) GetBidById() (*db.Bid, error) {
+	return data.NewBidData, nil
+}
+
+func (repo *StubBidsRepository) GetBidWithInvoiceById() (*[]*db.BidWithInvoice, error) {
+	return data.SeededAllBidsWithInvoiceList, nil
 }
 
 func (repo *StubBidsRepository) NewBid(*pb.NewBidRequest) (*db.Bid, error) {

@@ -206,6 +206,35 @@ func (s *BidServiceServer) GetBidById(ctx context.Context, req *pb.GetBidByIdReq
 	return &pb.GetBidByIdResponse{Data: &data}, nil
 }
 
+func (s *BidServiceServer) GetBidWithInvoiceById(ctx context.Context, req *pb.GetBidWithInvoiceByIdRequest) (*pb.GetBidWithInvoiceByIdResponse, error) {
+	if s.Repo == nil {
+		return nil, fmt.Errorf("no repository found for Bids")
+	}
+
+	byBidId := req.BidId
+
+	res, err := s.Repo.GetBidWithInvoiceById(byBidId)
+	if err != nil {
+		return nil, fmt.Errorf("error in response from repository for GetBidById: %+v", err)
+	}
+
+	data := pb.BidWithInvoice{
+		Id:                     res.Id,
+		InvoiceId:              res.InvoiceId,
+		BidderAccountId:        res.BidderAccountId,
+		Offer:                  res.Offer,
+		State:                  res.State,
+		InvoiceIssuerAccountId: res.InvoiceIssuerAccountId,
+		InvoiceReference:       res.InvoiceReference,
+		InvoiceDenom:           res.InvoiceDenom,
+		InvoiceAmount:          res.InvoiceAmount,
+		InvoiceAsking:          res.InvoiceAsking,
+		InvoiceState:           res.InvoiceState,
+	}
+
+	return &pb.GetBidWithInvoiceByIdResponse{Data: &data}, nil
+}
+
 func (s *BidServiceServer) GetBidsByInvoiceId(ctx context.Context, req *pb.GetBidsByInvoiceIdRequest) (*pb.GetBidsByInvoiceIdResponse, error) {
 	if s.Repo == nil {
 		return nil, fmt.Errorf("no repository found for Bids")
@@ -243,15 +272,21 @@ func (s *BidServiceServer) GetBidsByInvestorId(ctx context.Context, req *pb.GetB
 		return nil, fmt.Errorf("error in response from repository for GetBidsByInvestorId: %+v", err)
 	}
 
-	data := []*pb.Bid{}
+	data := []*pb.BidWithInvoice{}
 
 	for _, b := range *res {
-		data = append(data, &pb.Bid{
-			Id:              b.Id,
-			InvoiceId:       b.InvoiceId,
-			BidderAccountId: b.BidderAccountId,
-			Offer:           b.Offer,
-			State:           b.State,
+		data = append(data, &pb.BidWithInvoice{
+			Id:                     b.Id,
+			InvoiceId:              b.InvoiceId,
+			BidderAccountId:        b.BidderAccountId,
+			Offer:                  b.Offer,
+			State:                  b.State,
+			InvoiceIssuerAccountId: b.InvoiceIssuerAccountId,
+			InvoiceReference:       b.InvoiceReference,
+			InvoiceDenom:           b.InvoiceDenom,
+			InvoiceAmount:          b.InvoiceAmount,
+			InvoiceAsking:          b.InvoiceAsking,
+			InvoiceState:           b.InvoiceState,
 		})
 	}
 

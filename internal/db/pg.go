@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/jackc/pgtype"
 	pg "github.com/jackc/pgx/v4"
 )
 
@@ -50,13 +49,24 @@ func (db *PgDb) Close() error {
 
 func (db *PgDb) GetAllInvestors() (*[]*Account, error) {
 	data := new([]*Account)
-	rows, err := db.conn.Query(context.Background(), "select id, name, type, balance from investors")
+	rows, err := db.conn.Query(
+		context.Background(),
+		`select
+			id, name, type, balance
+		from
+			investors`,
+	)
 	if err != nil {
 		return nil, fmt.Errorf("failed query for GetAllInvestors: %+v", err)
 	}
 	for rows.Next() {
 		row := new(Account)
-		if err := rows.Scan(&row.Id, &row.Name, &row.Type, &row.Balance); err != nil {
+		if err := rows.Scan(
+			&row.Id,
+			&row.Name,
+			&row.Type,
+			&row.Balance,
+		); err != nil {
 			return nil, fmt.Errorf("error scanning query response for GetAllInvestors: %+v", err)
 		}
 		*data = append(*data, row)
@@ -73,14 +83,22 @@ func (db *PgDb) GetAllIssuers() (*[]*Account, error) {
 	data := new([]*Account)
 	rows, err := db.conn.Query(
 		context.Background(),
-		"select id, name, type, balance from issuers",
+		`select
+			id, name, type, balance
+		from
+			issuers`,
 	)
 	if err != nil {
 		return nil, fmt.Errorf("failed query for GetAllIssuers: %+v", err)
 	}
 	for rows.Next() {
 		row := new(Account)
-		if err := rows.Scan(&row.Id, &row.Name, &row.Type, &row.Balance); err != nil {
+		if err := rows.Scan(
+			&row.Id,
+			&row.Name,
+			&row.Type,
+			&row.Balance,
+		); err != nil {
 			return nil, fmt.Errorf("error scanning query response for GetAllIssuers: %+v", err)
 		}
 		*data = append(*data, row)
@@ -114,7 +132,15 @@ func (db *PgDb) GetAllInvoices() (*[]*Invoice, error) {
 	}
 	for rows.Next() {
 		row := new(Invoice)
-		if err := rows.Scan(&row.Id, &row.IssuerAccountId, &row.Reference, &row.Denom, &row.Amount, &row.Asking, &row.State); err != nil {
+		if err := rows.Scan(
+			&row.Id,
+			&row.IssuerAccountId,
+			&row.Reference,
+			&row.Denom,
+			&row.Amount,
+			&row.Asking,
+			&row.State,
+		); err != nil {
 			return nil, fmt.Errorf("error scanning query response for GetAllInvoices: %+v", err)
 		}
 		*data = append(*data, row)
@@ -133,10 +159,28 @@ func (db *PgDb) GetInvoiceById(invoiceId string) (*Invoice, error) {
 
 	row := db.conn.QueryRow(
 		context.Background(),
-		"select * from invoices where id = $1",
+		`select
+			id,
+			issuer_account_id,
+			reference,
+			denom,
+			amount,
+			asking,
+			state
+		 from invoices
+		 where
+		 	id = $1`,
 		invoiceId,
 	)
-	if err := row.Scan(&data); err != nil {
+	if err := row.Scan(
+		&data.Id,
+		&data.IssuerAccountId,
+		&data.Reference,
+		&data.Denom,
+		&data.Amount,
+		&data.Asking,
+		&data.State,
+	); err != nil {
 		return nil, fmt.Errorf("error scanning db response record field for GetInvoiceById: %+v", err)
 	}
 	return data, nil
@@ -218,15 +262,106 @@ func (db *PgDb) GetAllBids() (*[]*Bid, error) {
 	return data, nil
 }
 
+func (db *PgDb) GetAllBidsWithInvoices() (*[]*BidWithInvoice, error) {
+	data := new([]*BidWithInvoice)
+	rows, err := db.conn.Query(
+		context.Background(),
+		`select
+			id,
+			invoice_id,
+			bidder_account_id,
+			offer,
+			state
+		from
+		    bids_with_invoice`,
+	)
+	if err != nil {
+		return nil, fmt.Errorf("failed query for GetAllBidsWithInvoice: %+v", err)
+	}
+	for rows.Next() {
+		row := new(BidWithInvoice)
+		if err := rows.Scan(
+			&row.Id,
+			&row.InvoiceId,
+			&row.BidderAccountId,
+			&row.Offer,
+			&row.State,
+		); err != nil {
+			return nil, fmt.Errorf("error scanning query response for GetAllBidsWithInvoice: %+v", err)
+		}
+		*data = append(*data, row)
+	}
+	//defer rows.Close()
+	rows.Close()
+	if err := rows.Err(); err != nil {
+		return nil, fmt.Errorf("error in some rows of query response for GetAllBidsWithInvoice: %+v", err)
+	}
+	return data, nil
+}
+
 func (db *PgDb) GetBidById(bidId int64) (*Bid, error) {
 	data := new(Bid)
 
 	row := db.conn.QueryRow(
 		context.Background(),
-		"select * from bids_with_invoice where id = $1",
+		`select
+			id,
+			invoice_id,
+			bidder_account_id,
+			offer,
+			state
+		from
+		    bids
+		where id = $1`,
 		bidId,
 	)
-	if err := row.Scan(&data); err != nil {
+	if err := row.Scan(
+		&data.Id,
+		&data.InvoiceId,
+		&data.BidderAccountId,
+		&data.Offer,
+		&data.State,
+	); err != nil {
+		return nil, fmt.Errorf("error scanning db response record field for GetBidById: %+v", err)
+	}
+	return data, nil
+}
+
+func (db *PgDb) GetBidWithInvoiceById(bidId int64) (*BidWithInvoice, error) {
+	data := new(BidWithInvoice)
+
+	row := db.conn.QueryRow(
+		context.Background(),
+		`select
+			id,
+			invoice_id,
+			bidder_account_id,
+			offer,
+			state,
+			invoice_issuer_account_id,
+			invoice_reference,
+			invoice_denom,
+			invoice_amount,
+			invoice_asking,
+			invoice_state
+		from
+		    bids_with_invoice
+		where id = $1`,
+		bidId,
+	)
+	if err := row.Scan(
+		&data.Id,
+		&data.InvoiceId,
+		&data.BidderAccountId,
+		&data.Offer,
+		&data.State,
+		&data.InvoiceIssuerAccountId,
+		&data.InvoiceReference,
+		&data.InvoiceDenom,
+		&data.InvoiceAmount,
+		&data.InvoiceAsking,
+		&data.InvoiceState,
+	); err != nil {
 		return nil, fmt.Errorf("error scanning db response record field for GetBidById: %+v", err)
 	}
 	return data, nil
@@ -271,8 +406,8 @@ func (db *PgDb) GetBidsByInvoiceId(invoiceId string) (*[]*Bid, error) {
 	return data, nil
 }
 
-func (db *PgDb) GetBidsByInvestorId(investorId string) (*[]*Bid, error) {
-	data := new([]*Bid)
+func (db *PgDb) GetBidsByInvestorId(investorId string) (*[]*BidWithInvoice, error) {
+	data := new([]*BidWithInvoice)
 	rows, err := db.conn.Query(
 		context.Background(),
 		`select
@@ -297,13 +432,20 @@ func (db *PgDb) GetBidsByInvestorId(investorId string) (*[]*Bid, error) {
 		return nil, fmt.Errorf("failed query for GetBidsByInvestorId: %+v", err)
 	}
 	for rows.Next() {
-		row := new(Bid)
+		row := new(BidWithInvoice)
 		if err := rows.Scan(
 			&row.Id,
 			&row.InvoiceId,
 			&row.BidderAccountId,
 			&row.Offer,
-			&row.State); err != nil {
+			&row.State,
+			&row.InvoiceIssuerAccountId,
+			&row.InvoiceReference,
+			&row.InvoiceDenom,
+			&row.InvoiceAmount,
+			&row.InvoiceAsking,
+			&row.InvoiceState,
+		); err != nil {
 			return nil, fmt.Errorf("error scanning query response for GetBidsByInvestorId: %+v", err)
 		}
 		*data = append(*data, row)
@@ -317,36 +459,49 @@ func (db *PgDb) GetBidsByInvestorId(investorId string) (*[]*Bid, error) {
 }
 
 func (db *PgDb) NewBid(newBidData Bid) (*Bid, error) {
-	var buff pgtype.Record
+	// var buff pgtype.Record
 	data := new(Bid)
 
 	row := db.conn.QueryRow(
 		context.Background(),
-		"select bid($1, $2, $3)",
+		`select
+			 new_bid_id,
+			 invoice_id,
+			 bidder_account_id,
+			 new_bid_offer,
+			 new_bid_state 
+		from
+			bid($1, $2, $3)`,
 		newBidData.InvoiceId,
 		newBidData.BidderAccountId,
 		newBidData.Offer,
 	)
-	if err := row.Scan(&buff); err != nil {
+	if err := row.Scan(
+		&data.Id,
+		&data.InvoiceId,
+		&data.BidderAccountId,
+		&data.Offer,
+		&data.State,
+	); err != nil {
 		return nil, fmt.Errorf("error scanning db response record field for NewBid: %+v", err)
 	}
 
-	if err := buff.Fields[0].AssignTo(&data.Id); err != nil {
-		return nil, fmt.Errorf("error scanning db response record field for NewBid: %+v", err)
-	}
-	if err := buff.Fields[1].AssignTo(&data.InvoiceId); err != nil {
-		return nil, fmt.Errorf("error scanning db response record field for NewBid: %+v", err)
-	}
-	if err := buff.Fields[2].AssignTo(&data.BidderAccountId); err != nil {
-		return nil, fmt.Errorf("error scanning db response record field for NewBid: %+v", err)
-	}
-	if err := buff.Fields[3].AssignTo(&data.Offer); err != nil {
-		return nil, fmt.Errorf("error scanning db response record field for NewBid: %+v", err)
-	}
-	if err := buff.Fields[4].AssignTo(&data.State); err != nil {
-		return nil, fmt.Errorf("error scanning db response record field for NewBid: %+v", err)
-	}
-
+	/* 	if err := buff.Fields[0].AssignTo(&data.Id); err != nil {
+	   		return nil, fmt.Errorf("error scanning db response record field for NewBid: %+v", err)
+	   	}
+	   	if err := buff.Fields[1].AssignTo(&data.InvoiceId); err != nil {
+	   		return nil, fmt.Errorf("error scanning db response record field for NewBid: %+v", err)
+	   	}
+	   	if err := buff.Fields[2].AssignTo(&data.BidderAccountId); err != nil {
+	   		return nil, fmt.Errorf("error scanning db response record field for NewBid: %+v", err)
+	   	}
+	   	if err := buff.Fields[3].AssignTo(&data.Offer); err != nil {
+	   		return nil, fmt.Errorf("error scanning db response record field for NewBid: %+v", err)
+	   	}
+	   	if err := buff.Fields[4].AssignTo(&data.State); err != nil {
+	   		return nil, fmt.Errorf("error scanning db response record field for NewBid: %+v", err)
+	   	}
+	*/
 	return data, nil
 }
 
@@ -359,13 +514,7 @@ func (db *PgDb) GetFulfillingBids(invoiceId string) (*[]*Bid, error) {
 			invoice_id,
 			bidder_account_id,
 			offer,
-			state,
-			invoice_issuer_account_id,
-			invoice_reference,
-			invoice_denom,
-			invoice_amount,
-			invoice_asking,
-			invoice_state 
+			state 
 		from
 		    bids_with_invoice
 		where
@@ -396,25 +545,43 @@ func (db *PgDb) GetFulfillingBids(invoiceId string) (*[]*Bid, error) {
 	return data, nil
 }
 
-func (db *PgDb) AdjudicateBid(bidId int64) (*int64, error) {
-	saleAmount := new(int64)
+func (db *PgDb) AdjudicateBid(bidId int64) (*struct {
+	BidId      int64
+	PaidAmount int64
+}, error) {
+
+	var resBidId int64
+	var resPaidAmount int64
+
 	row := db.conn.QueryRow(
 		context.Background(),
-		"select adjudicate_bid($1)",
+		`select
+			bid_id,
+			paid_amount
+		from
+			adjudicate_bid($1)`,
 		bidId,
 	)
-	if err := row.Scan(&saleAmount); err != nil {
-		return nil, fmt.Errorf("error scanning db response record field for AdjudicateInvoice: %+v", err)
+	if err := row.Scan(&resBidId, &resPaidAmount); err != nil {
+		return nil, fmt.Errorf("error scanning db response record field for AdjudicateBid: %+v", err)
 	}
 
-	return saleAmount, nil
+	return &struct {
+			BidId      int64
+			PaidAmount int64
+		}{BidId: resBidId, PaidAmount: resPaidAmount},
+		nil
 }
 
 func (db *PgDb) AllRunningBidsToLost(invoiceId string) (*[]*Bid, error) {
 	data := new([]*Bid)
 	rows, err := db.conn.Query(
 		context.Background(),
-		"select all_running_bids_to_lost($1)",
+		`select
+			invoice_id,
+			bid_id bigint
+		from
+			all_running_bids_to_lost($1)`,
 		invoiceId,
 	)
 	if err != nil {

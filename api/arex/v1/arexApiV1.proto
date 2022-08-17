@@ -36,6 +36,20 @@ message Bid {
     string state = 5;
 }
 
+message BidWithInvoice {
+	int64 id = 1;
+	string invoiceId = 2 ;
+	string bidderAccountId = 3;
+	int64 offer = 4;
+	string state = 5;
+	string InvoiceIssuerAccountId = 6;
+	string InvoiceReference = 7;
+	string InvoiceDenom = 8;
+	int64 InvoiceAmount =9;
+	int64 InvoiceAsking = 10;
+	string InvoiceState = 11;
+}
+
 message GetAllInvestorsResponse{
     repeated Investor data = 1;
 }
@@ -53,7 +67,6 @@ service IssuerService {
     rpc GetAllIssuers(Empty) returns (GetAllIssuersResponse);
 }
 
-
 message GetAllBidsResponse{
     repeated Bid data = 1;
 }
@@ -64,6 +77,14 @@ message GetBidByIdRequest {
 
 message GetBidByIdResponse{
     Bid data = 1;
+}
+
+message GetBidWithInvoiceByIdRequest {
+    int64 bidId =1;
+}
+
+message GetBidWithInvoiceByIdResponse{
+    BidWithInvoice data = 1;
 }
 
 message GetBidsByInvoiceIdRequest {
@@ -79,7 +100,7 @@ message GetBidsByInvestorIdRequest {
 }
 
 message GetBidsByInvestorIdResponse {
-    repeated Bid data = 1;
+    repeated BidWithInvoice data = 1;
 }
 
 message NewBidRequest{
@@ -119,6 +140,7 @@ message AllRunningBidsToLostResponse {
 service BidService {
     rpc GetAllBids(Empty) returns (GetAllBidsResponse);
     rpc GetBidById(GetBidByIdRequest) returns (GetBidByIdResponse);
+    rpc GetBidWithInvoiceById(GetBidWithInvoiceByIdRequest) returns (GetBidWithInvoiceByIdResponse);
     rpc GetBidsByInvoiceId(GetBidsByInvoiceIdRequest) returns (GetBidsByInvoiceIdResponse);
     rpc GetBidsByInvestorId(GetBidsByInvestorIdRequest) returns (GetBidsByInvestorIdResponse);
     rpc NewBid(NewBidRequest) returns (NewBidResponse);

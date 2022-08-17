@@ -16,6 +16,7 @@ var SeededAllIssuersList = new([]*db.Account)
 var SeededAllInvoicesList = new([]*db.Invoice)
 var NewInvoiceData = new(db.Invoice)
 var SeededAllBidsList = new([]*db.Bid)
+var SeededAllBidsWithInvoiceList = new([]*db.BidWithInvoice)
 var NewBidData = new(db.Bid)
 
 var RequestGetAllInvestors = &pb.Empty{}
@@ -38,6 +39,7 @@ func init() {
 	loadFixtureDataJson("seededInvoices.json", SeededAllInvoicesList)
 	loadFixtureDataJson("newInvoice.json", NewInvoiceData)
 	loadFixtureDataJson("seededBids.json", SeededAllBidsList)
+	loadFixtureDataJson("seededBidsWithInvoice.json", SeededAllBidsWithInvoiceList)
 	loadFixtureDataJson("newBid.json", NewBidData)
 
 	makeResponseFromDataVars()
