@@ -10,7 +10,9 @@ You have a couple of pre-set commands that can help you explore the module:
 - 'make unittest': Will launch a simple unit testimg suite against a 'stub' database
 
 As of now, all three dbs are seeded with the same migrations, but can be fully customised independently
+
 ## Description
+The core problem of transaction consistency has been approached by having a single source of truthin the 'transactions' table  The table records a transaction between Escrow, Cash and user accounts
 
 ## Work Log
 
