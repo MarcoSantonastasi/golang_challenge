@@ -14,9 +14,10 @@ The goal of the tech challenge is to design a system supporting the requirements
 
 ### Invoice Handling
 In order to support invoice financing the system should be able to track the balances of the involved parties:
-- Issuer - A company that has an invoice to be financed.
-- Investors - The buyers of the invoice.
+- [ ] Issuer - A company that has an invoice to be financed.
+- [ ] Investors - The buyers of the invoice.
 For that, the account’s structure of each party should be defined, considering how the ledger will be implemented. Besides modelling parties and the ledger, any required data should be seeded when necessary.
+
 In terms of users interactions, the system should be able to handle and register invoices on the ledger through:
 - [ ] An endpoint to sell an invoice
 - [ ] An endpoint to retrieve an invoice, including the status: if it has been bought or not. In case it has been bought, by which investor (Example: An issuer issuer_A wants to finance an invoice invoice_1 with value €1000, recording in the ledger that issuer_A has a €1000 invoice invoice_1 to be financed)
