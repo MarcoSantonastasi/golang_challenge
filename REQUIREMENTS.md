@@ -26,14 +26,14 @@ In terms of users interactions, the system should be able to handle and register
 Once an invoice has been stored, the bidding process from existing investors with available funds starts, considering the following aspects:
 - [ ] An investor cannot place a bid if doesn’t have available funds
 - [ ] After a bid has been placed, the available balance of an investor must be reduced
-- For each investor’s bid received, the matching algorithm should:
-- [ ] Process bids by First In First (out) Served order until the invoice has been sold.
-- [ ] If a bid placed fills 100% of the invoice (meaning the price offered is greater or equal to the amount asked by the issuer) there is a match and the invoice is financed
-- [ ] After a match, its results should be recorded and the investor’s unplaced bids restored.
-At this point the financing is considered locked and the following should be implemented:
-  - [ ] A persisted set of investors with their available balance.
-  - [ ] An endpoint to list all the investors and their balances.
-  - [ ] A Matching algorithm fulfilling the business rules described above
+
+- [ ] For each investor’s bid received, the matching algorithm should:
+    - [ ] Process bids by First In First (out) Served order until the invoice has been sold.
+    - [ ] If a bid placed fills 100% of the invoice (meaning the price offered is greater or equal to the amount asked by the issuer) there is a match and the invoice is financed
+    - [ ] After a match, its results should be recorded and the investor’s unplaced bids restored. At this point the financing is considered locked and the following should be implemented:
+     - [ ] A persisted set of investors with their available balance.
+     - [ ] An endpoint to list all the investors and their balances.
+     - [ ] A Matching algorithm fulfilling the business rules described above
 
 Example: An issuer issuer_A wants to finance invoice invoice_1. The total of the invoice is €1000. The system executes a series of bids for that invoice in the following order:
 1. investor_A places a bid of size €500.
