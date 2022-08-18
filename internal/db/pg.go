@@ -519,7 +519,8 @@ func (db *PgDb) GetFulfillingBids(invoiceId string) (*[]*Bid, error) {
 		    bids_with_invoice
 		where
 			invoice_id = $1 AND
-			offer >= invoice_asking`,
+			offer >= invoice_asking
+		order by id asc`,
 		invoiceId,
 	)
 	if err != nil {
