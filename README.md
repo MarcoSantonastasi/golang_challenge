@@ -24,7 +24,7 @@ As of now, all three dbs are seeded with the same migrations, but can be fully c
 ## Description
 The core problem of transaction consistency has been approached by having a single source of truth in the 'transactions' table.  The table records all transactions between Escrow, Cash and user accounts. There is the possibility to record any generic transaction, for example users geting money in and out of their accounts in case future development calls for exra features.  If a transaction is relative to a 'Bid', the Bid id is associated in the transaction as a foreign key so as to make full reconciliation upon bid closure plain easy.
 
-The db API makes available a couple of methods thata should be exclusively used to interact with it in order to ensure data consistency. Direct manipulation of tables could be easily prevented by implementing RLS rules in a further development sprint.
+The db API makes available a couple of methods that should be exclusively used to interact with it in order to ensure data consistency. Direct manipulation of tables could be easily prevented by implementing RLS rules in a further development sprint.
 
 The 'cmd/server' exposes a method 'NewBid()' that calls specialised methods on the db to handle the business requirement of checking and adjuducating fulfilling bids in order of "First come, first adjudicated"
 
