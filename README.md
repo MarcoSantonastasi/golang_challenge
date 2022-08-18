@@ -31,5 +31,8 @@ Time has been spent mostly learning and applying knowledge at a slow pace to mak
 
 At the end of Iteration 1 I have basic database APIs with a corresponding storage model in place, comprising all the entities and the triggers and the fucnitons to support the following basic functionality:
     1. new_invoice(issuer_account_id, ref, denom, amount, ask) => creates a new invoice in the corresponding table
-    1. new_bid(bidder_id, invoice, amount) => creates a new bid veryfying sufficient funds and reserving funds
+    2. new_bid(bidder_id, invoice, amount) => creates a new bid veryfying sufficient funds and reserving funds.
+    3. adjudicate_bid(bid_id) => Sets a bid to won and the relative invoice to adjudicated. It pays out the issuer and retains a fee of 10% for us.
+    4. set_all_bids_to_lost(invoice_id) => Sets all bids related to an invoice to lost and refunds the money to investors by creating new transactions that reconcile to zero net money.
+    
 The DB is also seeded accordingly with just a few entries to make testing possible
