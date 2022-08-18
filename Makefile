@@ -3,6 +3,18 @@ SHELL=/bin/bash
 include .env
 
 
+.PHONY: demo
+demo:
+        make proddbseed
+	go run ./cmd/server
+	go run ./cmd/client
+
+
+.PHONY e2etesting
+e2etesting:
+        make testingdbseed
+	go test -v ./testing/e2e/...
+
 .PHONY: protogen
 protogen:
 	protoc --go_out=. --go_opt=paths=source_relative --go-grpc_out=. --go-grpc_opt=paths=source_relative api/arex/v1/arexApiV1.proto
