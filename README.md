@@ -1,5 +1,5 @@
 # arex_challenge
-see (./REQUIREMENTS.md)[REQUIREMENTS.md] for the challenge prompt.
+see (REQUIREMENTS.md)[./REQUIREMENTS.md] for the challenge prompt.
 
 ## Intall and run 
 You have to have Docker deamon and dockercompose alreeady installed on your machine, then you also have to make sure the 'make' executable is part of your PATH.
