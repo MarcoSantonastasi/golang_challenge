@@ -5,9 +5,11 @@ see (./REQUIREMENTS.md)[REQUIREMENTS.md] for the challenge prompt.
 You have to have Docker deamon and dockercompose alreeady installed on your machine, then you also have to make sure the 'make' executable is part of your PATH.
 
 You have a couple of pre-set commands that can help you explore the module:
-- 'make demo': Will launche a server and a client connecting to a "production" database
-- 'make e2etest': Will launch a smple e2e test suite against a 'production' database
+- 'make demo': Will launch a server and a client connecting to a "production" database
+- 'make e2etest': Will launch a smple e2e test suite against a 'testing' database
+- 'make unittest': Will launch a simple unit testimg suite against a 'stub' database
 
+As of now, all three dbs are seeded with the same migrations, but can be fully customised independently
 ## Description
 
 ## Work Log
