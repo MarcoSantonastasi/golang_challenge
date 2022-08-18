@@ -12,7 +12,8 @@ You have a couple of pre-set commands that can help you explore the module:
 As of now, all three dbs are seeded with the same migrations, but can be fully customised independently
 
 ## Description
-The core problem of transaction consistency has been approached by having a single source of truthin the 'transactions' table  The table records a transaction between Escrow, Cash and user accounts
+The core problem of transaction consistency has been approached by having a single source of truth in the 'transactions' table  The table records all transactions between Escrow, Cash and user accounts. There is the possibility to record any generic transaction, for example users geting money in and out of their accounts for future development.
+
 
 ## Work Log
 
