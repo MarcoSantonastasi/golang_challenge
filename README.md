@@ -31,7 +31,9 @@ The db makes available a couple of methods that are designed to be the only inte
 This is to ensure data consistency. Direct manipulation of tables could be easily prevented by implementing RLS rules in a further development sprint, so it has been forgone for now.
 
 ### Executables
-The 'cmd/server' exposes a method 'NewBid()' that calls specialised methods on the db to handle the business requirement of checking and adjuducating fulfilling bids in order of "First come, first adjudicated"
+The 'cmd/server' exposes a method 'NewBid()' that calls specialised methods on the db to handle the business requirement of checking and adjudicating fulfilling bids in order of "First come, first adjudicated".
+
+The '.cmd/client' runs a series of methods on the server that should reproduce a typical interaction. It hits listing endpoints to retrieve all invoices, investors, issuers and bids. It creates a new invoice and a bid.
 
 
 ## Work Log
