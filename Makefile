@@ -1,6 +1,6 @@
 SHELL=/bin/bash
 
-include .env
+-include .env
 
 
 .PHONY: demo
