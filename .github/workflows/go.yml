@@ -42,5 +42,5 @@ jobs:
           POSTGRES_PROD_DB: postgres
           POSTGRES_TESTING_DB: testingdb
           POSTGRES_STUB_DB: stubdb
-          PGPASSWORD: $POSTGRES_PASSWORD
+          PGPASSWORD: postgres
         run: make e2etesting
