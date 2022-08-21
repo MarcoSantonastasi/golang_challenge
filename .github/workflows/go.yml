@@ -9,7 +9,10 @@ on:
 env:
   POSTGRES_USER: postgres
   POSTGRES_PASSWORD: postgres
-  POSTGRES_DB: postgres
+  POSTGRES_HOSTNAME: localhost
+  POSTGRES_PROD_DB: postgres
+  POSTGRES_TESTING_DB: testingdb
+  POSTGRES_STUB_DB: stubdb
 
 jobs:
   tests:
