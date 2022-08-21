@@ -13,7 +13,7 @@ demo:
 .PHONY: e2etesting
 e2etesting:
 	make testingdbseed
-	go test -v ./testing/e2e/...
+	go test -v ./tests/e2e/...
 
 
 .PHONY: protogen
