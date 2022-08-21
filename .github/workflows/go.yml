@@ -6,14 +6,6 @@ on:
   pull_request:
     branches: [ "main" ]
 
-env:
-  POSTGRES_USER: postgres
-  POSTGRES_PASSWORD: postgres
-  POSTGRES_HOSTNAME: localhost
-  POSTGRES_PROD_DB: postgres
-  POSTGRES_TESTING_DB: testingdb
-  POSTGRES_STUB_DB: stubdb
-
 jobs:
   tests:
     name: Tests
@@ -41,4 +33,11 @@ jobs:
       - uses: actions/checkout@v3
 
       - name: Test e2e
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_HOSTNAME: localhost
+          POSTGRES_PROD_DB: postgres
+          POSTGRES_TESTING_DB: testingdb
+          POSTGRES_STUB_DB: stubdb
         run: make e2etesting
