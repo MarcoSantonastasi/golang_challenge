@@ -5,15 +5,16 @@ include .env
 
 .PHONY: demo
 demo:
-        make proddbseed
+	make proddbseed
 	go run ./cmd/server
 	go run ./cmd/client
 
 
-.PHONY e2etesting
+.PHONY: e2etesting
 e2etesting:
-        make testingdbseed
+	make testingdbseed
 	go test -v ./testing/e2e/...
+
 
 .PHONY: protogen
 protogen:
