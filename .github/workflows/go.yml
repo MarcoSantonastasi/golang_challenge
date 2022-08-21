@@ -1,4 +1,4 @@
-name: Go
+name: Arex challenge
 
 on:
   push:
@@ -8,15 +8,37 @@ on:
 
 jobs:
 
-  build:
+  tests:
+    name: Tests 
     runs-on: ubuntu-latest
+
+    services:
+      postges:
+      image: postgres:14-alpine
+      env:
+        POSTGRES_USER: postgres
+        POSTGRES_PASSWORD: postgres
+        POSTGRES_DB: postgres
+      ports:
+        - 5432:5432
+      options: >-
+        --health-cmd pg_isready
+        --health-interval 10s
+        --health-timeout 5s
+        --health-retries 5
+
     steps:
-    - uses: actions/checkout@v3
+      env:
+        POSTGRES_USER: postgres
+        POSTGRES_PASSWORD: postgres
+        POSTGRES_DB: postgres
 
     - name: Set up Go
       uses: actions/setup-go@v3
       with:
         go-version: 1.18
+
+    - uses: actions/checkout@v3
 
     - name: Test e2e
       run: go test -v tests/e2e/...
