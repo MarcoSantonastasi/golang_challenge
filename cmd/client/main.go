@@ -88,11 +88,4 @@ func main() {
 	}
 	log.Printf("\nBid: %+v", resBid.GetData())
 
-	resAdj, errAdj := bidServiceClient.AdjudicateBid(ctx, &pb.AdjudicateBidRequest{
-		BidId: 1,
-	})
-	if errAdj != nil {
-		log.Fatalf("\ncould not AdjudicateBid: %+v", errBid)
-	}
-	log.Printf("\nAdjudicated: %+v", resAdj.GetAmount())
 }
