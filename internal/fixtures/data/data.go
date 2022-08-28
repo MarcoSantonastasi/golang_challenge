@@ -3,6 +3,7 @@ package data
 import (
 	"encoding/json"
 	"io"
+	"log"
 	"os"
 	"path"
 	"runtime"
@@ -52,18 +53,18 @@ func loadFixtureDataJson(fileName string, dataVar any) {
 
 	file, fileErr := os.Open(filePath)
 	if fileErr != nil {
-		panic("cannot open " + filePath)
+		log.Fatal("cannot open " + filePath)
 	}
 	defer file.Close()
 
 	data, dataErr := io.ReadAll(file)
 	if dataErr != nil {
-		panic("cannot read " + filePath)
+		log.Fatal("cannot read " + filePath)
 	}
 
 	jsonErr := json.Unmarshal(data, dataVar)
 	if jsonErr != nil {
-		panic("cannot parse (unmarshall) JSON data from " + filePath)
+		log.Fatal("cannot parse (unmarshall) JSON data from " + filePath)
 	}
 }
 

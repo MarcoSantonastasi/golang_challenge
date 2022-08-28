@@ -4,17 +4,17 @@
 see [./REQUIREMENTS.md](./REQUIREMENTS.md) for the challenge prompt.
 
 ## Intall and run 
-You have to have Docker deamon and dockercompose alreeady installed on your machine, then you also have to make sure the 'make' executable is part of your PATH.
+You have to have Docker deamon and dockercompose alreeady installed on your machine, then you also have to make sure the `make` executable is part of your PATH.
 
-** Before running any code touch a '.env' in the root of the project and insert the following contants: **
-
-POSTGRES_USER = postgres
-POSTGRES_PASSWORD = postgres
-POSTGRES_HOSTNAME = localhost
-POSTGRES_PROD_DB = postgres
-POSTGRES_TESTING_DB = testingdb
-POSTGRES_STUB_DB = stubdb
-
+** Before running any code touch a `.env` in the root of the project and insert the following contants: **
+```shell
+POSTGRES_USER=postgres
+POSTGRES_PASSWORD=postgres
+POSTGRES_HOSTNAME=localhost
+POSTGRES_PROD_DB=postgres
+POSTGRES_TESTING_DB=testingdb
+POSTGRES_STUB_DB=stubdb
+```
 
 You have a couple of pre-set commands that can help you explore the module:
 - 'make demo': Will launch a server and a client connecting to a "production" database

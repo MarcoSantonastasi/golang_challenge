@@ -1,6 +1,7 @@
 package db_test
 
 import (
+	"log"
 	"os"
 	"reflect"
 	"testing"
@@ -17,15 +18,23 @@ func TestMain(m *testing.M) {
 	pgHostName := os.Getenv("POSTGRES_HOSTNAME")
 	pgDbName := os.Getenv("POSTGRES_STUB_DB")
 
+	if pgUser == "" || pgPwd == "" || pgHostName == "" || pgDbName == "" {
+		log.Fatal("stubdb unit test is missing .env variables")
+	}
+
 	testDb = db.NewPgDb(pgUser, pgPwd, pgHostName, pgDbName)
 
 	testDb.Connect()
 
-	exitCode := m.Run()
+	testDbErr := testDb.Connect()
+	if testDbErr != nil {
+		log.Fatalf("stubdb unit test conneciton to PostgresDB failed %+v", testDbErr)
+	}
+	log.Printf("stubdb unit test conneciton to PostgresDB %+v", testDb)
 
-	testDb.Close()
+	defer testDb.Close()
 
-	os.Exit(exitCode)
+	os.Exit(m.Run())
 }
 
 func TestPgDb_GetAllInvestors(t *testing.T) {
@@ -46,12 +55,12 @@ func TestPgDb_GetAllInvestors(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			got, err := tt.db.GetAllInvestors()
 			if (err != nil) != tt.wantErr {
-				t.Errorf("PgDb.GetAllInvestors() error = %v, wantErr %v", err, tt.wantErr)
+				t.Errorf("testDb.GetAllInvestors() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
 
 			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("PgDb.GetAllInvestors() = %+v, want %+v", got, tt.want)
+				t.Errorf("testDb.GetAllInvestors() = %+v, want %+v", got, tt.want)
 			}
 
 		})
@@ -76,11 +85,11 @@ func TestPgDb_GetAllIssuers(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			got, err := tt.db.GetAllIssuers()
 			if (err != nil) != tt.wantErr {
-				t.Errorf("PgDb.GetAllIssuers() error = %v, wantErr %v", err, tt.wantErr)
+				t.Errorf("testDb.GetAllIssuers() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
 			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("PgDb.GetAllIssuers() = %v, want %v", got, tt.want)
+				t.Errorf("testDb.GetAllIssuers() = %v, want %v", got, tt.want)
 			}
 		})
 	}
@@ -104,11 +113,11 @@ func TestPgDb_GetAllInvoices(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			got, err := tt.db.GetAllInvoices()
 			if (err != nil) != tt.wantErr {
-				t.Errorf("PgDb.GetAllInvoices() error = %v, wantErr %v", err, tt.wantErr)
+				t.Errorf("testDb.GetAllInvoices() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
 			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("PgDb.GetAllInvoices() = %v, want %v", got, tt.want)
+				t.Errorf("testDb.GetAllInvoices() = %v, want %v", got, tt.want)
 			}
 		})
 	}
@@ -137,11 +146,11 @@ func TestPgDb_GetInvoiceById(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			got, err := tt.db.GetInvoiceById(tt.args.invoiceId)
 			if (err != nil) != tt.wantErr {
-				t.Errorf("PgDb.GetInvoiceById() error = %v, wantErr %v", err, tt.wantErr)
+				t.Errorf("testDb.GetInvoiceById() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
 			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("PgDb.GetInvoiceById() = %v, want %v", got, tt.want)
+				t.Errorf("testDb.GetInvoiceById() = %v, want %v", got, tt.want)
 			}
 		})
 	}
@@ -164,11 +173,11 @@ func TestPgDb_NewInvoice(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			got, err := tt.db.NewInvoice(tt.args.newInvoiceData)
 			if (err != nil) != tt.wantErr {
-				t.Errorf("PgDb.NewInvoice() error = %v, wantErr %v", err, tt.wantErr)
+				t.Errorf("testDb.NewInvoice() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
 			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("PgDb.NewInvoice() = %v, want %v", got, tt.want)
+				t.Errorf("testDb.NewInvoice() = %v, want %v", got, tt.want)
 			}
 		})
 	}
@@ -187,11 +196,11 @@ func TestPgDb_GetAllBids(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			got, err := tt.db.GetAllBids()
 			if (err != nil) != tt.wantErr {
-				t.Errorf("PgDb.GetAllBids() error = %v, wantErr %v", err, tt.wantErr)
+				t.Errorf("testDb.GetAllBids() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
 			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("PgDb.GetAllBids() = %v, want %v", got, tt.want)
+				t.Errorf("testDb.GetAllBids() = %v, want %v", got, tt.want)
 			}
 		})
 	}
@@ -214,11 +223,11 @@ func TestPgDb_GetBidById(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			got, err := tt.db.GetBidById(tt.args.bidId)
 			if (err != nil) != tt.wantErr {
-				t.Errorf("PgDb.GetBidById() error = %v, wantErr %v", err, tt.wantErr)
+				t.Errorf("testDb.GetBidById() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
 			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("PgDb.GetBidById() = %v, want %v", got, tt.want)
+				t.Errorf("testDb.GetBidById() = %v, want %v", got, tt.want)
 			}
 		})
 	}
@@ -241,11 +250,11 @@ func TestPgDb_GetBidsByInvoiceId(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			got, err := tt.db.GetBidsByInvoiceId(tt.args.invoiceId)
 			if (err != nil) != tt.wantErr {
-				t.Errorf("PgDb.GetBidsByInvoiceId() error = %v, wantErr %v", err, tt.wantErr)
+				t.Errorf("testDb.GetBidsByInvoiceId() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
 			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("PgDb.GetBidsByInvoiceId() = %v, want %v", got, tt.want)
+				t.Errorf("testDb.GetBidsByInvoiceId() = %v, want %v", got, tt.want)
 			}
 		})
 	}
@@ -268,11 +277,11 @@ func TestPgDb_GetBidsByInvestorId(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			got, err := tt.db.GetBidsByInvestorId(tt.args.investorId)
 			if (err != nil) != tt.wantErr {
-				t.Errorf("PgDb.GetBidsByInvestorId() error = %v, wantErr %v", err, tt.wantErr)
+				t.Errorf("testDb.GetBidsByInvestorId() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
 			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("PgDb.GetBidsByInvestorId() = %v, want %v", got, tt.want)
+				t.Errorf("testDb.GetBidsByInvestorId() = %v, want %v", got, tt.want)
 			}
 		})
 	}
@@ -295,11 +304,11 @@ func TestPgDb_NewBid(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			got, err := tt.db.NewBid(tt.args.newBidData)
 			if (err != nil) != tt.wantErr {
-				t.Errorf("PgDb.NewBid() error = %v, wantErr %v", err, tt.wantErr)
+				t.Errorf("testDb.NewBid() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
 			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("PgDb.NewBid() = %v, want %v", got, tt.want)
+				t.Errorf("testDb.NewBid() = %v, want %v", got, tt.want)
 			}
 		})
 	}
@@ -322,11 +331,11 @@ func TestPgDb_GetFulfillingBids(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			got, err := tt.db.GetFulfillingBids(tt.args.invoiceId)
 			if (err != nil) != tt.wantErr {
-				t.Errorf("PgDb.GetFulfillingBids() error = %v, wantErr %v", err, tt.wantErr)
+				t.Errorf("testDb.GetFulfillingBids() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
 			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("PgDb.GetFulfillingBids() = %v, want %v", got, tt.want)
+				t.Errorf("testDb.GetFulfillingBids() = %v, want %v", got, tt.want)
 			}
 		})
 	}
@@ -349,11 +358,11 @@ func TestPgDb_AdjudicateBid(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			got, err := tt.db.AdjudicateBid(tt.args.bidId)
 			if (err != nil) != tt.wantErr {
-				t.Errorf("PgDb.AdjudicateBid() error = %v, wantErr %v", err, tt.wantErr)
+				t.Errorf("testDb.AdjudicateBid() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
 			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("PgDb.AdjudicateBid() = %v, want %v", got, tt.want)
+				t.Errorf("testDb.AdjudicateBid() = %v, want %v", got, tt.want)
 			}
 		})
 	}
@@ -376,11 +385,11 @@ func TestPgDb_AllRunningBidsToLost(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			got, err := tt.db.AllRunningBidsToLost(tt.args.invoiceId)
 			if (err != nil) != tt.wantErr {
-				t.Errorf("PgDb.AllRunningBidsToLost() error = %v, wantErr %v", err, tt.wantErr)
+				t.Errorf("testDb.AllRunningBidsToLost() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
 			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("PgDb.AllRunningBidsToLost() = %v, want %v", got, tt.want)
+				t.Errorf("testDb.AllRunningBidsToLost() = %v, want %v", got, tt.want)
 			}
 		})
 	}

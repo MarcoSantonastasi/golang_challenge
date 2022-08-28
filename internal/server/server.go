@@ -4,8 +4,8 @@ import (
 	"context"
 	"fmt"
 
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/status"
+	codes "google.golang.org/grpc/codes"
+	status "google.golang.org/grpc/status"
 
 	pb "github.com/marcosantonastasi/arex_challenge/api/arex/v1"
 	db "github.com/marcosantonastasi/arex_challenge/internal/db"

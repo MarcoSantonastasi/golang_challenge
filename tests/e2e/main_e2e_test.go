@@ -24,57 +24,68 @@ var clientServices = struct {
 }{}
 
 func TestMain(m *testing.M) {
+	const hostname string = "localhost"
+	const port int = 50051
 
-	s := startServer()
+	s := startServer(hostname, port)
 	defer s.Stop()
 
-	c := startClient()
+	c := startClient(hostname, port)
 	defer c.Close()
 
 	os.Exit(m.Run())
 }
 
-func startServer() (s *grpc.Server) {
-	const port int = 50051
-
-	lis, err := net.Listen("tcp", fmt.Sprintf(":%d", port))
-	if err != nil {
-		log.Fatalf("failed to listen: %v", err)
-	}
-
+func startServer(hostname string, port int) (s *grpc.Server) {
 	pgUser := os.Getenv("POSTGRES_USER")
 	pgPwd := os.Getenv("POSTGRES_PASSWORD")
 	pgHostName := os.Getenv("POSTGRES_HOSTNAME")
 	pgDbName := os.Getenv("POSTGRES_TESTING_DB")
 
+	if pgUser == "" || pgPwd == "" || pgHostName == "" || pgDbName == "" {
+		log.Fatal("e2e is missing .env variables")
+	}
+
 	dockerPgDb := db.NewPgDb(pgUser, pgPwd, pgHostName, pgDbName)
 
-	dockerPgDb.Connect()
+	dbErr := dockerPgDb.Connect()
+	if dbErr != nil {
+		log.Fatalf("e2e test conneciton to PostgresDB failed %+v", dbErr)
+	}
+	log.Printf("e2e test conneciton to PostgresDB %+v", dockerPgDb)
 
 	s = grpc.NewServer()
 	pb.RegisterInvestorServiceServer(s, &server.InvestorServiceServer{Repo: &repos.InvestorsRepository{Db: dockerPgDb}})
 	pb.RegisterIssuerServiceServer(s, &server.IssuerServiceServer{Repo: &repos.IssuersRepository{Db: dockerPgDb}})
 	pb.RegisterInvoiceServiceServer(s, &server.InvoiceServiceServer{Repo: &repos.InvoicesRepository{Db: dockerPgDb}})
 	pb.RegisterBidServiceServer(s, &server.BidServiceServer{Repo: &repos.BidsRepository{Db: dockerPgDb}})
-	log.Printf("server listening at %v", lis.Addr())
+
+	lis, err := net.Listen("tcp", fmt.Sprintf("%s:%d", hostname, port))
+	if err != nil {
+		log.Fatalf("e2e test TCP failed to listen on port %d because of error %v", port, err)
+	}
+	log.Printf("e2e test TCP listening on %v", lis.Addr())
+
 	go func() {
 		if err := s.Serve(lis); err != nil {
-			log.Fatalf("failed to serve: %v", err)
+			log.Fatalf("e2e test server failed with error: %v", err)
 			s.Stop()
 		}
+		log.Printf("e2e test server ready on %v", lis.Addr())
 	}()
 
 	return s
 }
 
-func startClient() (conn *grpc.ClientConn) {
-	addr := "localhost:50051"
+func startClient(hostname string, port int) (conn *grpc.ClientConn) {
+	addr := fmt.Sprintf("%s:%d", hostname, port)
 	conn, err := grpc.Dial(addr, grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
-		log.Fatalf("could not not connect to the gRPC server: %v", err)
+		log.Fatalf("e2e test client could not not connect to the gRPC e2e test server: %v", err)
 		conn.Close()
 		return nil
 	}
+	log.Printf("e2e test client ready for %v", conn.Target())
 
 	clientServices.investor = client.NewInvestorServiceClient(conn)
 	clientServices.issuer = client.NewIssuerServiceClient(conn)
