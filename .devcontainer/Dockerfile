@@ -19,7 +19,8 @@ RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
 # [Optional] Uncomment the next lines to use go get to install anything else you need
 USER vscode
 RUN go install google.golang.org/protobuf/cmd/protoc-gen-go@v1.28 \
-    && go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@v1.2
+    && go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@v1.2 \
+    && go install github.com/cweill/gotests/gotests@latest
 # RUN go get -x <package-or-tool>
 USER root
 
