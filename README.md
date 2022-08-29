@@ -29,6 +29,9 @@ You have a couple of pre-set commands that can help you explore the module:
 - `make demo`: Will launch a server and a client connecting to a __'production'__ database seeded ad-hoc.
 
 As of now, all three dbs are seeded with the same migrations, but can be fully customised independently.
+Migrations can be found under 'scripts/db/migrations', labled by descriptive file names.
+Seeding data is also under the same folder. During seeding, bids and adjudication are run as postgres db functions and may or may not reflect any business logic found in the server code, they are in fact only meant to seed data in the most effective way, making sure all triggers are fired upon insert.
+Using 'make testingdbseed' will log output to the console so you can visualise the result of the queries being run on the db.
 
 
 ## CI/CD
