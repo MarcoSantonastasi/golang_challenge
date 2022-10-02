@@ -90,7 +90,7 @@ NewBid();
 
 ## Work Log
 
-An overview of the sprints I covered is available as a GitHub Project at this link [@MarcoSantonastasi's arex_challenge](https://github.com/users/MarcoSantonastasi/projects/2/views/4)
+An overview of the sprints I covered is available as a GitHub Project at this link [@MarcoSantonastasi's Golang_challenge](https://github.com/users/MarcoSantonastasi/projects/2/views/4)
 
 ### Iteration 0: Learing Go
 
