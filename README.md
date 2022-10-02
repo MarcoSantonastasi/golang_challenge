@@ -1,6 +1,6 @@
 ![e2e tsting CI](https://github.com/MarcoSantonastasi/arex_challenge/actions/workflows/e2etests.yml/badge.svg)
 
-# arex_challenge
+# golang_challenge
 see [./REQUIREMENTS.md](./REQUIREMENTS.md) for the challenge prompt.
 
 
