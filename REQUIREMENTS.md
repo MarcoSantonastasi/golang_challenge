@@ -1,9 +1,9 @@
-# arex_challenge
+# Golang_challenge
 
 ## Requirements
 
 ### General
-In Arex we deal with bank accounts, invoices, transfers, etc... and we want to see how you deal with one of the classic tasks that our users do.
+In "Awesome Company" we deal with bank accounts, invoices, transfers, etc... and we want to see how you deal with one of the classic tasks that our users do.
 The goal of the tech challenge is to design a system supporting the requirements defined in the next sections, satisfying the following:
 - [X] For each invoice accepted into the market there will be an asking price
 - [X] Each investor will place bids to purchase an invoice
